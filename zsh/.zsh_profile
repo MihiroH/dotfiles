@@ -1,0 +1,78 @@
+export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
+alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+
+# エイリアスの設定
+# ls（カラー表示）
+alias ls='ls -G'
+alias ll='ls -lG'
+alias la='ls -laG'
+
+cdls ()
+{
+  \cd "$@" && ls
+}
+alias cd="cdls"
+
+# Git
+alias g='git'
+alias ga="add"
+alias gac='g add . && g commit -m'
+alias gb='g branch'
+alias gc='g commit -am'
+alias gco='g checkout'
+alias gd='g diff'
+alias gfp="fetchpull"
+alias gl='g log --name-only'
+alias gp='g push'
+alias gpop='g stash pop'
+alias gr='reset'
+alias gs='status'
+alias gsts='stash'
+
+fetchpull () {
+  g fetch -p && git pull
+}
+add () {
+  g add .
+}
+reset () {
+  g reset
+}
+stash() {
+  g stash
+}
+status() {
+  g status
+}
+rmbranch () {
+  git branch | grep $1 | xargs git branch -D
+}
+
+# peco
+alias gh='cd $(ghq list -p | peco)'
+alias codef='find . -type d \( -name .git -o -name node_modules \) -prune -o -print | peco X code'
+
+alias practice='cd /Users/mihiro/Documents/practice'
+if [ `uname` = "Darwin" ]; then
+  alias ip='ipconfig getifaddr en0 | pbcopy && pbpaste'
+fi
+
+
+# node yarn
+alias n='npm'
+alias y='yarn'
+
+# カレントディレクトリのパスをクリップボードにコピー(cpwd, copypathなど)
+alias pwdc='pwd | tr -d "\n" | pbcopy'
+
+# global alias
+alias -g G='| grep --color=auto'
+alias -g X='| xargs'
+
+# cd directory
+alias enoinc='cd /Users/mihiro.h/Documents/enoinc/'
+alias proto-campaign='cd /Users/mihiro.h/Documents/proto/goonet-prm/lp/search/campaign/'
+alias proto-lite='cd /Users/mihiro.h/Documents/proto/goonet-prm/search/'
+alias proto-mtg='cd /Users/mihiro.h/Dropbox\ \(ENO\ Inc.\)/個人用/proto/MTG/2019/'
+alias proto-library='cd /Users/mihiro.h/Documents/proto/goonet-prm/lp/search/library'
