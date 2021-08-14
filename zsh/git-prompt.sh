@@ -1,0 +1,1 @@
+/Users/mihiro/.zsh/git-prompt.sh
