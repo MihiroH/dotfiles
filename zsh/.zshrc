@@ -27,9 +27,12 @@ PS1=$'\n%c%F{#08e6e6}$(__git_ps1 " (%s)")%f\n%# '
 # history コマンドに日時を表示させる
 export HISTTIMEFORMAT='%F %T '
 
-export PATH="$HOME/.anyenv/bin:$PATH"
-eval "$(anyenv init -)"
 
+# anyenv
+if [ -d $HOME/.anyenv/ ]; then
+       export PATH="$HOME/.anyenv/bin:$PATH"
+       eval "$(anyenv init -)"
+fi
 if [ -f ${HOME}/.yvm/yvm.sh ]; then
        source ~/.yvm/yvm.sh
 fi
