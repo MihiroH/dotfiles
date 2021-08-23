@@ -21,7 +21,7 @@ endif
 let &runtimepath = s:dein_repo_dir .",". &runtimepath
 " プラグイン読み込み＆キャッシュ作成
 let s:toml = fnamemodify(expand('<sfile>'), ':h').'/.vim/dein.toml'
- let s:lazy_toml = fnamemodify(expand('<sfile>'), ':h').'/.vim/dein_lazy.toml'
+let s:lazy_toml = fnamemodify(expand('<sfile>'), ':h').'/.vim/dein_lazy.toml'
 if dein#load_state(s:dein_dir)
   call dein#begin(s:dein_dir)
   call dein#load_toml(s:toml, {'lazy': 0})
