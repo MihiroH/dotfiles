@@ -171,24 +171,6 @@ on_ft = ['stylus']
 repo = 'heavenshell/vim-jsdoc'
 on_ft = ['javascript', 'typescript']
 
-[[plugins]] # 入力補完
-repo = 'Shougo/neocomplete.vim'
-on_i = 1
-hook_add = '''
-  " 起動時に有効
-  let g:neocomplete#enable_at_startup = 1
-  " ポップアップメニューで表示される候補の数
-  let g:neocomplete#max_list = 10
-  "キーワードの長さ、デフォルトで80
-  let g:neocomplete#max_keyword_width = 80
-  let g:neocomplete#enable_ignore_case = 1
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  " autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType python setlocal omnifunc=python3complete#Complete
-'''
-
 [[plugins]] # snippets
 repo = 'Shougo/neosnippet-snippets'
 on_i = 1
