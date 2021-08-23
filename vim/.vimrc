@@ -92,6 +92,7 @@ nnoremap g# g#zz
 nnoremap cl :ccl<CR>
 filetype on
 filetype plugin indent on
+set guicursor=a:blinkon0
 set iskeyword-=.
 " 文字コードをUFT-8に設定
 set fenc=utf-8
