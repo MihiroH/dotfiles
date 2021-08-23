@@ -81,9 +81,9 @@ nnoremap g* g*zz
 nnoremap g# g#zz
 
 " All the languages Kite supports
-let g:kite_supported_languages = ['*']
-set completeopt=menuone,noselect
-set belloff+=ctrlg  " if vim beeps during completion
+" let g:kite_supported_languages = ['*']
+" set completeopt=menuone,noselect
+" set belloff+=ctrlg  " if vim beeps during completion
 " set statusline=%<%f\ %h%m%r%{kite#statusline()}%=%-14.(%l,%c%V%)\ %P
 " set laststatus=2
 " set completeopt+=menuone
