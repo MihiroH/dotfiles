@@ -89,6 +89,8 @@ nnoremap g# g#zz
 " set completeopt+=menuone
 " set completeopt-=noselect
 
+lang en_US.UTF-8
+
 nnoremap cl :ccl<CR>
 filetype on
 filetype plugin indent on
