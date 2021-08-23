@@ -58,11 +58,6 @@ if [ `uname` = "Darwin" ]; then
   alias ip='ipconfig getifaddr en0 | pbcopy && pbpaste'
 fi
 
-
-# node yarn
-alias n='npm'
-alias y='yarn'
-
 # カレントディレクトリのパスをクリップボードにコピー(cpwd, copypathなど)
 alias pwdc='pwd | tr -d "\n" | pbcopy'
 
@@ -70,9 +65,3 @@ alias pwdc='pwd | tr -d "\n" | pbcopy'
 alias -g G='| grep --color=auto'
 alias -g X='| xargs'
 
-# cd directory
-alias enoinc='cd /Users/mihiro.h/Documents/enoinc/'
-alias proto-campaign='cd /Users/mihiro.h/Documents/proto/goonet-prm/lp/search/campaign/'
-alias proto-lite='cd /Users/mihiro.h/Documents/proto/goonet-prm/search/'
-alias proto-mtg='cd /Users/mihiro.h/Dropbox\ \(ENO\ Inc.\)/個人用/proto/MTG/2019/'
-alias proto-library='cd /Users/mihiro.h/Documents/proto/goonet-prm/lp/search/library'
