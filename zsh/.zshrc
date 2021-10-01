@@ -27,18 +27,22 @@ PS1=$'\n%c%F{#08e6e6}$(__git_ps1 " (%s)")%f\n%# '
 # history コマンドに日時を表示させる
 export HISTTIMEFORMAT='%F %T '
 
+# Homebrew
+export PATH=/opt/homebrew/bin:$PATH
 
 # anyenv
 if [ -d $HOME/.anyenv/ ]; then
        export PATH="$HOME/.anyenv/bin:$PATH"
        eval "$(anyenv init -)"
 fi
+
+# yvm (yarn)
 if [ -f ${HOME}/.yvm/yvm.sh ]; then
        source ~/.yvm/yvm.sh
+       export YVM_DIR=/Users/mihiro.h/.yvm
+       [ -r $YVM_DIR/yvm.sh ] && . $YVM_DIR/yvm.sh
+       export PATH="$PATH:`yarn global bin`"
 fi
-
-# yarn
-export PATH="$PATH:`yarn global bin`"
 
 # 補完機能
 autoload -Uz compinit
@@ -106,9 +110,6 @@ function peco-get-destination-from-cdr() {
        sed -e 's/^[[:digit:]]*[[:blank:]]*//' | \
        peco --query "$LBUFFER"
 }
-
-export YVM_DIR=/Users/mihiro.h/.yvm
-[ -r $YVM_DIR/yvm.sh ] && . $YVM_DIR/yvm.sh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
