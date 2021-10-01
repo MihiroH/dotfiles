@@ -92,6 +92,8 @@ nnoremap g# g#zz
 lang en_US.UTF-8
 
 nnoremap cl :ccl<CR>
+nnoremap cn :cnext<CR>
+nnoremap cp :cprev<CR>
 filetype on
 filetype plugin indent on
 set guicursor=a:blinkon0
@@ -224,7 +226,3 @@ autocmd BufRead,BufNewFile *.md  set filetype=markdown
 " nnoremap <silent> <C-m> :PrevimOpen<CR>
 let g:vim_markdown_conceal = 0
 let g:vim_markdown_conceal_code_blocks = 0
-
-" === macro ===
-" deplicate '@media max1000' and '@media sp' from '@media pc'
-let @h = 'V/kb?pc d>Wcwmax1000/vwVG:s/\v\s\-kb=\s\d{2kb1,4}.*\)/)/g?pcV/@mediaky}VPWcwsp/vwVG:s/\v\(%[\D]*/(/g'
