@@ -1,5 +1,6 @@
 " ↓update dein↓
 " call dein#update()
+" call dein#check_clean()
 
 if !&compatible
   set nocompatible
@@ -57,13 +58,13 @@ if has('autocmd') " ignore this section if your vim does not support autocommand
         autocmd! BufWritePost $MYVIMRC,$MYGVIMRC nested source %
     augroup END
     " highlight
-    autocmd ColorScheme * highlight Search ctermfg=109
+    " autocmd ColorScheme * highlight Search ctermfg=109
     autocmd VimEnter,WinEnter,BufNewFile,BufRead,BufEnter,TabEnter * IndentLinesReset
 endif
 
 " config
 " LeaderをSpaceキーにする
-let mapleader = "\<Space>"
+map <Space> <Leader>
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>wq :wq<CR>

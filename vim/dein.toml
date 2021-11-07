@@ -10,6 +10,16 @@ hook_add = '''
   au MyAutoCmd VimEnter * nested colorscheme gruvbox
 '''
 
+# [[plugins]]
+# repo = 'sonph/onehalf'
+# rtp = 'vim/'
+# hook_add = '''
+#   " colorscheme onehalflight
+#   " let g:airline_theme='onehalfdark'
+#   " let g:lightline.colorscheme='onehalfdark'
+#   au MyAutoCmd VimEnter * nested colorscheme onehalfdark
+# '''
+
 [[plugins]] # dirctory tree
 repo = 'scrooloose/nerdtree'
 hook_add = '''
@@ -78,6 +88,15 @@ hook_add = '''
 repo = 'fatih/vim-go'
 on_ft = ['go']
 
+[[plugins]] # necessary for kana/vim-operator-replace
+repo = 'kana/vim-operator-user'
+
+[[plugins]] # replace text to yanked one.
+repo = 'kana/vim-operator-replace'
+hook_add = '''
+nmap _ <Plug>(operator-replace)
+'''
+
 [[plugins]] # autocomplete (lsp)
 repo = 'neoclide/coc.nvim'
 rev = 'release'
@@ -111,6 +130,8 @@ hook_add = '''
   autocmd FileType scss setl iskeyword+=@-@
 
   " coc-cssmodules
+
+  " coc-tsserver
 
   " intelephense (php using npm i -g intelephense)
 

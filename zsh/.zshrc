@@ -36,6 +36,13 @@ if [ -d $HOME/.anyenv/ ]; then
        eval "$(anyenv init -)"
 fi
 
+# pyenv
+if [ -d $HOME/.anyenv/envs/pyenv ]; then
+  export PYENV_ROOT="$HOME/.anyenv/envs/pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init --path)"
+fi
+
 # yvm (yarn)
 if [ -f ${HOME}/.yvm/yvm.sh ]; then
        source ~/.yvm/yvm.sh

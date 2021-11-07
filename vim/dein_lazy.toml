@@ -185,7 +185,10 @@ on_ft = ['stylus']
 
 [[plugins]] # jsdoc
 repo = 'heavenshell/vim-jsdoc'
-on_ft = ['javascript', 'typescript']
+on_ft = ['javascript', 'javascript.jsx', 'typescript']
+hook_add = '''
+  nnoremap <Space>j :JsDoc <Enter>
+'''
 
 [[plugins]] # snippets
 repo = 'Shougo/neosnippet-snippets'
@@ -249,3 +252,24 @@ on_path = '.*'
 [[plugins]] # editor config
 repo = 'editorconfig/editorconfig-vim'
 on_i = 1
+
+[[plugins]] # markdown preview
+repo = 'iamcco/markdown-preview.nvim'
+on_ft = ['markdown', 'pandoc.markdown', 'rmd']
+build = 'sh -c "cd app && npm install"'
+hook_add = '''
+  nmap <C-s> :MarkdownPreview<CR>
+'''
+
+[[plugins]] # AI pair programmer
+repo = 'github/copilot.vim'
+on_i = 1
+hook_add = '''
+  nnoremap <Space>co :Copilot status <Enter>
+  imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
+
+  if has('autocmd') " ignore this section if your vim does not support autocommands
+    autocmd ColorScheme * highlight CopilotSuggestion ctermfg=109
+    autocmd VimEnter,WinEnter * normal <Space>co
+  endif
+'''
