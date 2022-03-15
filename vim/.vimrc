@@ -1,6 +1,10 @@
 " ↓update dein↓
 " call dein#update()
 " call dein#check_clean()
+"
+" How to cache clear.
+" call map(dein#check_clean(), "delete(v:val, 'rf')")
+" call dein#recache_runtimepath()
 
 if !&compatible
   set nocompatible
@@ -92,6 +96,7 @@ nnoremap g# g#zz
 
 lang en_US.UTF-8
 
+" quickfix
 nnoremap cl :ccl<CR>
 nnoremap cn :cnext<CR>
 nnoremap cp :cprev<CR>
@@ -120,9 +125,11 @@ set formatoptions-=ro
 " ステータスラインを常に表示
 set laststatus=2
 " コマンドラインの補完
-set wildmode=list:longest
+set wildmode=longest:full,full
 " 80文字目にラインを入れる
 set colorcolumn=80
+" exclude patterns with vimgrep.
+set wildignore+=*/node_modules/**,*/dist/**,.**,*/tmp/*,*.so,*.swp,*.zip
 
 " 検索系
 " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
@@ -147,6 +154,7 @@ set splitright
 set splitbelow
 
 " 自動的にquickfix-windowを開く
+set modifiable
 autocmd QuickFixCmdPost *grep* cwindow
 
 " Tab

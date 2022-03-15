@@ -2,13 +2,22 @@
 repo = 'Shougo/dein.vim'
 
 [[plugins]] # color scheme
-repo = 'morhetz/gruvbox'
+repo = 'rebelot/kanagawa.nvim'
 hook_add = '''
-  set background=dark
+  colorscheme kanagawa
   " colorscheme 設定は source 後に行う必要があるので VimEnter で行う。
   " 但し Colorscheme イベントの発生が抑制されないよう nented を付ける。
-  au MyAutoCmd VimEnter * nested colorscheme gruvbox
+  au MyAutoCmd VimEnter * nested colorscheme kanagawa
 '''
+
+# [[plugins]] # color scheme
+# repo = 'morhetz/gruvbox'
+# hook_add = '''
+#   set background=dark
+#   " colorscheme 設定は source 後に行う必要があるので VimEnter で行う。
+#   " 但し Colorscheme イベントの発生が抑制されないよう nented を付ける。
+#   au MyAutoCmd VimEnter * nested colorscheme gruvbox
+# '''
 
 # [[plugins]]
 # repo = 'sonph/onehalf'
@@ -88,15 +97,6 @@ hook_add = '''
 repo = 'fatih/vim-go'
 on_ft = ['go']
 
-[[plugins]] # necessary for kana/vim-operator-replace
-repo = 'kana/vim-operator-user'
-
-[[plugins]] # replace text to yanked one.
-repo = 'kana/vim-operator-replace'
-hook_add = '''
-nmap _ <Plug>(operator-replace)
-'''
-
 [[plugins]] # autocomplete (lsp)
 repo = 'neoclide/coc.nvim'
 rev = 'release'
@@ -118,6 +118,9 @@ hook_add = '''
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
+
+  " Symbol renaming.
+  nmap <leader>rn <Plug>(coc-rename)
 
   """ Plugins (Example: CocInstall coc-html) """
   " https://github.com/neoclide/coc.nvim/wiki/Language-servers
@@ -141,3 +144,7 @@ hook_add = '''
 
   " coc-yaml
 '''
+
+[[plugins]] # auto close tag
+repo = 'cohama/lexima.vim'
+
