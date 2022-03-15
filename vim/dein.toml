@@ -1,6 +1,15 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
+# [[plugins]] # color scheme
+# repo = 'morhetz/gruvbox'
+# hook_add = '''
+#   set background=dark
+#   " colorscheme 設定は source 後に行う必要があるので VimEnter で行う。
+#   " 但し Colorscheme イベントの発生が抑制されないよう nented を付ける。
+#   au MyAutoCmd VimEnter * nested colorscheme gruvbox
+# '''
+
 [[plugins]] # color scheme
 repo = 'rebelot/kanagawa.nvim'
 hook_add = '''
@@ -122,6 +131,9 @@ hook_add = '''
   " Symbol renaming.
   nmap <leader>rn <Plug>(coc-rename)
 
+  " Add `:OR` command for organize imports of the current buffer.
+  command! -nargs=0 OR :call CocActionAsync('runCommand', 'editor.action.organizeImport')
+
   """ Plugins (Example: CocInstall coc-html) """
   " https://github.com/neoclide/coc.nvim/wiki/Language-servers
 
@@ -132,6 +144,9 @@ hook_add = '''
   " coc-css
   autocmd FileType scss setl iskeyword+=@-@
 
+  " yaegassy/coc-tailwindcss (following below)
+  " https://github.com/iamcco/coc-tailwindcss/pull/70#issuecomment-1025606959
+
   " coc-cssmodules
 
   " coc-tsserver
@@ -141,10 +156,14 @@ hook_add = '''
   " coc-vetur
 
   " coc-docker
-
-  " coc-yaml
 '''
 
 [[plugins]] # auto close tag
 repo = 'cohama/lexima.vim'
 
+[[plugins]] # coc tailwindcss
+repo = 'yaegassy/coc-tailwindcss'
+rev = 'feat/support-v3-and-use-server-pkg'
+build = '''
+  npm install --frozen-lockfile
+'''

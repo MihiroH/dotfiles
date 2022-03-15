@@ -45,11 +45,23 @@ fi
 
 # yvm (yarn)
 if [ -f ${HOME}/.yvm/yvm.sh ]; then
-       source ~/.yvm/yvm.sh
-       export YVM_DIR=/Users/mihiro.h/.yvm
-       [ -r $YVM_DIR/yvm.sh ] && . $YVM_DIR/yvm.sh
-       export PATH="$PATH:`yarn global bin`"
+  source ~/.yvm/yvm.sh
+  export YVM_DIR=/Users/mihiro.h/.yvm
+  [ -r $YVM_DIR/yvm.sh ] && . $YVM_DIR/yvm.sh
+  export PATH="$PATH:`yarn global bin`"
 fi
+
+# nvm
+if [ -f ${HOME}/.nvm ]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+fi
+
+# go
+export GOPATH=$HOME/go
+export GOBIN=$GOPATH/bin
+export PATH=$PATH:$GOBIN
 
 # 補完機能
 autoload -Uz compinit
@@ -121,3 +133,7 @@ function peco-get-destination-from-cdr() {
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export PATH="$HOME/anaconda3/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
