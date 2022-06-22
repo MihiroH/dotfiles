@@ -182,6 +182,7 @@ on_ft = ['stylus']
 [[plugins]] # jsdoc
 repo = 'heavenshell/vim-jsdoc'
 on_ft = ['javascript', 'javascript.jsx', 'typescript']
+build = 'make install'
 hook_add = '''
   nnoremap <Space>j :JsDoc <Enter>
 '''

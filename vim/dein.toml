@@ -10,14 +10,14 @@ repo = 'Shougo/dein.vim'
 #   au MyAutoCmd VimEnter * nested colorscheme gruvbox
 # '''
 
-[[plugins]] # color scheme
-repo = 'rebelot/kanagawa.nvim'
-hook_add = '''
-  colorscheme kanagawa
-  " colorscheme 設定は source 後に行う必要があるので VimEnter で行う。
-  " 但し Colorscheme イベントの発生が抑制されないよう nented を付ける。
-  au MyAutoCmd VimEnter * nested colorscheme kanagawa
-'''
+# [[plugins]] # color scheme
+# repo = 'rebelot/kanagawa.nvim'
+# hook_add = '''
+#   colorscheme kanagawa
+#   " colorscheme 設定は source 後に行う必要があるので VimEnter で行う。
+#   " 但し Colorscheme イベントの発生が抑制されないよう nested を付ける。
+#   au MyAutoCmd VimEnter * nested colorscheme kanagawa
+# '''
 
 # [[plugins]] # color scheme
 # repo = 'morhetz/gruvbox'
@@ -28,43 +28,58 @@ hook_add = '''
 #   au MyAutoCmd VimEnter * nested colorscheme gruvbox
 # '''
 
-# [[plugins]]
-# repo = 'sonph/onehalf'
-# rtp = 'vim/'
+[[plugins]]
+repo = 'sonph/onehalf'
+rtp = 'vim/'
+hook_add = '''
+  " Important!!
+  if has('termguicolors')
+    set termguicolors
+  endif
+
+  colorscheme onehalflight
+  let g:airline_theme='onehalflight'
+  " let g:lightline.colorscheme='onehalfdark'
+  " au MyAutoCmd VimEnter * nested colorscheme onehalfdark
+'''
+
+[[plugins]] # tree
+repo = 'lambdalisue/fern.vim'
+hook_add = '''
+  augroup fern
+    autocmd!
+    autocmd VimEnter * ++nested Fern .
+  augroup END
+
+  let g:fern#default_hidden=1
+  let g:fern#renderer='nerdfont'
+
+  nnoremap <Leader>f :<c-u>Fern . -drawer -toggle -reveal=%<CR>
+'''
+
+# [[plugins]] # dirctory tree
+# repo = 'scrooloose/nerdtree'
 # hook_add = '''
-#   " colorscheme onehalflight
-#   " let g:airline_theme='onehalfdark'
-#   " let g:lightline.colorscheme='onehalfdark'
-#   au MyAutoCmd VimEnter * nested colorscheme onehalfdark
+#   " short cut key
+#   if !has('gui_running')
+#     map VimNerdTree <S-D-e>
+#   endif
+#   map <S-D-e> :NERDTreeToggle<CR>
+#   " How can I open a NERDTree automatically when vim starts up if no files were specified?
+#   autocmd StdinReadPre * let s:std_in=1
+#   autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+#   " 他のバッファをすべて閉じた時にNERDTreeが開いていたらNERDTreeも一緒に閉じる。
+#   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+#   " NERDTreeを現在開いているタブファイルパスと同期する
+#   autocmd BufEnter * lcd %:p:h
+#   " ドットファイルを可視化
+#   let g:NERDTreeShowHidden=1
+#   let g:NERDTreeIgnore = ['^node_modules$', '^.git$', '^.DS_Store$', '.css.map$']
+#   let g:NERDTreeWinSize = 20
 # '''
 
-[[plugins]] # dirctory tree
-repo = 'scrooloose/nerdtree'
-hook_add = '''
-  " short cut key
-  if !has('gui_running')
-    map VimNerdTree <S-D-e>
-  endif
-  map <S-D-e> :NERDTreeToggle<CR>
-  " How can I open a NERDTree automatically when vim starts up if no files were specified?
-  autocmd StdinReadPre * let s:std_in=1
-  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-  " 他のバッファをすべて閉じた時にNERDTreeが開いていたらNERDTreeも一緒に閉じる。
-  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-  " NERDTreeを現在開いているタブファイルパスと同期する
-  autocmd BufEnter * lcd %:p:h
-  " ドットファイルを可視化
-  let g:NERDTreeShowHidden=1
-  let g:NERDTreeIgnore = ['^node_modules$', '^.git$', '^.DS_Store$', '.css.map$']
-  let g:NERDTreeWinSize = 20
-'''
-
 [[plugins]] # indent
-repo = 'Yggdroot/indentLine'
-hook_add = '''
-  let g:indentLine_color_term = 245
-  let g:indentLine_char_list = ['|']
-'''
+repo = 'lukas-reineke/indent-blankline.nvim'
 
 [[plugins]] # syntax highlight
 repo = 'sheerun/vim-polyglot'

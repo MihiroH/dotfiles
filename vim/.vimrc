@@ -63,7 +63,7 @@ if has('autocmd') " ignore this section if your vim does not support autocommand
     augroup END
     " highlight
     " autocmd ColorScheme * highlight Search ctermfg=109
-    autocmd VimEnter,WinEnter,BufNewFile,BufRead,BufEnter,TabEnter * IndentLinesReset
+    " autocmd VimEnter,WinEnter,BufNewFile,BufRead,BufEnter,TabEnter * IndentLinesReset
 endif
 
 " config
