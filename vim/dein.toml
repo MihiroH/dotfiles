@@ -50,12 +50,32 @@ hook_add = '''
   let g:NERDTreeWinSize = 20
 '''
 
-[[plugins]] # indent
-repo = 'Yggdroot/indentLine'
+[[plugins]] # tree
+repo = 'lambdalisue/fern.vim'
 hook_add = '''
-  let g:indentLine_color_term = 245
-  let g:indentLine_char_list = ['|']
+  function! s:init_fern() abort
+    nmap <buffer> d <Plug>(fern-action-remove)
+    nmap <buffer> cd <Plug>(fern-action-cd)
+    nmap <buffer> r <Plug>(fern-action-reload:all)
+  endfunction
+
+  augroup my-fern
+    autocmd! *
+    autocmd FileType fern call s:init_fern()
+  augroup END
+
+  let g:fern#default_hidden=1
+  let g:fern#renderer='nerdfont'
+
+  nnoremap <Leader>f :<c-u>Fern . -drawer -toggle -reveal=%<CR>
 '''
+
+[[plugins]] # fern hijack
+repo = 'lambdalisue/fern-hijack.vim'
+depends = ['lambdalisue/fern.vim']
+
+[[plugins]] # indent
+repo = 'lukas-reineke/indent-blankline.nvim'
 
 [[plugins]] # syntax highlight
 repo = 'sheerun/vim-polyglot'
@@ -143,6 +163,8 @@ hook_add = '''
   " coc-docker
 
   " coc-yaml
+
+  " coc-tabnine (the all-language autocompleter)
 '''
 
 [[plugins]] # auto close tag

@@ -22,7 +22,8 @@ GIT_PS1_SHOWUPSTREAM=auto
 # PROMPT="[%m]%# "
 RPROMPT="%*"
 setopt PROMPT_SUBST
-PS1=$'\n%c%F{#08e6e6}$(__git_ps1 " (%s)")%f\n%# '
+# PS1=$'\n%c%F{#08e6e6}$(__git_ps1 " (%s)")%f\n%# '
+PS1=$'\n%c%F{#0184bc}$(__git_ps1 " (%s)")%f\n%# '
 
 # history コマンドに日時を表示させる
 export HISTTIMEFORMAT='%F %T '
@@ -121,3 +122,6 @@ function peco-get-destination-from-cdr() {
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export PATH="$HOME/anaconda3/bin:$PATH"
+# volta(The Hassle-Free JavaScript Tool Manager)
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
