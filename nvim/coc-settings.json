@@ -1,0 +1,19 @@
+{
+  "coc.preferences.jumpCommand": "tabe",
+  "Lua.runtime.version": "LuaJIT",
+  "Lua.workspace.library": {
+    "/usr/lib/lua": true,
+    "/usr/lib/lua-pam/": true,
+    "/usr/share/awesome/lib": true
+  },
+  "languageserver": {
+    "intelephense": {
+      "command": "intelephense",
+      "args": ["--stdio"],
+      "filetypes": ["php"],
+      "initializationOptions": {
+        "storagePath": "/tmp/intelephense"
+      }
+    }
+  }
+}
