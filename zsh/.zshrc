@@ -140,3 +140,10 @@ export NVM_DIR="$HOME/.nvm"
 
 # Add cargo-installed binaries to the path
 export PATH="$PATH:$CARGO_HOME/bin"
+
+# bun completions
+[ -s "/Users/mihiro/.bun/_bun" ] && source "/Users/mihiro/.bun/_bun"
+
+# bun
+export BUN_INSTALL="/Users/mihiro/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
