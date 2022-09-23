@@ -1,16 +1,18 @@
 vim.cmd([[
-  function! s:check_back_space() abort
+  " use <tab> for trigger completion and navigate to the next complete item
+  function! CheckBackspace() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~# '\s'
   endfunction
 
-  inoremap <silent><expr> <TAB>
-        \ pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
+  inoremap <silent><expr> <Tab>
+        \ coc#pum#visible() ? coc#pum#next(1) :
+        \ CheckBackspace() ? "\<Tab>" :
         \ coc#refresh()
 
-  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+  inoremap <expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
+  inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
+  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
   " default extensions
   let g:coc_global_extensions = [
@@ -57,7 +59,7 @@ vim.cmd([[
   nmap <Leader>rn <Plug>(coc-rename)
 
   " Use K to show documentation in preview window.
-  nmap <silent> gK :call <SID>show_documentation()<CR>
+  nnoremap <silent> K :call ShowDocumentation()<CR>
 
   function! s:show_documentation()
     if (index(['vim','help'], &filetype) >= 0)
@@ -66,4 +68,12 @@ vim.cmd([[
       call CocActionAsync('doHover')
     endif
   endfunction
+
+  " Remap keys for applying codeAction to the current buffer.
+  nmap <Leader>ac  <Plug>(coc-codeaction)
+  " Apply AutoFix to problem on the current line.
+  nmap <Leader>qf  <Plug>(coc-fix-current)
+
+  " Run the Code Lens action on the current line.
+  nmap <Leader>cl  <Plug>(coc-codelens-action)
 ]])
