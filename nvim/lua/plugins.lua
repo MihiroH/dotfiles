@@ -63,6 +63,7 @@ return packer.startup(function(use)
   -- fern.vim
   use {
     'lambdalisue/fern.vim',
+    branch = 'main',
     config = function() require('config.fern') end,
   }
 
@@ -111,6 +112,7 @@ return packer.startup(function(use)
   -- Better syntax highlighting
   use {
     'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
     config = function () require('config.treesitter') end,
   }
 

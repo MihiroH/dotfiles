@@ -9,20 +9,24 @@ ts_config.setup {
     'vim',
     'lua',
 
-    "html",
-    "javascript",
-    "typescript",
-    "vue",
-    "tsx",
-    "svelte",
-    "astro",
-    "prisma",
-    "embedded_template", -- ejs, erb
+    'html',
+    'javascript',
+    'typescript',
+    'vue',
+    'tsx',
+    'svelte',
+    'astro',
+    'prisma',
+    'embedded_template', -- ejs, erb
 
     'dart',
     'php',
     'go',
     'gomod',
+  },
+
+  indent = {
+    enable = true,
   },
 
   highlight = {
@@ -41,6 +45,9 @@ ts_config.setup {
 
   matchup = {
     enable = true,
+    disable = {
+      'lua'
+    },
   },
 }
 

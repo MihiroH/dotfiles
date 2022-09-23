@@ -33,7 +33,7 @@ set guicursor=a:blinkon0
 set iskeyword-=.
 
 " マウスを有効
-set mouse=a
+" set mouse=a
 " テキストを通常どおり表示(JSONなどでダブルクオーテーションなどが非表示になるのを防ぐ)
 set conceallevel=0
 " 文字コードをUFT-8に設定

@@ -1,5 +1,4 @@
 {
-  "coc.preferences.jumpCommand": "tabe",
   "Lua.runtime.version": "LuaJIT",
   "Lua.workspace.library": {
     "/usr/lib/lua": true,
@@ -15,5 +14,6 @@
         "storagePath": "/tmp/intelephense"
       }
     }
-  }
+  },
+  "tailwindCSS.headwind.runOnSave": false
 }
