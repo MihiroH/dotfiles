@@ -112,6 +112,7 @@ return packer.startup(function(use)
   -- Better syntax highlighting
   use {
     'nvim-treesitter/nvim-treesitter',
+    commit = 'ddcda043017f34fa1a8109fcb847e5dfdd70ee41',
     run = ':TSUpdate',
     config = function () require('config.treesitter') end,
   }
