@@ -22,7 +22,8 @@ vim.cmd([[
   \   'typescript': ['eslint'],
   \   'typescriptreact': ['eslint'],
   \   'vue': ['eslint'],
-  \   'python'    : ['flake8']
+  \   'python' : ['flake8'],
+  \   'go' : ['staticcheck'],
   \}
 
   let g:ale_fixers = {
@@ -33,6 +34,7 @@ vim.cmd([[
   \   'typescriptreact': ['prettier', 'eslint'],
   \   'vue': ['prettier', 'eslint'],
   \   'json': ['prettier'],
-  \   'python': ['flake8']
+  \   'python': ['flake8'],
+  \   'go': ['gofmt'],
   \}
 ]])

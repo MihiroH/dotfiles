@@ -208,6 +208,12 @@ return packer.startup(function(use)
     config = function() require('nvim-web-devicons').setup() end,
   }
 
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true },
+    config = function() require('config.lualine') end,
+  }
+
   -- git conflict markers
   use 'rhysd/conflict-marker.vim'
 
@@ -241,4 +247,19 @@ return packer.startup(function(use)
 
   -- Highlight, navigate, and operate on sets of matching text
   use 'andymass/vim-matchup'
+
+  -- Execute commands
+  use {
+    'thinca/vim-quickrun',
+    ft = { 'python', 'php', 'javascript', 'go' },
+    config = function() require('config.quickrun') end,
+  }
+
+  -- Asynchronous execution library
+  use {
+    'Shougo/vimproc.vim',
+    ft = { 'python', 'php', 'javascript', 'go' },
+    run = 'make',
+    config = function() require('config.quickrun') end,
+  }
 end)

@@ -15,5 +15,8 @@
       }
     }
   },
-  "tailwindCSS.headwind.runOnSave": false
+  "tailwindCSS.headwind.runOnSave": false,
+  "coc.preferences.formatOnSaveFiletypes": [
+     "go"
+  ]
 }
