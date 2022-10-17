@@ -143,6 +143,12 @@ return packer.startup(function(use)
     config = function() require('config.coc') end,
   }
 
+  -- GitHub copilot
+  use {
+    'github/copilot.vim',
+    config = function() require('config.copilot') end,
+  }
+
   -- Search
   use {
     {
