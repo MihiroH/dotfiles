@@ -61,12 +61,12 @@ vim.cmd([[
   " Use K to show documentation in preview window.
   nnoremap <silent> K :call ShowDocumentation()<CR>
 
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    else
-      call CocActionAsync('doHover')
-    endif
+  function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+  call CocActionAsync('doHover')
+  else
+  call feedkeys('K', 'in')
+  endif
   endfunction
 
   " Remap keys for applying codeAction to the current buffer.
