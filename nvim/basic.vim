@@ -117,6 +117,11 @@ endfunction
 
 command! -nargs=1 B call TabSb(<f-args>)
 
+" 現在のバッファのディレクトリに移動
+nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+" バッファを開いたときにpwdをcurrent directoryにする
+" autocmd BufEnter * silent! lcd %:p:h
+
 " insertmodeで移動
 imap <C-k> <Up>
 imap <C-j> <Down>

@@ -196,18 +196,6 @@ return packer.startup(function(use)
     config = function () require('config.ale') end,
   }
 
-  -- airline-theme
-  use {
-    'vim-airline/vim-airline-themes',
-    config = function() require('config.airline-themes') end,
-  }
-
-  -- status line
-  use {
-    'vim-airline/vim-airline',
-    requires = { 'vim-airline/vim-airline-themes', opt = true },
-  }
-
   -- Pretty symbols
   use {
     'kyazdani42/nvim-web-devicons',
