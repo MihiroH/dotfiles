@@ -256,4 +256,18 @@ return packer.startup(function(use)
     run = 'make',
     config = function() require('config.quickrun') end,
   }
+
+  -- Test
+  use {
+    'vim-test/vim-test',
+    ft = { 'python', 'php', 'javascript', 'go' },
+    config = function() require('config.test') end,
+  }
+
+  -- Visualizing test coverage results
+  use({
+    "andythigpen/nvim-coverage",
+    requires = "nvim-lua/plenary.nvim",
+    config = function() require('config.coverage') end,
+  })
 end)
