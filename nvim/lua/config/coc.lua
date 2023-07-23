@@ -14,6 +14,9 @@ vim.cmd([[
   inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
   inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
+  let g:coc_status_error_sign = '😡'
+  let g:coc_status_warning_sign = '😩'
+
   " default extensions
   let g:coc_global_extensions = [
     \ '@yaegassy/coc-volar',
@@ -34,7 +37,6 @@ vim.cmd([[
     \ 'coc-tabnine',
     \ 'coc-tailwindcss',
     \ 'coc-tsserver',
-    \ 'coc-vetur',
     \ 'coc-webview',
     \ 'coc-yaml',
   \]

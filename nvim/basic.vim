@@ -29,6 +29,8 @@ nnoremap cp :cprev<CR>
 filetype on
 filetype plugin indent on
 
+syntax on
+
 set guicursor=a:blinkon0
 set iskeyword-=.
 
@@ -62,6 +64,10 @@ set wildmode=longest:full,full
 set colorcolumn=80
 " exclude patterns with vimgrep.
 set wildignore+=*/node_modules/**,*/dist/**,.**,*/tmp/*,*.so,*.swp,*.zip
+" spell check
+" set spell
+set spelllang=en,cjk
+set spellsuggest=best,9
 
 " 検索系
 " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
@@ -155,7 +161,7 @@ endfun
 
 autocmd BufWritePre * call StripTrailingWhitespace()
 
-"全角スペースをハイライト表示
+" 全角スペースをハイライト表示
 function! ZenkakuSpace()
     highlight ZenkakuSpace cterm=reverse ctermfg=DarkMagenta gui=reverse guifg=DarkMagenta
 endfunction
@@ -168,3 +174,6 @@ if has('syntax')
     augroup END
     call ZenkakuSpace()
 endif
+
+" Pythonを有効化
+let g:python3_host_prog = '/Users/mihiro/.anyenv/envs/pyenv/shims/python'

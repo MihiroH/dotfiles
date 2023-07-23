@@ -75,8 +75,9 @@ return packer.startup(function(use)
 
   -- colorscheme
   use {
-    'sonph/onehalf',
-    rtp = 'vim/',
+    -- 'sonph/onehalf',
+    'navarasu/onedark.nvim',
+    -- rtp = 'vim/',
     config = function() require('config.colors') end,
   }
 
@@ -88,12 +89,6 @@ return packer.startup(function(use)
     'norcalli/nvim-colorizer.lua',
     event = 'VimEnter',
     config = function () require('colorizer').setup() end,
-  }
-
-  -- Support for plugins
-  use {
-    'tpope/vim-repeat',
-    event = 'BufRead',
   }
 
   -- Emmet
@@ -112,10 +107,12 @@ return packer.startup(function(use)
   -- Better syntax highlighting
   use {
     'nvim-treesitter/nvim-treesitter',
-    commit = 'ddcda043017f34fa1a8109fcb847e5dfdd70ee41',
+    -- commit = 'ddcda043017f34fa1a8109fcb847e5dfdd70ee41',
     run = ':TSUpdate',
     config = function () require('config.treesitter') end,
   }
+
+  use 'nvim-treesitter/nvim-treesitter-context'
 
   -- Documentation
   use {
@@ -126,14 +123,15 @@ return packer.startup(function(use)
 
   -- comments
   use {
-    'tpope/vim-commentary',
-    after = 'vim-repeat',
+    'numToStr/Comment.nvim',
+    config = function() require('config.comment') end,
   }
 
   -- surround motions
   use {
-    'tpope/vim-surround',
-    after = 'vim-repeat',
+    'kylechui/nvim-surround',
+    version = '*',
+    config = function () require('config.surround') end,
   }
 
   -- coc
@@ -240,7 +238,7 @@ return packer.startup(function(use)
   }
 
   -- Highlight, navigate, and operate on sets of matching text
-  use 'andymass/vim-matchup'
+  -- use 'andymass/vim-matchup'
 
   -- Execute commands
   use {
@@ -266,8 +264,33 @@ return packer.startup(function(use)
 
   -- Visualizing test coverage results
   use({
-    "andythigpen/nvim-coverage",
-    requires = "nvim-lua/plenary.nvim",
+    'andythigpen/nvim-coverage',
+    requires = 'nvim-lua/plenary.nvim',
     config = function() require('config.coverage') end,
   })
+
+  -- Live Share
+  use({
+    'jbyuki/instant.nvim',
+    config = function() require('config.liveshare') end,
+  })
+
+  -- Translator
+  use({
+    'voldikss/vim-translator',
+    config = function() require('config.translator') end,
+  })
+
+  use({
+    'utilyre/barbecue.nvim',
+    tag = "*",
+    requires = {
+      'SmiteshP/nvim-navic',
+      'kyazdani42/nvim-web-devicons',
+      'neovim/nvim-lspconfig',
+    },
+    after = 'nvim-web-devicons', -- keep this if you're using NvChad
+    config = function() require('config.navic') end,
+  })
+
 end)

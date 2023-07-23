@@ -1,7 +1,7 @@
 vim.cmd([[
   let g:silicon = {
     \ 'theme': 'OneHalfLight',
-    \ 'font': 'Fira Code',
+    \ 'font': 'Source Han Code JP',
     \ 'background': '#24292f',
   \ }
 

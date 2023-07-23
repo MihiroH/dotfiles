@@ -6,6 +6,11 @@ telescope.setup {
   defaults = {
     layout_strategy = 'flex',
     scroll_strategy = 'cycle',
+    file_ignore_patterns = {
+      'node_modules/.*',
+      '.git/.*',
+      'package-lock.json'
+    }
   },
   file_sorter = require('telescope.sorters').get_fzy_sorter,
   generic_sorter = require('telescope.sorters').get_fzy_sorter,

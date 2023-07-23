@@ -1,4 +1,6 @@
 {
+  "diagnostic.errorSign": "🥵",
+  "diagnostic.warningSign": "💩",
   "Lua.runtime.version": "LuaJIT",
   "Lua.workspace.library": {
     "/usr/lib/lua": true,

@@ -7,26 +7,26 @@ vim.cmd([[
 
   " 表示に関する設定
   let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
-  let g:ale_sign_error = '😡'
-  let g:ale_sign_warning = '😩'
+  let g:ale_sign_error = '🥵'
+  let g:ale_sign_warning = '💩'
   let g:airline#extensions#ale#open_lnum_symbol = '('
   let g:airline#extensions#ale#close_lnum_symbol = ')'
 
   highlight link ALEErrorSign Tag
   highlight link ALEWarningSign StorageClass
 
-  let g:ale_linters = {
+  let b:ale_linters = {
   \   'css': ['stylelint'],
   \   'scss': ['stylelint'],
   \   'javascript': ['eslint'],
   \   'typescript': ['eslint'],
   \   'typescriptreact': ['eslint'],
-  \   'vue': ['eslint'],
+  \   'vue': ['eslint', 'volar'],
   \   'python' : ['flake8'],
   \   'go' : ['staticcheck'],
   \}
 
-  let g:ale_fixers = {
+  let b:ale_fixers = {
   \   'css': ['prettier', 'stylelint'],
   \   'scss': ['prettier', 'stylelint'],
   \   'javascript': ['prettier', 'eslint'],
