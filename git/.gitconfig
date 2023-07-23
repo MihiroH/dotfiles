@@ -13,6 +13,8 @@
     name = MihiroH
     email = mihiro.hashimoto.1125@gmail.com
     mail = mihiro.hashimoto.1125@gmail.com
+[includeIf "gitdir:~/Documents/personal/github/"]
+  path = .gitconfig-personal
 [commit]
     template = /Users/mihiro/.stCommitMsg
 [http]
