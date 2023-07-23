@@ -65,3 +65,5 @@ alias pwdc='pwd | tr -d "\n" | pbcopy'
 alias -g G='| grep --color=auto'
 alias -g X='| xargs'
 
+# Laravel sail
+alias sail='./vendor/bin/sail'

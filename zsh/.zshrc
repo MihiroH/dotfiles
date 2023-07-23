@@ -22,13 +22,16 @@ GIT_PS1_SHOWUPSTREAM=auto
 # PROMPT="[%m]%# "
 RPROMPT="%*"
 setopt PROMPT_SUBST
-PS1=$'\n%c%F{#0184bc}$(__git_ps1 " (%s)")%f\n%# '
+PS1=$'\n%c%F{#5ab0f6}$(__git_ps1 " (%s)")%f\n%# '
 
 # history コマンドに日時を表示させる
 export HISTTIMEFORMAT='%F %T '
 
 # Homebrew
 export PATH=/opt/homebrew/bin:$PATH
+
+# Homebrew PHP
+export PATH=/opt/homebrew/bin/php:$PATH
 
 # anyenv
 if [ -d $HOME/.anyenv/ ]; then
@@ -52,11 +55,11 @@ if [ -f ${HOME}/.yvm/yvm.sh ]; then
 fi
 
 # nvm
-if [ -f ${HOME}/.nvm ]; then
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-fi
+# if [ -f ${HOME}/.nvm ]; then
+#   export NVM_DIR="$HOME/.nvm"
+#   [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+#   [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+# fi
 
 # go
 export GOPATH=$HOME/go
@@ -147,3 +150,4 @@ export PATH="$PATH:$CARGO_HOME/bin"
 # bun
 export BUN_INSTALL="/Users/mihiro/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
