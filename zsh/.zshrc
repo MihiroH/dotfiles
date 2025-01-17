@@ -55,11 +55,11 @@ if [ -f ${HOME}/.yvm/yvm.sh ]; then
 fi
 
 # nvm
-# if [ -f ${HOME}/.nvm ]; then
-#   export NVM_DIR="$HOME/.nvm"
-#   [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
-#   [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-# fi
+if [ -f ${HOME}/.nvm ]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+fi
 
 # go
 export GOPATH=$HOME/go
@@ -151,3 +151,26 @@ export PATH="$PATH:$CARGO_HOME/bin"
 export BUN_INSTALL="/Users/mihiro/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/mihiro/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mihiro/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/mihiro/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mihiro/google-cloud-sdk/completion.zsh.inc'; fi
+
+# gcloud
+export GOOGLE_APPLICATION_CREDENTIALS="/Users/mihiro/.config/gcloud/legacy_credentials/mihiro.yanagawa@legalscape.co.jp/adc.json"
+
+# java
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+
+export PATH="/opt/homebrew/opt/jpeg/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/jpeg/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/jpeg/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg/lib/pkgconfig"
+
+# export PATH="/usr/local/opt/jpeg/bin:$PATH"
+# export LDFLAGS="-L/usr/local/opt/jpeg/lib"
+# export CPPFLAGS="-I/usr/local/opt/jpeg/include"
+# export PKG_CONFIG_PATH="/usr/local/opt/jpeg/lib/pkgconfig"
