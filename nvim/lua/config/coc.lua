@@ -39,6 +39,11 @@ vim.cmd([[
     \ 'coc-tsserver',
     \ 'coc-webview',
     \ 'coc-yaml',
+    \ 'coc-prettier',
+    \ 'coc-nav',
+    \ 'coc-biome',
+    \ 'coc-prisma',
+    \ 'coc-sql',
   \]
 
   " Markdown preview
@@ -47,15 +52,39 @@ vim.cmd([[
   autocmd FileType scss setl iskeyword+=@-@
 
   " autofix linting for JS
-  autocmd FileType javascript,typescript,vue,svelte nnoremap <silent><buffer><Leader>ll :CocCommand eslint.executeAutofix<CR>
+  " autocmd FileType javascript,typescript,typescriptreact,vue,svelte nnoremap <silent><buffer><Leader>ce :CocCommand eslint.executeAutofix<CR>
+  command! -nargs=0 ESLintFix :CocCommand eslint.executeAutofix
   " format buffer
-  nnoremap <silent> <Leader>ll :call CocActionAsync('format')<CR>
+  command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
+  " nnoremap <silent> <Leader>cf :call CocActionAsync('format')<CR>
+  command! -nargs=0 Format :!npm run check
+  command! -nargs=0 FormatPrisma :!npm run format:prisma
 
   " GoTo code navigation
   nmap <silent> gd <Plug>(coc-definition)
   nmap <silent> gy <Plug>(coc-type-definition)
   nmap <silent> gi <Plug>(coc-implementation)
   nmap <silent> gr <Plug>(coc-references)
+
+  " NOTE: text must contains '()' to detect input and its must be 1 character
+  function! ChoseAction(actions) abort
+    echo join(map(copy(a:actions), { _, v -> v.text }), ", ") .. ": "
+    let result = getcharstr()
+    let result = filter(a:actions, { _, v -> v.text =~# printf(".*\(%s\).*", result)})
+    return len(result) ? result[0].value : ""
+  endfunction
+
+  function! CocJumpAction() abort
+    let actions = [
+      \ {"text": "(s)plit", "value": "split"},
+      \ {"text": "(v)slit", "value": "vsplit"},
+      \ {"text": "(t)ab", "value": "tabedit"},
+      \ {"text": "(n)ew", "value": "tabnew"},
+    \]
+    return ChoseAction(actions)
+  endfunction
+
+  nnoremap <silent> <C-t> :<C-u>call CocActionAsync('jumpDefinition', CocJumpAction())<CR>
 
   " Symbol renaming.
   nmap <Leader>rn <Plug>(coc-rename)
@@ -64,11 +93,11 @@ vim.cmd([[
   nnoremap <silent> K :call ShowDocumentation()<CR>
 
   function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-  call CocActionAsync('doHover')
-  else
-  call feedkeys('K', 'in')
-  endif
+    if CocAction('hasProvider', 'hover')
+      call CocActionAsync('doHover')
+    else
+      call feedkeys('K', 'in')
+    endif
   endfunction
 
   " Remap keys for applying codeAction to the current buffer.

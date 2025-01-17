@@ -1,3 +1,6 @@
+-- Speed up loading Lua modules in Neovim to improve startup time.
+vim.loader.enable()
+
 vim.g.do_filetype_lua = 1
 vim.g.did_load_filetypes = 0
 

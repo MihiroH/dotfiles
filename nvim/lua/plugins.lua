@@ -47,9 +47,6 @@ return packer.startup(function(use)
   -- yo dawg, I heard you like plugin managers
   use {'wbthomason/packer.nvim', opt = true}
 
-  -- Speed up loading Lua modules in Neovim to improve startup time.
-  use 'lewis6991/impatient.nvim'
-
   -- icon
   use 'lambdalisue/nerdfont.vim'
 
@@ -73,7 +70,7 @@ return packer.startup(function(use)
     requires = { 'lambdalisue/fern.vim', opt = true },
   }
 
-  -- colorscheme
+  -- color scheme
   use {
     -- 'sonph/onehalf',
     'navarasu/onedark.nvim',
@@ -82,7 +79,10 @@ return packer.startup(function(use)
   }
 
   -- indent
-  use 'lukas-reineke/indent-blankline.nvim'
+  use {
+    'lukas-reineke/indent-blankline.nvim',
+    config = function() require('config.indent') end,
+  }
 
   -- Preview colors of hexcodes
   use {
@@ -112,7 +112,8 @@ return packer.startup(function(use)
     config = function () require('config.treesitter') end,
   }
 
-  use 'nvim-treesitter/nvim-treesitter-context'
+  -- Show code context
+  -- use 'nvim-treesitter/nvim-treesitter-context'
 
   -- Documentation
   use {
@@ -151,11 +152,14 @@ return packer.startup(function(use)
   use {
     {
       'nvim-telescope/telescope.nvim',
+      -- tag = '0.1.5',
+      branch = '0.1.x',
       requires = {
         'nvim-lua/popup.nvim',
         'nvim-lua/plenary.nvim',
         'telescope-frecency.nvim',
         'telescope-fzy-native.nvim',
+        'fannheyward/telescope-coc.nvim'
       },
       wants = {
         'popup.nvim',
@@ -169,12 +173,12 @@ return packer.startup(function(use)
     },
     {
       'nvim-telescope/telescope-frecency.nvim',
-      after = 'telescope.nvim',
+      -- after = 'telescope.nvim',
       requires = { 'tami5/sqlite.lua' },
     },
     {
       'nvim-telescope/telescope-fzy-native.nvim',
-      run = 'make',
+      -- run = 'make',
     },
   }
 
@@ -292,5 +296,4 @@ return packer.startup(function(use)
     after = 'nvim-web-devicons', -- keep this if you're using NvChad
     config = function() require('config.navic') end,
   })
-
 end)

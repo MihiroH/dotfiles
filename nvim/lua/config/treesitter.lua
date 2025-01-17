@@ -5,6 +5,10 @@ if not present then return end
 if not present_ then return end
 
 ts_config.setup {
+  auto_install = true,
+
+  sync_install = true,
+
   ensure_installed = {
     'vim',
     'lua',
@@ -18,9 +22,11 @@ ts_config.setup {
     'astro',
     'prisma',
     'embedded_template', -- ejs, erb
+    'pug',
+    'php',
+    'graphql',
 
     'dart',
-    'php',
     'go',
     'gomod',
   },
@@ -31,6 +37,7 @@ ts_config.setup {
 
   highlight = {
     enable = true,
+    disable = { "php" },
   },
 
   incremental_selection = {
@@ -43,12 +50,12 @@ ts_config.setup {
     },
   },
 
-  matchup = {
-    enable = true,
-    disable = {
-      'lua'
-    },
-  },
+  -- matchup = {
+  --   enable = true,
+  --   disable = {
+  --     'lua'
+  --   },
+  -- },
 }
 
 vim.cmd('autocmd VimEnter,BufNewFile,BufRead *.ejs set filetype=embedded_template')

@@ -8,6 +8,11 @@
     "/usr/share/awesome/lib": true
   },
   "languageserver": {
+    "graphql": {
+      "command": "graphql-lsp",
+      "args": ["server", "-m", "stream"],
+      "filetypes": ["typescript", "typescriptreact", "graphql"]
+    },
     "intelephense": {
       "command": "intelephense",
       "args": ["--stdio"],
@@ -20,5 +25,6 @@
   "tailwindCSS.headwind.runOnSave": false,
   "coc.preferences.formatOnSaveFiletypes": [
      "go"
-  ]
+  ],
+  "svelte.enable-ts-plugin": false
 }

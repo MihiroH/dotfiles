@@ -60,8 +60,8 @@ set formatoptions-=ro
 set laststatus=2
 " コマンドラインの補完
 set wildmode=longest:full,full
-" 80文字目にラインを入れる
-set colorcolumn=80
+" 120文字目にラインを入れる
+set colorcolumn=120
 " exclude patterns with vimgrep.
 set wildignore+=*/node_modules/**,*/dist/**,.**,*/tmp/*,*.so,*.swp,*.zip
 " spell check
