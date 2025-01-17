@@ -1,7 +1,7 @@
 [ghq]
     root = ~/Documents
 [core]
-    excludesfile = /Users/mihiro/.gitignore_global
+	excludesfile = /Users/mihiro/.gitignore
 	editor = /opt/homebrew/bin/nvim
 [difftool "sourcetree"]
     cmd = opendiff \"$LOCAL\" \"$REMOTE\"
@@ -13,6 +13,12 @@
     name = MihiroH
     email = mihiro.hashimoto.1125@gmail.com
     mail = mihiro.hashimoto.1125@gmail.com
+[includeIf "gitdir:~/Documents/depart/github/"]
+  path = .gitconfig-work-github
+[includeIf "gitdir:~/Documents/depart/backlog/"]
+  path = .gitconfig-work-backlog
+[includeIf "gitdir:~/Documents/depart/backlog_tf/"]
+  path = .gitconfig-work-backlog-tf
 [includeIf "gitdir:~/Documents/personal/github/"]
   path = .gitconfig-personal
 [commit]
@@ -50,8 +56,8 @@
     # スタッシュを選択してdropする
     std = !git stl | xargs git stash drop
 
-    # マージ済みのブランチを一括削除
-    delete-merged-branch = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|master'|xargs git branch -d; };f"
+    # マージ済みのブランチを一括削除(リモート追跡ブランチが存在しないローカルブランチを削除)
+    delete-merged-branch = "!f() { git fetch -p; for branch in $(git branch -vv | grep \": gone]\" | awk '{print $1}'); do git branch -D \"$branch\"; done; }; f"
 
 [push]
     default = current
