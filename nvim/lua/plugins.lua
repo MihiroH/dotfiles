@@ -211,7 +211,10 @@ return packer.startup(function(use)
   }
 
   -- git conflict markers
-  use 'rhysd/conflict-marker.vim'
+  use {
+    'rhysd/conflict-marker.vim',
+    config = function() require('config.git-conflict') end,
+  }
 
   -- editor config
   use {
