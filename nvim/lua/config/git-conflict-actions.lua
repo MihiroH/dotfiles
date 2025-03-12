@@ -85,6 +85,15 @@ function M.choose_side(side, buffer_cache, parse_buffer, clear_highlights)
   clear_highlights(bufnr)
   parse_buffer(bufnr)
 
+  -- Handle autojump after choosing a side
+  if Constants.CONFIG.autojump and side ~= SIDES.ALL_THEIRS then
+    -- Use deferred execution to ensure the buffer is updated first
+    vim.schedule(function()
+      M.next_conflict(buffer_cache)
+      vim.cmd([[normal! zz]])
+    end)
+  end
+
   if side == SIDES.ALL_THEIRS then
     -- Resolve all remaining conflicts in the buffer as "theirs"
     for _, pos in ipairs(buffer_cache[bufnr].positions) do

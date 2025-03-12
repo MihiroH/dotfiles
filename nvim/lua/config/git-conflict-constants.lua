@@ -1,5 +1,10 @@
 local M = {}
 
+-- Configuration defaults
+M.CONFIG = {
+  autojump = true,  -- automatically jump to next conflict after choosing
+}
+
 -- Side selection constants
 M.SIDES = {
   OURS = "ours",

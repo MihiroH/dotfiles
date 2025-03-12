@@ -320,7 +320,25 @@ function M.setup()
   })
 
   -- Auto detect conflicts on buffer read/write
-  api.nvim_create_autocmd({"BufRead", "BufNewFile", "BufWritePost"}, {
+  api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+    group = augroup,
+    callback = function(ev)
+      M.parse_buffer(ev.buf)
+      if M.conflict_count(ev.buf) > 0 then
+        setup_keymaps(ev.buf)
+        -- Jump to first conflict when opening file
+        if Constants.CONFIG.autojump then
+          vim.schedule(function()
+            Actions.next_conflict(buffer_cache)
+            vim.cmd([[normal! zz]])
+          end)
+        end
+      end
+    end
+  })
+
+  -- Update conflict markers on buffer write
+  api.nvim_create_autocmd({"BufWritePost"}, {
     group = augroup,
     callback = function(ev)
       M.parse_buffer(ev.buf)
