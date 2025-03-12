@@ -1,8 +1,11 @@
 local api = vim.api
 local bit = require("bit")
 local rshift, band = bit.rshift, bit.band
--- local cmd = vim.cmd
--- local Utils = require("config.utils")
+local Actions = require("config.git-conflict-actions")
+local Keymaps = require("config.git-conflict-keymaps")
+local Constants = require("config.git-conflict-constants")
+local MARKERS = Constants.MARKERS
+local HIGHLIGHTS = Constants.HIGHLIGHTS
 
 --- helper
 local H = {}
@@ -12,32 +15,30 @@ local M = {}
 
 -- Constants
 local NAMESPACE = api.nvim_create_namespace("git-conflict-highlight")
+
 local PRIORITY = vim.highlight.priorities.user
-local CONFLICT_START = "^<<<<<<<"
-local CONFLICT_MIDDLE = "^======="
-local CONFLICT_END = "^>>>>>>>"
 
 -- Highlight definitions
 local Highlights = {
   CURRENT = {
-    name = "CustomGitConflictCurrent",
+    name = HIGHLIGHTS.CURRENT,
     link = "DiffAdd",
     default = true,
   },
   CURRENT_LABEL = {
-    name = "CustomGitConflictCurrentLabel",
-    shade_link = "CustomGitConflictCurrent",
+    name = HIGHLIGHTS.CURRENT_LABEL,
+    shade_link = HIGHLIGHTS.CURRENT,
     shade = 30,
     default = true,
   },
   INCOMING = {
-    name = "CustomGitConflictIncoming",
+    name = HIGHLIGHTS.INCOMING,
     link = "DiffChange",
     default = true,
   },
   INCOMING_LABEL = {
-    name = "CustomGitConflictIncomingLabel",
-    shade_link = "CustomGitConflictIncoming",
+    name = HIGHLIGHTS.INCOMING_LABEL,
+    shade_link = HIGHLIGHTS.INCOMING,
     shade = 30,
     default = true,
   },
@@ -51,10 +52,10 @@ end
 
 -- Create highlights
 local function setup_highlights()
-  -- vim.api.nvim_set_hl(0, "CustomGitConflictCurrent", { link = "DiffAdd" })
-  -- vim.api.nvim_set_hl(0, "CustomGitConflictCurrentLabel", { bg = "#2e4c42", fg = "#9add89" })
-  -- vim.api.nvim_set_hl(0, "CustomGitConflictIncoming", { link = "DiffChange" })
-  -- vim.api.nvim_set_hl(0, "CustomGitConflictIncomingLabel", { bg = "#363a5e", fg = "#a2bbff" })
+  -- vim.api.nvim_set_hl(0, "GitConflictCurrent", { link = "DiffAdd" })
+  -- vim.api.nvim_set_hl(0, "GitConflictCurrentLabel", { bg = "#2e4c42", fg = "#9add89" })
+  -- vim.api.nvim_set_hl(0, "GitConflictIncoming", { link = "DiffChange" })
+  -- vim.api.nvim_set_hl(0, "GitConflictIncomingLabel", { bg = "#363a5e", fg = "#a2bbff" })
 
   ---@return number | nil
   local function get_bg(hl_name)
@@ -140,7 +141,7 @@ local function detect_conflicts(lines)
   for index, line in ipairs(lines) do
     local lnum = index - 1
 
-    if line:match(CONFLICT_START) then
+    if line:match(MARKERS.CONFLICT_START) then
       position = {
         current = { range_start = lnum, content_start = lnum + 1 },
         middle = {},
@@ -148,7 +149,7 @@ local function detect_conflicts(lines)
       }
     end
 
-    if position ~= nil and line:match(CONFLICT_MIDDLE) then
+    if position ~= nil and line:match(MARKERS.CONFLICT_MIDDLE) then
       has_middle = true
       position.current.range_end = lnum - 1
       position.current.content_end = lnum - 1
@@ -158,7 +159,7 @@ local function detect_conflicts(lines)
       position.incoming.content_start = lnum + 1
     end
 
-    if position ~= nil and has_middle and line:match(CONFLICT_END) then
+    if position ~= nil and has_middle and line:match(MARKERS.CONFLICT_END) then
       position.incoming.range_end = lnum
       position.incoming.content_end = lnum - 1
       positions[#positions + 1] = position
@@ -187,12 +188,12 @@ local function highlight_conflicts(bufnr, positions, lines)
     local incoming_label = lines[incoming_end + 1] .. " (Incoming changes)"
 
     -- Highlight current/ours section
-    draw_section_label(bufnr, "CustomGitConflictCurrentLabel", current_label, current_start)
-    highlight_range(bufnr, "CustomGitConflictCurrent", current_start, current_end + 1)
+    draw_section_label(bufnr, "GitConflictCurrentLabel", current_label, current_start)
+    highlight_range(bufnr, "GitConflictCurrent", current_start, current_end + 1)
 
     -- Highlight incoming/theirs section
-    highlight_range(bufnr, "CustomGitConflictIncoming", incoming_start, incoming_end + 1)
-    draw_section_label(bufnr, "CustomGitConflictIncomingLabel", incoming_label, incoming_end)
+    highlight_range(bufnr, "GitConflictIncoming", incoming_start, incoming_end + 1)
+    draw_section_label(bufnr, "GitConflictIncomingLabel", incoming_label, incoming_end)
   end
 
   -- Store positions in buffer cache
@@ -200,6 +201,22 @@ local function highlight_conflicts(bufnr, positions, lines)
     positions = positions,
     tick = vim.b[bufnr].changedtick,
   }
+end
+
+-- Navigate to next conflict
+function M.next_conflict()
+  Actions.next_conflict(buffer_cache)
+end
+
+-- Navigate to previous conflict
+function M.prev_conflict()
+  Actions.prev_conflict(buffer_cache)
+end
+
+-- Choose a side of the conflict
+---@param side string One of "ours", "theirs", "all_theirs", "both", "none", "cursor"
+function M.choose_side(side)
+  Actions.choose_side(side, buffer_cache, M.parse_buffer, M.clear_highlights)
 end
 
 -- Parse buffer for conflict markers
@@ -280,6 +297,16 @@ function M.conflict_count(bufnr)
 end
 
 -- Setup the plugin
+-- Setup keymaps for the buffer
+local function setup_keymaps(bufnr)
+  local actions = {
+    next_conflict = M.next_conflict,
+    prev_conflict = M.prev_conflict,
+    choose_side = M.choose_side,
+  }
+  Keymaps.setup_keymaps(bufnr, actions)
+end
+
 function M.setup()
   local augroup = api.nvim_create_augroup("GitConflictHighlight", { clear = true })
 
@@ -297,6 +324,9 @@ function M.setup()
     group = augroup,
     callback = function(ev)
       M.parse_buffer(ev.buf)
+      if M.conflict_count(ev.buf) > 0 then
+        setup_keymaps(ev.buf)
+      end
     end
   })
 
