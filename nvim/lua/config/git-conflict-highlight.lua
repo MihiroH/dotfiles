@@ -84,7 +84,8 @@ local function setup_highlights()
 
     local link_bg = get_bg(hl.shade_link)
     if link_bg == nil then
-      vim.notify(string.format("highlights %s don't have bg, use fallback", hl.shade_link), vim.log.levels.INFO)
+      -- TODO: log this
+      -- vim.notify(string.format("highlights %s don't have bg, use fallback", hl.shade_link), vim.log.levels.INFO)
       link_bg = 3229523
     end
 
