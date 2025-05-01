@@ -49,21 +49,14 @@ rmbranch () {
   git branch | grep $1 | xargs git branch -D
 }
 
-# peco
-alias gh='cd $(ghq list -p | peco)'
-alias codef='find . -type d \( -name .git -o -name node_modules \) -prune -o -print | peco X code'
-
-alias practice='cd /Users/mihiro/Documents/practice'
 if [ `uname` = "Darwin" ]; then
-  alias ip='ipconfig getifaddr en0 | pbcopy && pbpaste'
+  alias ip='ipconfig getifaddr en1 | pbcopy && pbpaste'
 fi
 
 # カレントディレクトリのパスをクリップボードにコピー(cpwd, copypathなど)
 alias pwdc='pwd | tr -d "\n" | pbcopy'
 
-# global alias
-alias -g G='| grep --color=auto'
-alias -g X='| xargs'
-
-# Laravel sail
-alias sail='./vendor/bin/sail'
+# ripgrep
+if command -v rg > /dev/null 2>&1; then
+  alias rg="rg --hidden --glob '!.git'"
+fi

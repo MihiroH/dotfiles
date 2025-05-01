@@ -71,10 +71,15 @@ return packer.startup(function(use)
   }
 
   -- color scheme
+  -- use {
+  --   -- 'sonph/onehalf',
+  --   -- 'navarasu/onedark.nvim',
+  --   'sainnhe/gruvbox-material',
+  --   -- rtp = 'vim/',
+  --   config = function() require('config.colors') end,
+  -- }
   use {
-    -- 'sonph/onehalf',
-    'navarasu/onedark.nvim',
-    -- rtp = 'vim/',
+    'sainnhe/everforest',
     config = function() require('config.colors') end,
   }
 
@@ -135,17 +140,70 @@ return packer.startup(function(use)
     config = function () require('config.surround') end,
   }
 
-  -- coc
+  -- Coc (Language Server Protocol)
   use {
     'neoclide/coc.nvim',
-    branch = 'release',
+    -- branch = 'release',
+    commit = 'd1fc170',
     config = function() require('config.coc') end,
   }
 
-  -- GitHub copilot
+  -- A code outline window for skimming and quick navigation
   use {
-    'github/copilot.vim',
+    'stevearc/aerial.nvim',
+    config = function() require('config.aerial') end,
+  }
+
+  -- GitHub copilot
+  -- use {
+  --   'github/copilot.vim',
+  --   config = function() require('config.copilot') end,
+  -- }
+
+  -- Github copilot chat
+  use {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    requires = {
+      'github/copilot.vim',
+      -- 'zbirenbaum/copilot.lua',
+      'nvim-lua/plenary.nvim',
+    },
+    after = 'copilot.vim',
+    run = 'make tiktoken',
     config = function() require('config.copilot') end,
+  }
+
+  -- AI-driven code suggestions
+  use {
+    'yetone/avante.nvim',
+    requires = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      'MeanderingProgrammer/render-markdown.nvim',
+      'nvim-tree/nvim-web-devicons',
+      'github/copilot.vim',
+      {
+        'HakonHarnes/img-clip.nvim',
+        config = function() require('config.img-clip') end,
+      },
+    },
+    branch = 'main',
+    run = 'make',
+    config = function() require('config.avante') end,
+  }
+
+  -- AI-driven code suggestions
+  -- use {
+  --   'augmentcode/augment.vim',
+  --   config = function() require('config.augment') end,
+  -- }
+
+  use {
+    'MeanderingProgrammer/render-markdown.nvim',
+    after = { 'nvim-treesitter' },
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+    config = function() require('config.render-markdown') end,
   }
 
   -- Search
@@ -159,7 +217,9 @@ return packer.startup(function(use)
         'nvim-lua/plenary.nvim',
         'telescope-frecency.nvim',
         'telescope-fzy-native.nvim',
-        'fannheyward/telescope-coc.nvim'
+        'fannheyward/telescope-coc.nvim',
+        'Snikimonkd/telescope-git-conflicts.nvim',
+        'LukasPietzschmann/telescope-tabs',
       },
       wants = {
         'popup.nvim',
@@ -211,7 +271,10 @@ return packer.startup(function(use)
   }
 
   -- git conflict markers
-  use 'rhysd/conflict-marker.vim'
+  use {
+    -- 'rhysd/conflict-marker.vim',
+    -- config = function() require('config.git-conflict') end,
+  }
 
   -- editor config
   use {
@@ -294,6 +357,6 @@ return packer.startup(function(use)
       'neovim/nvim-lspconfig',
     },
     after = 'nvim-web-devicons', -- keep this if you're using NvChad
-    config = function() require('config.navic') end,
+    config = function() require('config.barbecue') end,
   })
 end)

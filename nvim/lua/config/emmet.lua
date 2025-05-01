@@ -1,5 +1,5 @@
 vim.cmd([[
-  autocmd FileType html,css,javascriptreact,typescriptreact,jst,scss,sass,embedded_template imap <buffer><expr><tab>
+  autocmd FileType html,css,javascriptreact,typescriptreact,jst,scss,sass,embedded_template,vue imap <buffer><expr><tab>
       \ emmet#isExpandable() ? "\<plug>(emmet-expand-abbr)" :
       \ "\<tab>"
 

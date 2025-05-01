@@ -1,0 +1,7 @@
+[tools]
+java = "openjdk-23"
+node = "20.12.0"
+pnpm = "latest"
+python = "latest"
+rust = "latest"
+yarn = "latest"

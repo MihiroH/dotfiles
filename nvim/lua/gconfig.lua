@@ -4,6 +4,9 @@ vim.loader.enable()
 vim.g.do_filetype_lua = 1
 vim.g.did_load_filetypes = 0
 
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
+
 local loadedImpatient, _ = pcall(require, 'impatient')
 
 local g = vim.g
@@ -38,3 +41,5 @@ local disabled_built_ins = {
 for i = 1, 10 do
   g['loaded_' .. disabled_built_ins[i]] = 1
 end
+
+require('config.git-conflict')

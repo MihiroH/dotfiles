@@ -1,28 +1,16 @@
 [ghq]
-    root = ~/Documents
+  root = ~/Documents
 [core]
-	excludesfile = /Users/mihiro/.gitignore
-	editor = /opt/homebrew/bin/nvim
-[difftool "sourcetree"]
-    cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-    path =
-[mergetool "sourcetree"]
-    cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-    trustExitCode = true
+  excludesfile = ~/.gitignore
+  editor = /opt/homebrew/bin/nvim
 [user]
     name = MihiroH
     email = mihiro.hashimoto.1125@gmail.com
     mail = mihiro.hashimoto.1125@gmail.com
-[includeIf "gitdir:~/Documents/depart/github/"]
-  path = .gitconfig-work-github
-[includeIf "gitdir:~/Documents/depart/backlog/"]
-  path = .gitconfig-work-backlog
-[includeIf "gitdir:~/Documents/depart/backlog_tf/"]
-  path = .gitconfig-work-backlog-tf
-[includeIf "gitdir:~/Documents/personal/github/"]
+[includeIf "gitdir:~/Documents/personal/"]
   path = .gitconfig-personal
 [commit]
-    template = /Users/mihiro/.stCommitMsg
+    template = ~/.stCommitMsg
 [http]
     postBuffer = 1048576000
 [alias]

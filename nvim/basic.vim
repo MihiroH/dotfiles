@@ -84,6 +84,7 @@ set hlsearch
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
 " 補完時のpreviewウィンドウを表示しない
 " set completeopt=menuone
+set completeopt=menuone,noinsert,popup
 
 " yank
 set clipboard=unnamed
@@ -100,8 +101,8 @@ set list
 set listchars=tab:\▸\-
 " set listchars=tab:\▸\-,space:.
 hi SpecialKey ctermbg=NONE ctermfg=100
-" 常にタブラインを表示
-set showtabline=2
+" 常にタブラインを非表示
+set showtabline=0
 " Tab文字を半角スペースにする
 set expandtab
 " 行頭以外のTab文字の表示幅（スペースいくつ分）
@@ -177,3 +178,11 @@ endif
 
 " Pythonを有効化
 let g:python3_host_prog = '/Users/mihiro/.anyenv/envs/pyenv/shims/python'
+
+" Copy the latest message to clipboard
+command! MesToClipboard let content = substitute(execute('1messages'), '[\r\n]', '', 'g') | let @+ = content | echomsg 'Copied: "' . content . '"'
+nnoremap <Leader>cm <cmd>MesToClipboard<CR>
+
+" Copy file path of current buffer to clipboard
+command! CopyFilePath :let @+ = expand('%') | echomsg 'Copied: "' . expand('%') . '"'
+nnoremap <Leader>cp :CopyFilePath<CR>
