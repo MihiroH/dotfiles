@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # Paths
-SOURCE=~/Documents/personal/dotfiles/kitty
-TARGET=~/.config
+SOURCE="${PWD}/kitty"
+TARGET="${HOME}/.config"
+KITTY_DIR="${TARGET}/kitty"
 
-# Remove existing config directory if it's not a symlink
-if [ -d "$TARGET/kitty" ] && [ ! -L "$TARGET/kitty" ]; then
-    mv "$TARGET/kitty" "${TARGET}/kitty.bak"
-    echo "Backed up existing kitty configuration to ${TARGET}/kitty.bak"
+# Back up existing config directory if it's not a symlink
+if [ -d "$KITTY_DIR" ] && [ ! -L "$KITTY_DIR" ]; then
+    mv "$KITTY_DIR" "${KITTY_DIR}.bak"
+    echo "Backed up existing configuration to ${KITTY_DIR}.bak"
 fi
 
 # Create symbolic link
 ln -s "$SOURCE" "$TARGET"
-echo "Symbolic link created: $TARGET -> $SOURCE"
+echo "Kitty configuration linked: $SOURCE -> $TARGET"
