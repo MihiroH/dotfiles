@@ -1,7 +1,7 @@
 [ghq]
   root = ~/Documents
 [core]
-  excludesfile = ~/.gitignore
+	excludesFile = ~/.config/git/ignore
   editor = /opt/homebrew/bin/nvim
 [user]
     name = MihiroH

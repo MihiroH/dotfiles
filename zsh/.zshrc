@@ -222,3 +222,14 @@ export PATH="/usr/local/opt/jpeg/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/jpeg/lib"
 export CPPFLAGS="-I/usr/local/opt/jpeg/include"
 export PKG_CONFIG_PATH="/usr/local/opt/jpeg/lib/pkgconfig"
+
+# Claude Code MCP Timeout
+export MCP_TIMEOUT=120000
+
+# phantom
+if [ -f ${HOME}/.zsh/phantom-completion.zsh ]; then
+       source ${HOME}/.zsh/phantom-completion.zsh
+fi
+
+# Submlime Merge
+export PATH="/Applications/Sublime Merge.app/Contents/SharedSupport/bin:$PATH"

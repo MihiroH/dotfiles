@@ -161,43 +161,52 @@ return packer.startup(function(use)
   -- }
 
   -- Github copilot chat
-  use {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    requires = {
-      'github/copilot.vim',
-      -- 'zbirenbaum/copilot.lua',
-      'nvim-lua/plenary.nvim',
-    },
-    after = 'copilot.vim',
-    run = 'make tiktoken',
-    config = function() require('config.copilot') end,
-  }
-
-  -- AI-driven code suggestions
-  use {
-    'yetone/avante.nvim',
-    requires = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-lua/plenary.nvim',
-      'MunifTanjim/nui.nvim',
-      'MeanderingProgrammer/render-markdown.nvim',
-      'nvim-tree/nvim-web-devicons',
-      'github/copilot.vim',
-      {
-        'HakonHarnes/img-clip.nvim',
-        config = function() require('config.img-clip') end,
-      },
-    },
-    branch = 'main',
-    run = 'make',
-    config = function() require('config.avante') end,
-  }
+  -- use {
+  --   'CopilotC-Nvim/CopilotChat.nvim',
+  --   requires = {
+  --     'github/copilot.vim',
+  --     -- 'zbirenbaum/copilot.lua',
+  --     'nvim-lua/plenary.nvim',
+  --   },
+  --   after = 'copilot.vim',
+  --   run = 'make tiktoken',
+  --   config = function() require('config.copilot') end,
+  -- }
 
   -- AI-driven code suggestions
   -- use {
-  --   'augmentcode/augment.vim',
-  --   config = function() require('config.augment') end,
+  --   'yetone/avante.nvim',
+  --   requires = {
+  --     'nvim-treesitter/nvim-treesitter',
+  --     'nvim-lua/plenary.nvim',
+  --     'MunifTanjim/nui.nvim',
+  --     'MeanderingProgrammer/render-markdown.nvim',
+  --     'nvim-tree/nvim-web-devicons',
+  --     'github/copilot.vim',
+  --     {
+  --       'HakonHarnes/img-clip.nvim',
+  --       config = function() require('config.img-clip') end,
+  --     },
+  --   },
+  --   branch = 'main',
+  --   run = 'make',
+  --   config = function() require('config.avante') end,
   -- }
+
+  -- AI-driven code suggestions
+  use {
+    'augmentcode/augment.vim',
+    config = function() require('config.augment') end,
+  }
+
+  -- Claude Code in Nvim
+  use {
+    'greggh/claude-code.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim',
+    },
+    config = function() require('config.claude-code') end,
+  }
 
   use {
     'MeanderingProgrammer/render-markdown.nvim',
