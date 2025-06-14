@@ -1,26 +1,29 @@
 #!/bin/bash
 
 # Paths
-SOURCE=~/Documents/personal/settings-files/karabiner
-TARGET=~/.config
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE="$SCRIPT_DIR"
+TARGET="$HOME/.config"
+KARABINER_DIR="$TARGET/karabiner"
 
-# Remove existing config directory if it's not a symlink
-if [ -d "$TARGET/karabiner" ] && [ ! -L "$TARGET/karabiner" ]; then
-    mv "$TARGET/karabiner" "$TARGET/karabiner.bak"
-    echo "Backed up existing karabiner configuration to ${TARGET}/karabiner.bak"
+# Back up existing config directory if it's not a symlink
+if [ -d "$KARABINER_DIR" ] && [ ! -L "$KARABINER_DIR" ]; then
+    mv "$KARABINER_DIR" "$KARABINER_DIR.bak"
+    echo "Backed up existing configuration to $KARABINER_DIR.bak"
 fi
 
 # Create symbolic link
-ln -s "$SOURCE" "$TARGET"
-echo "Symbolic link created: $TARGET -> $SOURCE"
+ln -sf "$SOURCE" "$TARGET"
+echo "Karabiner configuration linked: $SOURCE -> $TARGET"
 
-# Output messages
-echo $'\n'
+# Output setup instructions
+echo
 echo "===================="
 echo "Important"
 echo "===================="
 echo "1. Go to System Preferences -> Privacy and Security -> Full Disk Access"
 echo "2. Tick karabiner_grabber"
 echo "3. Restart Karabiner-Elements"
-echo $'\nPlease wait a moment while the settings are updated.'
-echo $'\n'
+echo
+echo "Please wait a moment while the settings are updated."
+echo

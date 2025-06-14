@@ -1,15 +1,17 @@
 #!/bin/bash
 
 # Paths
-SOURCE=~/Documents/personal/settings-files/nvim
-TARGET=~/.config
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE="$SCRIPT_DIR"
+TARGET="$HOME/.config"
+NVIM_DIR="$TARGET/nvim"
 
-# Remove existing config directory if it's not a symlink
-if [ -d "$TARGET/nvim" ] && [ ! -L "$TARGET/nvim" ]; then
-    mv "$TARGET/nvim" "${TARGET}.bak"
-    echo "Backed up existing nvim configuration to ${TARGET}/nvim.bak"
+# Back up existing config directory if it's not a symlink
+if [ -d "$NVIM_DIR" ] && [ ! -L "$NVIM_DIR" ]; then
+    mv "$NVIM_DIR" "$NVIM_DIR.bak"
+    echo "Backed up existing configuration to $NVIM_DIR.bak"
 fi
 
 # Create symbolic link
-ln -s "$SOURCE" "$TARGET"
-echo "Symbolic link created: $TARGET -> $SOURCE"
+ln -sf "$SOURCE" "$TARGET"
+echo "Nvim configuration linked: $SOURCE -> $TARGET"

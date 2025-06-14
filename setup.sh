@@ -14,14 +14,15 @@ fi
 
 # Homebrew packages
 #
-# lua@5.1, luarocks and lynx is required for CopilotChat.nvim
+# lua, luarocks and lynx is required for CopilotChat.nvim
 # After installing above packages, run the following commands to prepare the environment:
 # ```
 # % mise install rust
 # % mise use -g rust
-# % luarocks install --lua-version=5.1 tiktoken_core
+# % luarocks install tiktoken_core
 # ```
-BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua@5.1" "luarocks" "lynx")
+BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx")
+BREW_CASK_PACKAGES=("kitty")
 
 # Install packages
 for package in "${BREW_PACKAGES[@]}"; do
@@ -38,7 +39,7 @@ for package in "${BREW_PACKAGES[@]}"; do
   CONFIG_EXTENSIONS=("json" "toml")
 
   for ext in "${CONFIG_EXTENSIONS[@]}"; do
-    CONFIG_SOURCE=~/Documents/personal/settings-files/$package/config.$ext
+    CONFIG_SOURCE=~/Documents/personal/dotfiles/$package/config.$ext
     CONFIG_TARGET=~/.config/$package/config.$ext
     if [ -f "$CONFIG_SOURCE" ]; then
       mkdir -p "$(dirname "$CONFIG_TARGET")"
@@ -48,8 +49,22 @@ for package in "${BREW_PACKAGES[@]}"; do
   done
 done
 
+# Install cask packages (GUI applications)
+for package in "${BREW_CASK_PACKAGES[@]}"; do
+  # Check if the application is already installed
+  if ! brew list --cask | grep -q "^$package\$"; then
+    echo "Installing $package (cask)..."
+    brew install --cask $package || {
+      echo "Error: $package installation failed. Install it manually."
+      exit 1
+    }
+  else
+    echo "$package is already installed"
+  fi
+done
+
 # Default tools to set up if none are specified
-DEFAULT_TOOLS=("zsh" "karabiner" "iterm" "git" "nvim")
+DEFAULT_TOOLS=("zsh" "karabiner" "iterm" "git" "nvim" "kitty")
 
 # Make sure all setup scripts are executable
 echo "Ensuring setup scripts are executable..."
