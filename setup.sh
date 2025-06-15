@@ -26,7 +26,7 @@ OPTIONS:
     --help, -h       Show this help message
 
 TOOLS:
-    zsh, git, nvim, karabiner, iterm, kitty, mise, claude-squad
+    zsh, git, nvim, karabiner, iterm, kitty, mise, claude, claude-squad
 
 EXAMPLES:
     $0                    # Setup all default tools
@@ -111,6 +111,7 @@ declare -A TOOL_DEPS=(
     [karabiner]=""
     [iterm]="curl"
     [mise]="mise"
+    [claude]=""
     [claude-squad]="tmux gh"
 )
 
@@ -170,7 +171,7 @@ install_packages() {
 }
 
 # Default tools to set up if none are specified
-DEFAULT_TOOLS=("zsh" "git" "nvim" "kitty" "karabiner" "iterm" "claude-squad")
+DEFAULT_TOOLS=("zsh" "git" "nvim" "kitty" "karabiner" "iterm" "claude" "claude-squad")
 
 # Available tools
 AVAILABLE_TOOLS=()
