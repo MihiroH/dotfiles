@@ -1,11 +1,7 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## MANDATORY: Notification and User Permission Guidelines
 
 ### Precondition
-Whenever you are about to run Bash, check if the kitty app is in front on macOS. If it is not, notify the user as described below.
+Bashを実行する前に毎回、kittyアプリがMacOSの前面にあるか調べてください。もしkittyアプリが前面にない場合は、以下のDescriptionに従って、ユーザーに通知を送信してください。
 
 ### Description
 Notify user when ANY user permission is needed or ANY user input is needed, or ANY task completes or fails - this is REQUIRED, not optional:
