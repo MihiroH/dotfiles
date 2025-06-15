@@ -2,89 +2,46 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repository Overview
+## MANDATORY: Notification and User Permission Guidelines
 
-This is a dotfiles repository for macOS development environment configuration. It manages configurations for zsh, git, nvim, karabiner, iterm2, kitty, and mise through a modular setup system.
+### Precondition
+Each time before running Bash, check to see if the kitty app is in front of the MacOS. If the kitty app is not in front, send a notification to the user according to the following Description.
 
-## Common Commands
+### Description
+Notify user when ANY user permission is needed or ANY user input is needed, or ANY task completes or fails - this is REQUIRED, not optional:
+You must obtain the user’s permission before executing any Bash commands, and always notify the user when a task is completed. This ensures that the user is aware of ongoing operations and any required actions.
 
-### Setup and Installation
+### How to notify user:
+Use the `kitty` command to send notifications to the user. The command format is as follows:
+
 ```bash
-# Full installation (all tools)
-./setup.sh
-
-# Selective installation
-./setup.sh zsh git nvim  # Install only specified tools
-
-# Individual tool setup (can be run from anywhere)
-./zsh/setup.sh
-./nvim/setup.sh
-./git/setup.sh
-./karabiner/setup.sh
-./iterm/setup.sh
-./kitty/setup.sh
+kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "waiting - task name - Claude needs your permission to use tools"
+kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "status review - found 3 pending items"
+kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "code analysis - 5 files examined"
+kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "test suite - 42/42 passed"
+kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "completed - all tasks completed"
+kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "failed - task failed with error message"
 ```
 
-### CopilotChat.nvim Setup
-After running setup.sh, complete the CopilotChat.nvim environment setup:
-```bash
-mise install rust
-mise use -g rust
-luarocks install tiktoken_core
-```
+ENFORCEMENT: If you fail to provide notifications, you will be in violation of the core instructions. In that case, you will be dismissed immediately.
 
-### Making Changes
-When modifying configurations:
-1. Edit the source files in this repository (not the symlinked files)
-2. Changes take effect immediately for most tools
-3. Some tools may require restart (iTerm2, Karabiner)
+## Practical tips for tools
 
-## Architecture
+### Parallel tool calling
+For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 
-### Directory Structure
-- Each tool has its own directory with configuration files and a `setup.sh` script
-- Setup scripts create symbolic links from standard locations to this repository
-- Backups are created before overwriting existing configurations
+### Thinking and tool use
+After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.
 
-### Setup Script Pattern
-All setup scripts use script directory resolution for reliability:
-```bash
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-```
-This ensures scripts work correctly regardless of where they're executed from.
+### Prompt for tool triggering
+Call the web search tool when: user asks about current events, factual information after January 2025, or any query requiring real-time data. Be proactive in identifying when searches would enhance your response.
 
-### Symlink Locations
-- **Git**: `.gitconfig` → `~/.config/git/config`, `.gitignore` → `~/.config/git/ignore`
-- **Zsh**: `.zshrc` → `~/.zshrc`, `.zsh_profile` → `~/.zsh_profile`
-- **Nvim**: entire directory → `~/.config/nvim`
-- **Karabiner**: entire directory → `~/.config/karabiner`
-- **Kitty**: entire directory → `~/.config/kitty`
-- **iTerm2**: preferences file copied to `~/Library/Preferences/`
-- **Mise**: `config.toml` → `~/.config/mise/config.toml` (via root setup.sh)
-
-### Key Integration Points
-1. **Git + FZF**: Custom git aliases use fzf for interactive operations
-2. **Zsh + FZF**: Ctrl+r (history), Ctrl+g (git repos), Ctrl+v (vim files)
-3. **Nvim + Copilot/Avante**: AI assistance integrated into editor
-4. **Mise**: Manages tool versions across the environment
-
-### Root setup.sh Behavior
-- Installs Homebrew if missing (with Apple Silicon support)
-- Installs packages: git, ripgrep, ghq, fd, fzf, nvim, gpg, mise, lua, luarocks, lynx
-- Installs cask packages: kitty
-- Auto-links `config.{json,toml}` files for any installed package
-- Runs individual setup scripts for specified tools
-
-## Important Notes
-
-- The main `setup.sh` installs Homebrew and essential packages if missing
-- Git configuration uses conditional includes for personal/work profiles
-- Neovim uses Packer for plugin management - run `:PackerSync` after adding plugins
-- Karabiner modifies keyboard behavior (Escape key sends both escape and Japanese input switch)
-
-## CLI Tool Preferences
-- Use `fd` instead of `find` for file searching
-- Use `rg` instead of `grep` for text searching
+## CLI Tools
+These rules are required to ensure consistency and efficiency in tool usage.
+Always use alternative command-line tools.
+ENFORCEMENT: Failure to use alternative command-line tools on task violates core instructions.
+- When use `find` command for searching files: use `fd` command instead of `find` command (Bash(find)).
+- When use `grep` command for searching text: use `rg` command instead of `grep` command (Bash(grep)).
 
 ## Commit Guidelines
 - Always use the Conventional Commits specification to generate a one-line commit message.
