@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Verify all dotfile installations
 # This script runs verification for all configured tools

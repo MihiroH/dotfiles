@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,9 +12,13 @@ TOOL_NAME="Git"
 REQUIRED_COMMANDS=("git")
 
 # Configuration files mapping (source:target)
-declare -A CONFIG_FILES=(
-    ["$SCRIPT_DIR/.gitconfig"]="$HOME/.config/git/config"
-    ["$SCRIPT_DIR/.gitignore"]="$HOME/.config/git/ignore"
+CONFIG_SOURCES=(
+    "$SCRIPT_DIR/.gitconfig"
+    "$SCRIPT_DIR/.gitignore"
+)
+CONFIG_TARGETS=(
+    "$HOME/.config/git/config"
+    "$HOME/.config/git/ignore"
 )
 
 # Setup function
@@ -28,8 +32,9 @@ setup_tool() {
     require_commands "${REQUIRED_COMMANDS[@]}" || return 1
     
     # Create symlinks for configuration files
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         create_symlink "$source" "$target" || return 1
     done
     
@@ -59,8 +64,9 @@ verify_installation() {
     log_info "Verifying $TOOL_NAME installation..."
     
     # Verify symlinks
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         validate_symlink "$target" "$source" || return 1
     done
     

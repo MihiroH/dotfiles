@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Common utility functions for dotfiles setup scripts
 # This file should be sourced by individual setup scripts
@@ -181,13 +181,19 @@ require_commands() {
 # Check if running on macOS
 # Usage: if is_macos; then ... fi
 is_macos() {
-    [[ "$OSTYPE" == "darwin"* ]]
+    case "$OSTYPE" in
+        darwin*) return 0 ;;
+        *) return 1 ;;
+    esac
 }
 
 # Check if running on Linux
 # Usage: if is_linux; then ... fi
 is_linux() {
-    [[ "$OSTYPE" == "linux-gnu"* ]]
+    case "$OSTYPE" in
+        linux-gnu*) return 0 ;;
+        *) return 1 ;;
+    esac
 }
 
 # Get the dotfiles root directory
@@ -233,7 +239,10 @@ confirm() {
         REPLY="$default"
     fi
     
-    [[ "$REPLY" =~ ^[Yy]$ ]]
+    case "$REPLY" in
+        y|Y) return 0 ;;
+        *) return 1 ;;
+    esac
 }
 
 # Check if script is run with sudo when it shouldn't be

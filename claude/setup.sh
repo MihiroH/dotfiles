@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,9 +12,13 @@ TOOL_NAME="Claude"
 REQUIRED_COMMANDS=() # No specific commands required
 
 # Configuration files mapping (source:target)
-declare -A CONFIG_FILES=(
-    ["$SCRIPT_DIR/CLAUDE.md"]="$HOME/.claude/CLAUDE.md"
-    ["$SCRIPT_DIR/settings.json"]="$HOME/.claude/settings.json"
+CONFIG_SOURCES=(
+    "$SCRIPT_DIR/CLAUDE.md"
+    "$SCRIPT_DIR/settings.json"
+)
+CONFIG_TARGETS=(
+    "$HOME/.claude/CLAUDE.md"
+    "$HOME/.claude/settings.json"
 )
 
 # Setup function
@@ -29,8 +33,9 @@ setup_tool() {
     mkdir -p "$HOME/.claude"
     
     # Create symlinks for individual files
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         create_symlink "$source" "$target" || return 1
     done
     
@@ -90,8 +95,9 @@ verify_installation() {
     log_info "Verifying $TOOL_NAME installation..."
     
     # Verify symlinks
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         validate_symlink "$target" "$source" || return 1
     done
     

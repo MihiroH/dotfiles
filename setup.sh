@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -37,7 +37,7 @@ EOF
 }
 
 # Parse command line options
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
     case $1 in
         --dry-run)
             DRY_RUN=true
@@ -103,16 +103,18 @@ BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luaro
 BREW_CASK_PACKAGES=("kitty")
 
 # Tool dependencies
-declare -A TOOL_DEPS=(
-    [git]="git"
-    [zsh]="zsh git curl"
-    [nvim]="nvim git lua luarocks"
-    [kitty]=""
-    [karabiner]=""
-    [iterm]="curl"
-    [mise]="mise"
-    [claude]=""
-)
+get_tool_deps() {
+    case "$1" in
+        git) echo "git" ;;
+        zsh) echo "zsh git curl" ;;
+        nvim) echo "nvim git lua luarocks" ;;
+        kitty) echo "" ;;
+        karabiner) echo "" ;;
+        iterm) echo "curl" ;;
+        mise) echo "mise" ;;
+        claude) echo "" ;;
+    esac
+}
 
 # Install packages
 install_packages() {
@@ -178,9 +180,10 @@ for dir in "$SCRIPT_DIR"/*/; do
     if [ -f "$dir/setup.sh" ]; then
         tool=$(basename "$dir")
         # Skip lib and other non-tool directories
-        if [[ ! "$tool" =~ ^(lib|bash|vim|vscode|themes)$ ]]; then
-            AVAILABLE_TOOLS+=("$tool")
-        fi
+        case "$tool" in
+            lib|bash|vim|vscode|themes) ;;
+            *) AVAILABLE_TOOLS+=("$tool") ;;
+        esac
     fi
 done
 
@@ -188,7 +191,14 @@ done
 validate_tools() {
     local tools=("$@")
     for tool in "${tools[@]}"; do
-        if [[ ! " ${AVAILABLE_TOOLS[@]} " =~ " ${tool} " ]]; then
+        local found=false
+        for available_tool in "${AVAILABLE_TOOLS[@]}"; do
+            if [ "$available_tool" = "$tool" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
             log_error "Unknown tool: $tool"
             log_info "Available tools: ${AVAILABLE_TOOLS[*]}"
             return 1
@@ -200,7 +210,7 @@ validate_tools() {
 # Check tool dependencies
 check_tool_deps() {
     local tool=$1
-    local deps="${TOOL_DEPS[$tool]:-}"
+    local deps="$(get_tool_deps "$tool")"
     
     if [ -n "$deps" ]; then
         local missing_deps=()

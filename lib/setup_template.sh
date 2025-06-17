@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Template for individual tool setup scripts
 # Copy this file and modify for each tool
@@ -15,23 +15,35 @@ TOOL_NAME="TOOL_NAME_HERE"
 REQUIRED_COMMANDS=()  # Add required commands like ("git" "curl")
 
 # Configuration files mapping (source:target)
-declare -A CONFIG_FILES=(
-    # ["$SCRIPT_DIR/config.file"]="$HOME/.config/tool/config.file"
+CONFIG_SOURCES=(
+    # "$SCRIPT_DIR/config.file"
+)
+CONFIG_TARGETS=(
+    # "$HOME/.config/tool/config.file"
 )
 
 # Directories to symlink entirely (source:target)
-declare -A SYMLINK_DIRS=(
-    # ["$SCRIPT_DIR"]="$HOME/.config/tool"
+SYMLINK_SOURCES=(
+    # "$SCRIPT_DIR"
+)
+SYMLINK_TARGETS=(
+    # "$HOME/.config/tool"
 )
 
 # Files to download (url:target)
-declare -A DOWNLOAD_FILES=(
-    # ["https://example.com/file.conf"]="$HOME/.config/tool/file.conf"
+DOWNLOAD_URLS=(
+    # "https://example.com/file.conf"
+)
+DOWNLOAD_TARGETS=(
+    # "$HOME/.config/tool/file.conf"
 )
 
 # Git repositories to clone (url:target)
-declare -A CLONE_REPOS=(
-    # ["https://github.com/user/repo.git"]="$HOME/.local/share/tool/repo"
+CLONE_URLS=(
+    # "https://github.com/user/repo.git"
+)
+CLONE_TARGETS=(
+    # "$HOME/.local/share/tool/repo"
 )
 
 # Setup function
@@ -47,26 +59,30 @@ setup_tool() {
     fi
     
     # Create symlinks for directories
-    for source in "${!SYMLINK_DIRS[@]}"; do
-        target="${SYMLINK_DIRS[$source]}"
+    for i in "${!SYMLINK_SOURCES[@]}"; do
+        source="${SYMLINK_SOURCES[$i]}"
+        target="${SYMLINK_TARGETS[$i]}"
         create_symlink "$source" "$target" || return 1
     done
     
     # Create symlinks for individual files
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         create_symlink "$source" "$target" || return 1
     done
     
     # Download files
-    for url in "${!DOWNLOAD_FILES[@]}"; do
-        target="${DOWNLOAD_FILES[$url]}"
+    for i in "${!DOWNLOAD_URLS[@]}"; do
+        url="${DOWNLOAD_URLS[$i]}"
+        target="${DOWNLOAD_TARGETS[$i]}"
         download_if_missing "$url" "$target" || log_warning "Failed to download: $url"
     done
     
     # Clone repositories
-    for url in "${!CLONE_REPOS[@]}"; do
-        target="${CLONE_REPOS[$url]}"
+    for i in "${!CLONE_URLS[@]}"; do
+        url="${CLONE_URLS[$i]}"
+        target="${CLONE_TARGETS[$i]}"
         clone_if_missing "$url" "$target" || log_warning "Failed to clone: $url"
     done
     
@@ -89,13 +105,15 @@ verify_installation() {
     log_info "Verifying $TOOL_NAME installation..."
     
     # Verify symlinks
-    for source in "${!SYMLINK_DIRS[@]}"; do
-        target="${SYMLINK_DIRS[$source]}"
+    for i in "${!SYMLINK_SOURCES[@]}"; do
+        source="${SYMLINK_SOURCES[$i]}"
+        target="${SYMLINK_TARGETS[$i]}"
         validate_symlink "$target" "$source" || return 1
     done
     
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         validate_symlink "$target" "$source" || return 1
     done
     

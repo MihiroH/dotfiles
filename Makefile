@@ -47,12 +47,15 @@ clean:
 	@echo "Backups will be restored if available."
 	@read -p "Are you sure? [y/N] " -n 1 -r; \
 	echo ""; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		echo "Cleaning up dotfiles..."; \
-		./scripts/cleanup.sh; \
-	else \
-		echo "Cleanup cancelled."; \
-	fi
+	case "$$REPLY" in \
+		y|Y) \
+			echo "Cleaning up dotfiles..."; \
+			./scripts/cleanup.sh; \
+			;; \
+		*) \
+			echo "Cleanup cancelled."; \
+			;; \
+	esac
 
 # Test setup in dry-run mode
 test:
@@ -62,9 +65,12 @@ test:
 list:
 	@echo "Available tools:"
 	@for dir in */; do \
-		if [ -f "$$dir/setup.sh" ] && [[ ! "$$dir" =~ ^(lib|bash|vim|vscode|themes)/ ]]; then \
-			echo "  - $${dir%/}"; \
-		fi \
+		if [ -f "$$dir/setup.sh" ]; then \
+			case "$$dir" in \
+				lib/|bash/|vim/|vscode/|themes/) ;; \
+				*) echo "  - $${dir%/}"; ;; \
+			esac; \
+		fi; \
 	done
 
 # Install specific tool

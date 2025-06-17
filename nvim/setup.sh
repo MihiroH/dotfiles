@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,8 +12,11 @@ TOOL_NAME="Neovim"
 REQUIRED_COMMANDS=("nvim" "git")
 
 # Directories to symlink entirely (source:target)
-declare -A SYMLINK_DIRS=(
-    ["$SCRIPT_DIR"]="$HOME/.config/nvim"
+SYMLINK_SOURCES=(
+    "$SCRIPT_DIR"
+)
+SYMLINK_TARGETS=(
+    "$HOME/.config/nvim"
 )
 
 # Setup function
@@ -27,8 +30,9 @@ setup_tool() {
     require_commands "${REQUIRED_COMMANDS[@]}" || return 1
     
     # Create symlinks for directories
-    for source in "${!SYMLINK_DIRS[@]}"; do
-        target="${SYMLINK_DIRS[$source]}"
+    for i in "${!SYMLINK_SOURCES[@]}"; do
+        source="${SYMLINK_SOURCES[$i]}"
+        target="${SYMLINK_TARGETS[$i]}"
         create_symlink "$source" "$target" || return 1
     done
     
@@ -75,8 +79,9 @@ verify_installation() {
     log_info "Verifying $TOOL_NAME installation..."
     
     # Verify symlinks
-    for source in "${!SYMLINK_DIRS[@]}"; do
-        target="${SYMLINK_DIRS[$source]}"
+    for i in "${!SYMLINK_SOURCES[@]}"; do
+        source="${SYMLINK_SOURCES[$i]}"
+        target="${SYMLINK_TARGETS[$i]}"
         validate_symlink "$target" "$source" || return 1
     done
     

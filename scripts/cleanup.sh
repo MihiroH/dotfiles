@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Cleanup script for dotfiles
 # This script removes symlinks and restores backups
@@ -11,31 +11,47 @@ source "$SCRIPT_DIR/../lib/common.sh" || {
 }
 
 # Configuration paths that might be symlinked
-declare -A CLEANUP_PATHS=(
+CLEANUP_PATHS=(
     # Git
-    ["$HOME/.config/git/config"]="Git config"
-    ["$HOME/.config/git/ignore"]="Git ignore"
-    
+    "$HOME/.config/git/config"
+    "$HOME/.config/git/ignore"
     # Zsh
-    ["$HOME/.zshrc"]="Zsh config"
-    ["$HOME/.zsh_profile"]="Zsh profile"
-    
+    "$HOME/.zshrc"
+    "$HOME/.zsh_profile"
     # Neovim
-    ["$HOME/.config/nvim"]="Neovim config"
-    
+    "$HOME/.config/nvim"
     # Kitty
-    ["$HOME/.config/kitty"]="Kitty config"
-    
+    "$HOME/.config/kitty"
     # Karabiner
-    ["$HOME/.config/karabiner"]="Karabiner config"
-    
+    "$HOME/.config/karabiner"
     # Mise
-    ["$HOME/.config/mise/config.toml"]="Mise config"
+    "$HOME/.config/mise/config.toml"
+)
+
+CLEANUP_DESCRIPTIONS=(
+    # Git
+    "Git config"
+    "Git ignore"
+    # Zsh
+    "Zsh config"
+    "Zsh profile"
+    # Neovim
+    "Neovim config"
+    # Kitty
+    "Kitty config"
+    # Karabiner
+    "Karabiner config"
+    # Mise
+    "Mise config"
 )
 
 # Files that were copied (not symlinked)
-declare -A COPIED_FILES=(
-    ["$HOME/Library/Preferences/com.googlecode.iterm2.plist"]="iTerm2 preferences"
+COPIED_PATHS=(
+    "$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+)
+
+COPIED_DESCRIPTIONS=(
+    "iTerm2 preferences"
 )
 
 # Remove symlink and restore backup if available
@@ -144,14 +160,17 @@ main() {
     
     # Remove symlinks
     log_info "Removing symlinks..."
-    for path in "${!CLEANUP_PATHS[@]}"; do
-        description="${CLEANUP_PATHS[$path]}"\n        cleanup_symlink "$path" "$description"
+    for i in "${!CLEANUP_PATHS[@]}"; do
+        path="${CLEANUP_PATHS[$i]}"
+        description="${CLEANUP_DESCRIPTIONS[$i]}"
+        cleanup_symlink "$path" "$description"
     done
     
     # Handle copied files
     log_info "Checking copied files..."
-    for path in "${!COPIED_FILES[@]}"; do
-        description="${COPIED_FILES[$path]}"
+    for i in "${!COPIED_PATHS[@]}"; do
+        path="${COPIED_PATHS[$i]}"
+        description="${COPIED_DESCRIPTIONS[$i]}"
         cleanup_copied_file "$path" "$description"
     done
     

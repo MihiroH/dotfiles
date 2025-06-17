@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,20 +12,31 @@ TOOL_NAME="Zsh"
 REQUIRED_COMMANDS=("zsh" "git" "curl")
 
 # Configuration files mapping (source:target)
-declare -A CONFIG_FILES=(
-    ["$SCRIPT_DIR/.zshrc"]="$HOME/.zshrc"
-    ["$SCRIPT_DIR/.zsh_profile"]="$HOME/.zsh_profile"
+CONFIG_SOURCES=(
+    "$SCRIPT_DIR/.zshrc"
+    "$SCRIPT_DIR/.zsh_profile"
+)
+CONFIG_TARGETS=(
+    "$HOME/.zshrc"
+    "$HOME/.zsh_profile"
 )
 
 # Files to download (url:target)
-declare -A DOWNLOAD_FILES=(
-    ["https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"]="$HOME/.zsh/git-completion.zsh"
-    ["https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"]="$HOME/.zsh/git-prompt.sh"
+DOWNLOAD_URLS=(
+    "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+    "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
+)
+DOWNLOAD_TARGETS=(
+    "$HOME/.zsh/git-completion.zsh"
+    "$HOME/.zsh/git-prompt.sh"
 )
 
 # Git repositories to clone (url:target)
-declare -A CLONE_REPOS=(
-    ["https://github.com/zsh-users/zsh-autosuggestions.git"]="$HOME/.zsh/zsh-autosuggestions"
+CLONE_URLS=(
+    "https://github.com/zsh-users/zsh-autosuggestions.git"
+)
+CLONE_TARGETS=(
+    "$HOME/.zsh/zsh-autosuggestions"
 )
 
 # Setup function
@@ -39,20 +50,23 @@ setup_tool() {
     require_commands "${REQUIRED_COMMANDS[@]}" || return 1
     
     # Create symlinks for configuration files
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         create_symlink "$source" "$target" || return 1
     done
     
     # Download files
-    for url in "${!DOWNLOAD_FILES[@]}"; do
-        target="${DOWNLOAD_FILES[$url]}"
+    for i in "${!DOWNLOAD_URLS[@]}"; do
+        url="${DOWNLOAD_URLS[$i]}"
+        target="${DOWNLOAD_TARGETS[$i]}"
         download_if_missing "$url" "$target" || log_warning "Failed to download: $url"
     done
     
     # Clone repositories
-    for url in "${!CLONE_REPOS[@]}"; do
-        target="${CLONE_REPOS[$url]}"
+    for i in "${!CLONE_URLS[@]}"; do
+        url="${CLONE_URLS[$i]}"
+        target="${CLONE_TARGETS[$i]}"
         clone_if_missing "$url" "$target" || log_warning "Failed to clone: $url"
     done
     
@@ -83,14 +97,15 @@ verify_installation() {
     log_info "Verifying $TOOL_NAME installation..."
     
     # Verify symlinks
-    for source in "${!CONFIG_FILES[@]}"; do
-        target="${CONFIG_FILES[$source]}"
+    for i in "${!CONFIG_SOURCES[@]}"; do
+        source="${CONFIG_SOURCES[$i]}"
+        target="${CONFIG_TARGETS[$i]}"
         validate_symlink "$target" "$source" || return 1
     done
     
     # Verify downloaded files
-    for url in "${!DOWNLOAD_FILES[@]}"; do
-        target="${DOWNLOAD_FILES[$url]}"
+    for i in "${!DOWNLOAD_TARGETS[@]}"; do
+        target="${DOWNLOAD_TARGETS[$i]}"
         if [ ! -f "$target" ]; then
             log_error "Missing downloaded file: $target"
             return 1
@@ -98,8 +113,8 @@ verify_installation() {
     done
     
     # Verify cloned repos
-    for url in "${!CLONE_REPOS[@]}"; do
-        target="${CLONE_REPOS[$url]}"
+    for i in "${!CLONE_TARGETS[@]}"; do
+        target="${CLONE_TARGETS[$i]}"
         if [ ! -d "$target/.git" ]; then
             log_error "Missing git repository: $target"
             return 1

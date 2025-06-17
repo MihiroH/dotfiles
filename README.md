@@ -52,7 +52,7 @@ make
 
 ### Automatically Installed
 - [Homebrew](https://brew.sh/) - Package manager for macOS
-- Bash 5.2+ - Modern bash with associative array support
+- Bash 3.2+ - Works with standard macOS bash (no Homebrew required)
 - Various command-line tools (git, ripgrep, fd, fzf, etc.)
 
 ## 📦 Installation
@@ -228,8 +228,11 @@ make clean
    TOOL_NAME="YourTool"
    REQUIRED_COMMANDS=("command1" "command2")
    
-   declare -A CONFIG_FILES=(
-       ["$SCRIPT_DIR/config"]="$HOME/.config/yourtool/config"
+   CONFIG_SOURCES=(
+       "$SCRIPT_DIR/config"
+   )
+   CONFIG_TARGETS=(
+       "$HOME/.config/yourtool/config"
    )
    ```
 4. Add tool-specific logic in `post_setup()` and `verify_tool()` functions
