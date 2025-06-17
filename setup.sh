@@ -272,6 +272,58 @@ run_setup() {
     fi
 }
 
+# Show post-setup instructions based on installed tools
+show_post_setup_instructions() {
+    local installed_tools=("$@")
+    
+    log_info "Post-setup steps:"
+    
+    # Common steps for any setup
+    log_info "1. Restart your terminal or run: source ~/.zshrc"
+    
+    local step_num=2
+    
+    # Tool-specific instructions
+    for tool in "${installed_tools[@]}"; do
+        case "$tool" in
+            zsh)
+                if ! pgrep -x "zsh" > /dev/null && [ "$(basename "$SHELL")" != "zsh" ]; then
+                    log_info "$step_num. To make zsh your default shell, run: chsh -s \$(which zsh)"
+                    step_num=$((step_num + 1))
+                fi
+                ;;
+            nvim)
+                log_info "$step_num. For Neovim, run :PackerSync to install plugins"
+                step_num=$((step_num + 1))
+                # Only show CopilotChat instructions if tiktoken_core is not installed
+                if ! luarocks list | grep -q tiktoken_core 2>/dev/null; then
+                    log_info "$step_num. For CopilotChat.nvim:"
+                    if ! command_exists "cargo"; then
+                        log_info "   - mise install rust && mise use -g rust"
+                    fi
+                    log_info "   - luarocks install tiktoken_core"
+                    step_num=$((step_num + 1))
+                fi
+                ;;
+            iterm)
+                if pgrep -x "iTerm2" > /dev/null; then
+                    log_info "$step_num. Restart iTerm2 to apply new preferences"
+                    step_num=$((step_num + 1))
+                fi
+                ;;
+            karabiner)
+                log_info "$step_num. For Karabiner-Elements:"
+                log_info "   - Open System Preferences -> Privacy & Security -> Full Disk Access"
+                log_info "   - Enable access for karabiner_grabber and karabiner_observer"
+                step_num=$((step_num + 1))
+                ;;
+        esac
+    done
+    
+    # General reminder
+    log_info "$step_num. Check individual tool setup messages above for additional steps"
+}
+
 # Main setup function
 main() {
     print_section "Dotfiles Setup"
@@ -322,13 +374,7 @@ main() {
         
         # Show post-setup instructions
         echo
-        log_info "Post-setup steps:"
-        log_info "1. Restart your terminal or run: source ~/.zshrc"
-        log_info "2. For Neovim, run :PackerSync to install plugins"
-        log_info "3. For CopilotChat.nvim:"
-        log_info "   - mise install rust && mise use -g rust"
-        log_info "   - luarocks install tiktoken_core"
-        log_info "4. Check individual tool instructions above"
+        show_post_setup_instructions "${tools[@]}"
     else
         log_error "Setup completed with errors for: ${failed_tools[*]}"
         exit 1
