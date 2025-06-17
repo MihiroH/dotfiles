@@ -53,14 +53,6 @@ post_setup() {
         fi
     fi
     
-    # Validate config syntax if kitty is available
-    if command_exists "kitty"; then
-        if kitty --debug-config 2>&1 | grep -q "Config loaded"; then
-            log_success "Kitty configuration syntax is valid"
-        else
-            log_warning "Kitty configuration may have syntax errors"
-        fi
-    fi
     
     return 0
 }
