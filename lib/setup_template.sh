@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Template for individual tool setup scripts
+# Copy this file and modify for each tool
+
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$(dirname "$SCRIPT_DIR")/lib/common.sh" || {
@@ -8,35 +11,39 @@ source "$(dirname "$SCRIPT_DIR")/lib/common.sh" || {
 }
 
 # Tool-specific configuration
-TOOL_NAME="Zsh"
-REQUIRED_COMMANDS=("zsh" "git" "curl")
+TOOL_NAME="TOOL_NAME_HERE"
+REQUIRED_COMMANDS=()  # Add required commands like ("git" "curl")
 
 # Configuration files mapping (source:target)
 CONFIG_SOURCES=(
-    "$SCRIPT_DIR/.zshrc"
-    "$SCRIPT_DIR/.zsh_profile"
+    # "$SCRIPT_DIR/config.file"
 )
 CONFIG_TARGETS=(
-    "$HOME/.zshrc"
-    "$HOME/.zsh_profile"
+    # "$HOME/.config/tool/config.file"
+)
+
+# Directories to symlink entirely (source:target)
+SYMLINK_SOURCES=(
+    # "$SCRIPT_DIR"
+)
+SYMLINK_TARGETS=(
+    # "$HOME/.config/tool"
 )
 
 # Files to download (url:target)
 DOWNLOAD_URLS=(
-    "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
-    "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
+    # "https://example.com/file.conf"
 )
 DOWNLOAD_TARGETS=(
-    "$HOME/.zsh/git-completion.zsh"
-    "$HOME/.zsh/git-prompt.sh"
+    # "$HOME/.config/tool/file.conf"
 )
 
 # Git repositories to clone (url:target)
 CLONE_URLS=(
-    "https://github.com/zsh-users/zsh-autosuggestions.git"
+    # "https://github.com/user/repo.git"
 )
 CLONE_TARGETS=(
-    "$HOME/.zsh/zsh-autosuggestions"
+    # "$HOME/.local/share/tool/repo"
 )
 
 # Setup function
@@ -47,9 +54,18 @@ setup_tool() {
     ensure_permissions || return 1
     
     # Check required commands
-    require_commands "${REQUIRED_COMMANDS[@]}" || return 1
+    if [ ${#REQUIRED_COMMANDS[@]} -gt 0 ]; then
+        require_commands "${REQUIRED_COMMANDS[@]}" || return 1
+    fi
     
-    # Create symlinks for configuration files
+    # Create symlinks for directories
+    for i in "${!SYMLINK_SOURCES[@]}"; do
+        source="${SYMLINK_SOURCES[$i]}"
+        target="${SYMLINK_TARGETS[$i]}"
+        create_symlink "$source" "$target" || return 1
+    done
+    
+    # Create symlinks for individual files
     for i in "${!CONFIG_SOURCES[@]}"; do
         source="${CONFIG_SOURCES[$i]}"
         target="${CONFIG_TARGETS[$i]}"
@@ -70,25 +86,17 @@ setup_tool() {
         clone_if_missing "$url" "$target" || log_warning "Failed to clone: $url"
     done
     
-    # Post-setup actions
+    # Tool-specific post-setup actions
     post_setup || return 1
     
     log_success "$TOOL_NAME setup completed!"
     return 0
 }
 
-# Post-setup actions
+# Tool-specific post-setup actions
 post_setup() {
-    # Check if zsh is the default shell
-    local current_shell=$(basename "$SHELL")
-    if [ "$current_shell" != "zsh" ]; then
-        log_warning "Zsh is not your default shell"
-        log_info "To make zsh your default shell, run: chsh -s $(which zsh)"
-    fi
-    
-    # Create .zsh directory if it doesn't exist
-    mkdir -p "$HOME/.zsh"
-    
+    # Override this function in your setup script for custom actions
+    # Example: setting permissions, running commands, etc.
     return 0
 }
 
@@ -97,31 +105,28 @@ verify_installation() {
     log_info "Verifying $TOOL_NAME installation..."
     
     # Verify symlinks
+    for i in "${!SYMLINK_SOURCES[@]}"; do
+        source="${SYMLINK_SOURCES[$i]}"
+        target="${SYMLINK_TARGETS[$i]}"
+        validate_symlink "$target" "$source" || return 1
+    done
+    
     for i in "${!CONFIG_SOURCES[@]}"; do
         source="${CONFIG_SOURCES[$i]}"
         target="${CONFIG_TARGETS[$i]}"
         validate_symlink "$target" "$source" || return 1
     done
     
-    # Verify downloaded files
-    for i in "${!DOWNLOAD_TARGETS[@]}"; do
-        target="${DOWNLOAD_TARGETS[$i]}"
-        if [ ! -f "$target" ]; then
-            log_error "Missing downloaded file: $target"
-            return 1
-        fi
-    done
-    
-    # Verify cloned repos
-    for i in "${!CLONE_TARGETS[@]}"; do
-        target="${CLONE_TARGETS[$i]}"
-        if [ ! -d "$target/.git" ]; then
-            log_error "Missing git repository: $target"
-            return 1
-        fi
-    done
+    # Tool-specific verification
+    verify_tool || return 1
     
     log_success "$TOOL_NAME verification passed!"
+    return 0
+}
+
+# Tool-specific verification
+verify_tool() {
+    # Override this function in your setup script for custom verification
     return 0
 }
 

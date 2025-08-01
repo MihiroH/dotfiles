@@ -1,7 +1,8 @@
 [tools]
+bun = "latest"
 firebase = "latest"
 java = "openjdk-23"
-node = "20.12.0"
+node = "latest"
 pnpm = "latest"
 python = "latest"
 rust = "latest"

@@ -231,5 +231,10 @@ if [ -f ${HOME}/.zsh/phantom-completion.zsh ]; then
        source ${HOME}/.zsh/phantom-completion.zsh
 fi
 
+# cs-completion.zsh
+if [ -f ${HOME}/.zsh/cs-completion.zsh ]; then
+       source ${HOME}/.zsh/cs-completion.zsh
+fi
+
 # Submlime Merge
 export PATH="/Applications/Sublime Merge.app/Contents/SharedSupport/bin:$PATH"
