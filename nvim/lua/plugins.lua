@@ -279,12 +279,6 @@ return packer.startup(function(use)
     config = function() require('config.lualine') end,
   }
 
-  -- git conflict markers
-  use {
-    -- 'rhysd/conflict-marker.vim',
-    -- config = function() require('config.git-conflict') end,
-  }
-
   -- editor config
   use {
     'editorconfig/editorconfig-vim',
