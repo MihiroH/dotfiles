@@ -3,7 +3,7 @@ vim.opt.termguicolors = true
 
 -- vim.cmd('colorscheme onehalflight')
 
-vim.o.background = 'light'
+-- vim.o.background = 'light'
 -- vim.g.gruvbox_material_foreground = 'material'
 -- vim.g.gruvbox_material_background = 'medium'
 vim.g.everforest_background = 'medium'

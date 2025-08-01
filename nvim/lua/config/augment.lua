@@ -2,7 +2,9 @@ vim.g.augment_workspace_folders = {
   '~/Documents/personal/punk-ideas',
   '~/Documents/personal/settings-files',
   '~/Documents/personal/threey-smile',
-  '~/Documents/legalscape/wklr-docker'
+  '~/Documents/personal/donrichy',
+  '~/Documents/personal/meetogether',
+  '~/Documents/personal/trace-suntory-site',
 }
 
 -- Key mappings
