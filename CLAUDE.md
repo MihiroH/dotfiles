@@ -2,55 +2,118 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## MANDATORY: Notification and User Permission Guidelines
+## Repository Overview
 
-### Precondition
-Whenever you are about to run Bash, check if the kitty app is in front on macOS. If it is not, notify the user as described below.
+This is a comprehensive dotfiles repository for macOS development environment configuration. It provides a modular, automated setup system for configuring development tools with intelligent backup management and verification capabilities.
 
-### Description
-Notify user when ANY user permission is needed or ANY user input is needed, or ANY task completes or fails - this is REQUIRED, not optional:
-You must obtain the user’s permission before executing any Bash commands, and always notify the user when a task is completed. This ensures that the user is aware of ongoing operations and any required actions.
+## Common Development Commands
 
-### How to notify user:
-Use the `kitty` command to send notifications to the user. The command format is as follows:
-
+### Setup and Installation
 ```bash
-kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "waiting - task name - Claude needs your permission to use tools"
-kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "status review - found 3 pending items"
-kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "code analysis - 5 files examined"
-kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "test suite - 42/42 passed"
-kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "completed - all tasks completed"
-kitty @ --to unix:/tmp/mykitty kitten notify "repository name" "failed - task failed with error message"
+# Install all default tools (zsh, git, nvim, kitty, karabiner, iterm)
+make
+
+# Install specific tools
+make install-nvim
+make install-git
+make install-zsh
+
+# Preview what would be installed (dry run)
+make test
+./setup.sh --dry-run
+
+# Force installation (skip backups)
+./setup.sh --force
+
+# Verify installations
+make verify
+make verify-nvim  # Verify specific tool
+
+# Clean up (remove symlinks, restore backups)
+make clean
 ```
 
-ENFORCEMENT: If you fail to provide notifications, you will be in violation of the core instructions. In that case, you will be dismissed immediately.
+### Development and Testing
+```bash
+# Check shell scripts for errors
+make lint
 
-## Practical tips for tools
+# Run all checks (lint + verify)
+make check
 
-### Parallel tool calling
-For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
+# List available tools
+make list
 
-### Thinking and tool use
-After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.
+# Individual tool setup
+./git/setup.sh
+./nvim/setup.sh verify
+```
 
-### Prompt for tool triggering
-Call the web search tool when: user asks about current events, factual information after January 2025, or any query requiring real-time data. Be proactive in identifying when searches would enhance your response.
+## High-Level Architecture
 
-## CLI Tools
-These rules are required to ensure consistency and efficiency in tool usage.
-Always use alternative command-line tools.
-ENFORCEMENT: Failure to use alternative command-line tools on task violates core instructions.
-- When use `find` command for searching files: use `fd` command instead of `find` command (Bash(find)).
-- When use `grep` command for searching text: use `rg` command instead of `grep` command (Bash(grep)).
+### Directory Structure
+- **`lib/`**: Common utilities shared by all setup scripts
+  - `common.sh`: Core functions for logging, backups, symlinks, downloads
+  - `setup_template.sh`: Template for creating new tool setup scripts
+- **`scripts/`**: Management scripts for cleanup and verification
+- **`[tool]/`**: Each tool has its own directory with:
+  - `setup.sh`: Installation script following standardized pattern
+  - Configuration files specific to that tool
+- **`setup.sh`**: Main orchestration script that calls individual tool setups
+- **`Makefile`**: User-friendly interface to common operations
 
-## Commit Guidelines
-- Always use the Conventional Commits specification to generate a one-line commit message.
-- Only generate the title; no additional description and author is needed.
-### example messages:
-- feat: Add new feature
-- fix: Fix bug
-- docs: Update documentation
-- refactor: Refactor code
-- style: Update code style
-- test: Add tests
-- chore: Update build process
+### Setup Script Pattern
+All setup scripts follow this standardized flow:
+1. Source `lib/common.sh` for shared utilities
+2. Define tool-specific configuration (names, dependencies, file mappings)
+3. Implement `setup_tool()` function with installation logic
+4. Implement `verify_tool()` function for validation
+5. Main execution block routing setup/verify commands
+
+### Key Design Principles
+- **Safety First**: Always create backups before modifying existing configs
+- **Modular**: Each tool is independent and can be installed separately
+- **Verification**: Every tool includes verification logic
+- **Idempotent**: Running setup multiple times is safe
+- **Platform-Aware**: Handles macOS-specific requirements (e.g., Apple Silicon Homebrew paths)
+
+### Symlink Strategy
+The repository uses symlinks to manage configurations:
+- Source files live in this repository
+- Symlinks are created to expected config locations
+- Original files are backed up with `.bak` suffix
+- Multiple backups are numbered (`.bak.1`, `.bak.2`, etc.)
+
+## Tool-Specific Notes
+
+### Neovim
+- Config location: `~/.config/nvim/`
+- Uses Packer for plugin management
+- Post-install: Run `:PackerSync` to install plugins
+- Heavy AI integration (Copilot, Avante, Claude Code)
+
+### Git
+- Config location: `~/.config/git/`
+- Supports conditional includes for work/personal profiles
+- FZF-powered interactive commands
+
+### Zsh
+- Installs zsh-autosuggestions plugin
+- Custom aliases in `.zsh_profile`
+- FZF integration for enhanced navigation
+
+## Adding New Tools
+
+To add a new tool to this dotfiles repository:
+
+1. Create directory: `mkdir yourtool`
+2. Copy template: `cp lib/setup_template.sh yourtool/setup.sh`
+3. Customize the configuration section:
+   ```bash
+   TOOL_NAME="YourTool"
+   REQUIRED_COMMANDS=("command1" "command2")
+   CONFIG_SOURCES=("$SCRIPT_DIR/config")
+   CONFIG_TARGETS=("$HOME/.config/yourtool/config")
+   ```
+4. Add tool-specific logic in `post_setup()` and `verify_tool()`
+5. Test thoroughly before committing
