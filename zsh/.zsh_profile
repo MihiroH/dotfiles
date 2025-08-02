@@ -62,4 +62,4 @@ if command -v rg > /dev/null 2>&1; then
 fi
 
 # ssh
-alias ssh="TERM=xterm-256color && ssh"
+alias ssh="TERM=xterm-256color ssh"
