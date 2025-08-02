@@ -244,7 +244,8 @@ is_linux() {
 # Get the dotfiles root directory
 # Usage: DOTFILES_ROOT=$(get_dotfiles_root)
 get_dotfiles_root() {
-    local current_dir=$(get_script_dir)
+    local current_dir
+    current_dir=$(get_script_dir)
     # Navigate up until we find the setup.sh in root
     while [ "$current_dir" != "/" ]; do
         if [ -f "$current_dir/setup.sh" ] && [ -f "$current_dir/CLAUDE.md" ]; then
@@ -271,6 +272,7 @@ print_section() {
 confirm() {
     local prompt="${1:-Continue?}"
     local default="${2:-n}"
+    local REPLY
     
     local yn_prompt="[y/N]"
     if [ "$default" = "y" ]; then

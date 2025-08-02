@@ -73,7 +73,7 @@ fi
 # yvm (yarn)
 if [ -f ${HOME}/.yvm/yvm.sh ]; then
   source ~/.yvm/yvm.sh
-  export YVM_DIR=/Users/mihiro.h/.yvm
+  export YVM_DIR="$HOME/.yvm"
   [ -r $YVM_DIR/yvm.sh ] && . $YVM_DIR/yvm.sh
   export PATH="$PATH:`yarn global bin`"
 fi
@@ -197,20 +197,20 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$PATH:$CARGO_HOME/bin"
 
 # bun completions
-[ -s "/Users/mihiro/.bun/_bun" ] && source "/Users/mihiro/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
-export BUN_INSTALL="/Users/mihiro/.bun"
+export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # gcloud
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/mihiro/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mihiro/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/mihiro/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mihiro/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
-export GOOGLE_APPLICATION_CREDENTIALS="/Users/mihiro/.config/gcloud/legacy_credentials/mihiro.yanagawa@legalscape.co.jp/adc.json"
+export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/legacy_credentials/mihiro.yanagawa@legalscape.co.jp/adc.json"
 
 # java
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
