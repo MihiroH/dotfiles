@@ -105,16 +105,22 @@ create_symlink() {
             local source_abs="$source"
             
             if command_exists realpath; then
-                # Use realpath if available
-                if [ -e "$target" ]; then
-                    current_abs=$(cd "$(dirname "$target")" && realpath "$current_source" 2>/dev/null) || current_abs="$current_source"
+                # Try to use realpath with -m if supported (GNU), fallback to regular realpath
+                if realpath -m "/tmp" >/dev/null 2>&1; then
+                    # GNU realpath with -m support
+                    current_abs=$(cd "$(dirname "$target")" && realpath -m "$current_source") || current_abs="$current_source"
+                    source_abs=$(realpath -m "$source") || source_abs="$source"
+                else
+                    # BSD realpath or realpath without -m support
+                    # Only resolve if the path exists
+                    if [ -e "$target" ]; then
+                        current_abs=$(cd "$(dirname "$target")" && realpath "$current_source" 2>/dev/null) || current_abs="$current_source"
+                    fi
+                    source_abs=$(realpath "$source" 2>/dev/null) || source_abs="$source"
                 fi
-                source_abs=$(realpath "$source" 2>/dev/null) || source_abs="$source"
             else
                 # Fallback: resolve using cd and pwd -P
                 if [[ "$current_source" != /* ]]; then
-                    local target_dir
-                    target_dir=$(dirname "$target")
                     if [ -e "$target_dir/$current_source" ]; then
                         current_abs=$(cd "$target_dir" && cd "$(dirname "$current_source")" 2>/dev/null && pwd -P)/$(basename "$current_source") || current_abs="$current_source"
                     fi
