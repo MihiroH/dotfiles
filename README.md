@@ -189,6 +189,18 @@ Tool version management (formerly rtx).
   - Language version management
   - Global tool configuration
 
+### 🤖 Claude Code
+AI-powered coding assistant by Anthropic.
+
+- **Config Location**: `~/.claude/`
+- **Features**:
+  - Global CLAUDE.md configuration for all projects
+  - MCP (Model Context Protocol) server configurations
+  - Custom commands and aliases for enhanced workflows
+  - Integration with development tools and workflows
+
+**Post-install**: Claude Code will be configured with global settings and instructions that apply to all your projects.
+
 ## 📖 Usage
 
 ### Common Commands

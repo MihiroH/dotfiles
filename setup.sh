@@ -346,10 +346,12 @@ main() {
     install_packages || exit 1
     
     # Determine which tools to setup
-    local tools=("${@}")
-    if [ ${#tools[@]} -eq 0 ]; then
+    local tools=()
+    if [ $# -eq 0 ]; then
         tools=("${DEFAULT_TOOLS[@]}")
         log_info "No tools specified, using defaults: ${tools[*]}"
+    else
+        tools=("${@}")
     fi
     
     # Validate tool selection
