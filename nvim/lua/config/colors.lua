@@ -1,10 +1,16 @@
 -- enable termguicolors
 vim.opt.termguicolors = true
 
-require('onedark').setup {
-  style = 'cool'
-}
-require('onedark').load()
+-- vim.cmd('colorscheme onehalflight')
+
+-- vim.o.background = 'light'
+-- vim.g.gruvbox_material_foreground = 'material'
+-- vim.g.gruvbox_material_background = 'medium'
+vim.g.everforest_background = 'medium'
+vim.cmd.colorscheme('everforest')
+
+-- vim.g.everforest_background = 'hard'
+-- vim.cmd('colorscheme everforest')
 
 -- highlight spell check
 vim.cmd([[
@@ -19,6 +25,4 @@ vim.cmd([[
     autocmd!
     autocmd ColorScheme * call MyHighlights()
   augroup END
-
-  " autocmd vimenter * ++nested colorscheme kanagawa
 ]])

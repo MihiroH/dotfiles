@@ -20,6 +20,7 @@ vim.cmd([[
   " default extensions
   let g:coc_global_extensions = [
     \ '@yaegassy/coc-volar',
+    \ '@yaegassy/coc-volar-tools',
     \ '@yaegassy/coc-tailwindcss3',
     \ 'coc-css',
     \ 'coc-cssmodules',
@@ -44,6 +45,7 @@ vim.cmd([[
     \ 'coc-biome',
     \ 'coc-prisma',
     \ 'coc-sql',
+    \ 'coc-pyright',
   \]
 
   " Markdown preview
@@ -101,7 +103,7 @@ vim.cmd([[
   endfunction
 
   " Remap keys for applying codeAction to the current buffer.
-  nmap <Leader>ac  <Plug>(coc-codeaction)
+  nmap <Leader>cac  <Plug>(coc-codeaction)
   " Apply AutoFix to problem on the current line.
   nmap <Leader>qf  <Plug>(coc-fix-current)
 

@@ -14,6 +14,8 @@ ts_config.setup {
     'lua',
 
     'html',
+    'css',
+    'scss',
     'javascript',
     'typescript',
     'vue',
