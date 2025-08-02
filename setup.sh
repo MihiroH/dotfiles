@@ -99,7 +99,7 @@ install_homebrew() {
 }
 
 # Package definitions
-BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx" "node")
+BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx")
 BREW_CASK_PACKAGES=("kitty")
 
 # Tool dependencies
