@@ -34,7 +34,10 @@ setopt PROMPT_SUBST
 PS1=$'\n%c%F{#3a94c5}$(__git_ps1 " (%s)")%f\n%# '
 
 # For Copilot Chat (avante.nvim)
-export TAVILY_API_KEY=$(jq -r '."api_key"' ~/.config/tavily/apps.json)
+# Load API key from secure location if file exists
+if [ -f ~/.config/tavily/apps.json ]; then
+    export TAVILY_API_KEY=$(jq -r '."api_key"' ~/.config/tavily/apps.json 2>/dev/null)
+fi
 # export GITHUB_TOKEN=$(jq -r '."github.com:Iv1.b507a08c87ecfe98".oauth_token' ~/.config/github-copilot/apps.json)
 # export CODESPACES=true
 
