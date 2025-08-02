@@ -15,10 +15,12 @@ REQUIRED_COMMANDS=("node" "npm") # Required for Claude Code installation
 CONFIG_SOURCES=(
     "$SCRIPT_DIR/CLAUDE.md"
     "$SCRIPT_DIR/settings.json"
+    "$SCRIPT_DIR/commands"
 )
 CONFIG_TARGETS=(
     "$HOME/.claude/CLAUDE.md"
     "$HOME/.claude/settings.json"
+    "$HOME/.claude/commands"
 )
 
 # Install Claude Code binary
@@ -108,24 +110,6 @@ setup_tool() {
         create_symlink "$source" "$target" || return 1
     done
 
-    # Create project-level CLAUDE.md symlink
-    log_info "Setting up project-level CLAUDE.md..."
-    DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
-    if [ -f "$DOTFILES_ROOT/CLAUDE.md" ]; then
-        # Check if it's already a symlink to our file
-        if [ -L "$DOTFILES_ROOT/CLAUDE.md" ]; then
-            current_target=$(readlink "$DOTFILES_ROOT/CLAUDE.md")
-            if [ "$current_target" = "$SCRIPT_DIR/CLAUDE.md" ]; then
-                log_info "Project CLAUDE.md already linked correctly"
-            else
-                log_warning "Project CLAUDE.md exists but points elsewhere: $current_target"
-            fi
-        else
-            log_warning "Project CLAUDE.md already exists (not a symlink)"
-        fi
-    else
-        create_symlink "$SCRIPT_DIR/CLAUDE.md" "$DOTFILES_ROOT/CLAUDE.md" || return 1
-    fi
 
     # Post-setup actions
     post_setup || return 1
@@ -155,7 +139,7 @@ post_setup() {
     log_info "Claude configuration locations:"
     echo "  Global instructions: $HOME/.claude/CLAUDE.md"
     echo "  Settings: $HOME/.claude/settings.json"
-    echo "  Project instructions: $(dirname "$SCRIPT_DIR")/CLAUDE.md"
+    echo "  Commands: $HOME/.claude/commands"
 
     return 0
 }
@@ -190,14 +174,6 @@ verify_installation() {
         validate_symlink "$target" "$source" || return 1
     done
 
-    # Check project CLAUDE.md
-    DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
-    if [ -f "$DOTFILES_ROOT/CLAUDE.md" ]; then
-        log_success "Project CLAUDE.md exists"
-    else
-        log_error "Project CLAUDE.md not found"
-        return 1
-    fi
 
     # Verify file contents are accessible
     if [ ! -r "$HOME/.claude/CLAUDE.md" ]; then
