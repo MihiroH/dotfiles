@@ -390,12 +390,6 @@ mv ~/.config/[tool].bak ~/.config/[tool]
 
 This project is licensed under the MIT License.
 
-## 🙏 Acknowledgments
-
-- [Homebrew](https://brew.sh/) for package management
-- All the amazing open-source tool maintainers
-- The dotfiles community for inspiration
-
 ---
 
 Made with ❤️ for the developer community
