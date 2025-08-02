@@ -1,4 +1,8 @@
-require("claude-code").setup({
+local present, claude_code = pcall(require, 'claude-code')
+
+if not present then return end
+
+claude_code.setup({
   -- Terminal window settings
   window = {
     split_ratio = 0.4,      -- Percentage of screen for the terminal window (height for horizontal, width for vertical splits)

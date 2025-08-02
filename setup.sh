@@ -115,7 +115,7 @@ get_tool_deps() {
         karabiner) echo "" ;;
         iterm) echo "curl" ;;
         mise) echo "mise" ;;
-        claude) echo "node npm" ;;
+        claude) echo "node" ;;
     esac
 }
 
