@@ -91,11 +91,37 @@ create_symlink() {
             # It's already a symlink
             local current_source
             current_source=$(readlink "$target")
-            if [ "$current_source" = "$source" ]; then
+            
+            # Resolve both paths to absolute form for robust comparison
+            local current_abs="$current_source"
+            local source_abs="$source"
+            
+            if command_exists realpath; then
+                # Use realpath if available
+                if [ -e "$target" ]; then
+                    current_abs=$(cd "$(dirname "$target")" && realpath "$current_source" 2>/dev/null) || current_abs="$current_source"
+                fi
+                source_abs=$(realpath "$source" 2>/dev/null) || source_abs="$source"
+            else
+                # Fallback: resolve using cd and pwd -P
+                if [[ "$current_source" != /* ]]; then
+                    local target_dir
+                    target_dir=$(dirname "$target")
+                    if [ -e "$target_dir/$current_source" ]; then
+                        current_abs=$(cd "$target_dir" && cd "$(dirname "$current_source")" 2>/dev/null && pwd -P)/$(basename "$current_source") || current_abs="$current_source"
+                    fi
+                fi
+                if [ -e "$source" ]; then
+                    source_abs=$(cd "$(dirname "$source")" 2>/dev/null && pwd -P)/$(basename "$source") || source_abs="$source"
+                fi
+            fi
+            
+            # Compare both resolved and original paths
+            if [ "$current_abs" = "$source_abs" ] || [ "$current_source" = "$source" ]; then
                 log_info "Symlink already exists and points to correct location: $target"
                 return 0
             else
-                log_warning "Symlink exists but points to different location: $current_source"
+                log_warning "Symlink exists but points to different location: $current_source (expected: $source)"
                 if [ "$force" = "true" ]; then
                     rm "$target"
                 else
@@ -109,7 +135,11 @@ create_symlink() {
     fi
     
     # Create the symlink
-    ln -sf "$source" "$target"
+    if [ "$force" = "true" ]; then
+        ln -sf "$source" "$target"
+    else
+        ln -s "$source" "$target"
+    fi
     log_success "Created symlink: $source -> $target"
     return 0
 }

@@ -64,13 +64,21 @@ cleanup_symlink() {
         rm "$path"
         
         # Look for backup files
-        for backup in "$path.bak" "$path.bak."*; do
-            if [ -f "$backup" ] || [ -d "$backup" ]; then
-                log_info "Restoring backup: $backup -> $path"
-                mv "$backup" "$path"
-                break
-            fi
-        done
+        # First check for exact .bak file
+        if [ -f "$path.bak" ] || [ -d "$path.bak" ]; then
+            log_info "Restoring backup: $path.bak -> $path"
+            mv "$path.bak" "$path"
+        else
+            # Then check for timestamped backups
+            for backup in "$path.bak."*; do
+                [ -e "$backup" ] || continue  # Skip if glob didn't match
+                if [ -f "$backup" ] || [ -d "$backup" ]; then
+                    log_info "Restoring backup: $backup -> $path"
+                    mv "$backup" "$path"
+                    break
+                fi
+            done
+        fi
     elif [ -e "$path" ]; then
         log_info "Skipping non-symlink: $description"
     else
@@ -87,7 +95,16 @@ cleanup_copied_file() {
         log_warning "Found copied file: $description"
         if confirm "Remove copied file and restore backup?"; then
             # Look for backup
-            for backup in "$path.bak" "$path.bak."*; do
+            # Check for exact .bak file first
+            if [ -f "$path.bak" ]; then
+                log_info "Restoring backup: $path.bak -> $path"
+                mv "$path.bak" "$path"
+                return
+            fi
+            
+            # Then check for timestamped backups
+            for backup in "$path.bak."*; do
+                [ -f "$backup" ] || continue  # Skip if glob didn't match
                 if [ -f "$backup" ]; then
                     log_info "Restoring backup: $backup -> $path"
                     mv "$backup" "$path"
