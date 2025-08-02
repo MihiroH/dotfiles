@@ -53,7 +53,10 @@ post_setup() {
             log_success "Packer installed successfully"
             log_info "Run :PackerSync in Neovim to install plugins"
         else
-            log_warning "Failed to install Packer. You can install it manually later."
+            log_error "Failed to install Packer. Please check your internet connection and git configuration."
+            log_info "To install manually, run:"
+            log_info "  git clone --depth 1 https://github.com/wbthomason/packer.nvim $packer_path"
+            log_warning "Continuing without Packer - you can install it later"
         fi
     fi
     
