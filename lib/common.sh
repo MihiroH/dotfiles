@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -euo pipefail
 # Common utility functions for dotfiles setup scripts
 # This file should be sourced by individual setup scripts
 
