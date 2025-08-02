@@ -99,7 +99,7 @@ install_homebrew() {
 }
 
 # Package definitions
-BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx")
+BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx" "node")
 BREW_CASK_PACKAGES=("kitty")
 
 # Tool dependencies
@@ -112,7 +112,7 @@ get_tool_deps() {
         karabiner) echo "" ;;
         iterm) echo "curl" ;;
         mise) echo "mise" ;;
-        claude) echo "" ;;
+        claude) echo "node npm" ;;
     esac
 }
 
@@ -210,7 +210,8 @@ validate_tools() {
 # Check tool dependencies
 check_tool_deps() {
     local tool=$1
-    local deps="$(get_tool_deps "$tool")"
+    local deps
+    deps="$(get_tool_deps "$tool")"
     
     if [ -n "$deps" ]; then
         local missing_deps=()
