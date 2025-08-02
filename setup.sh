@@ -219,7 +219,7 @@ check_tool_deps() {
     if [ -n "$deps" ]; then
         local missing_deps=()
         for dep in $deps; do
-            if ! command_exists "$dep" && ! brew list "$dep" &>/dev/null; then
+            if ! command_exists "$dep" && { command_exists brew && ! brew list "$dep" &>/dev/null; }; then
                 missing_deps+=("$dep")
             fi
         done
