@@ -11,20 +11,28 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Logging functions
+# shellcheck disable=SC2059  # intentional %b for colours
 log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    printf "%b
+" "${BLUE}[INFO]${NC} $1"
 }
 
+# shellcheck disable=SC2059  # intentional %b for colours
 log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+    printf "%b
+" "${GREEN}[SUCCESS]${NC} $1"
 }
 
+# shellcheck disable=SC2059  # intentional %b for colours
 log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
+    printf "%b
+" "${YELLOW}[WARNING]${NC} $1"
 }
 
+# shellcheck disable=SC2059  # intentional %b for colours
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1" >&2
+    printf "%b
+" "${RED}[ERROR]${NC} $1" >&2
 }
 
 # Get the absolute path of the script directory
