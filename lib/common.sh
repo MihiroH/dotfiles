@@ -45,18 +45,19 @@ backup_if_exists() {
     local target="$1"
     local backup_suffix="${2:-.bak}"
     
-    if [ -e "$target" ] && [ ! -L "$target" ]; then
+    # Check if target exists (including symlinks)
+    if [ -e "$target" ] || [ -L "$target" ]; then
         local backup_path="${target}${backup_suffix}"
         local counter=1
         
         # Find a unique backup filename
-        while [ -e "$backup_path" ]; do
+        while [ -e "$backup_path" ] || [ -L "$backup_path" ]; do
             backup_path="${target}${backup_suffix}.${counter}"
             ((counter++))
         done
         
         mv "$target" "$backup_path"
-        log_info "Backed up existing file to $backup_path"
+        log_info "Backed up existing file/symlink to $backup_path"
         return 0
     fi
     return 1
@@ -76,7 +77,8 @@ create_symlink() {
     fi
     
     # Create target directory if needed
-    local target_dir=$(dirname "$target")
+    local target_dir
+    target_dir=$(dirname "$target")
     if [ ! -d "$target_dir" ]; then
         mkdir -p "$target_dir"
         log_info "Created directory: $target_dir"
@@ -86,7 +88,8 @@ create_symlink() {
     if [ -e "$target" ] || [ -L "$target" ]; then
         if [ -L "$target" ]; then
             # It's already a symlink
-            local current_source=$(readlink "$target")
+            local current_source
+            current_source=$(readlink "$target")
             if [ "$current_source" = "$source" ]; then
                 log_info "Symlink already exists and points to correct location: $target"
                 return 0
@@ -122,7 +125,8 @@ download_if_missing() {
     fi
     
     # Create target directory if needed
-    local target_dir=$(dirname "$target")
+    local target_dir
+    target_dir=$(dirname "$target")
     if [ ! -d "$target_dir" ]; then
         mkdir -p "$target_dir"
     fi
