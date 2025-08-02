@@ -30,7 +30,8 @@ log_error() {
 # Get the absolute path of the script directory
 # Usage: SCRIPT_DIR=$(get_script_dir)
 get_script_dir() {
-    cd "$(dirname "${BASH_SOURCE[1]}")" && pwd
+    local src="${BASH_SOURCE[1]}"
+    ( cd "$(dirname "$src")" && pwd )
 }
 
 # Check if a command exists
