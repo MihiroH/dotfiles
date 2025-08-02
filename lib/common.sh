@@ -309,9 +309,43 @@ validate_symlink() {
         return 1
     fi
     
-    local actual_source=$(readlink "$link")
-    if [ "$actual_source" != "$expected_source" ]; then
+    local actual_source
+    actual_source=$(readlink "$link")
+    
+    # Try to resolve to absolute paths for comparison
+    local actual_abs="$actual_source"
+    local expected_abs="$expected_source"
+    
+    # Use realpath if available (more reliable)
+    if command_exists realpath; then
+        # Resolve the actual symlink target
+        if [ -e "$link" ]; then
+            actual_abs=$(cd "$(dirname "$link")" && realpath "$actual_source" 2>/dev/null) || actual_abs="$actual_source"
+        fi
+        # Resolve the expected source
+        expected_abs=$(realpath "$expected_source" 2>/dev/null) || expected_abs="$expected_source"
+    else
+        # Fallback: try to resolve using cd and pwd -P
+        # For actual source (relative to the link's directory)
+        if [[ "$actual_source" != /* ]]; then
+            local link_dir
+            link_dir=$(dirname "$link")
+            if [ -e "$link_dir/$actual_source" ]; then
+                actual_abs=$(cd "$link_dir" && cd "$(dirname "$actual_source")" 2>/dev/null && pwd -P)/$(basename "$actual_source") || actual_abs="$actual_source"
+            fi
+        fi
+        # For expected source
+        if [[ "$expected_source" != /* ]] && [ -e "$expected_source" ]; then
+            expected_abs=$(cd "$(dirname "$expected_source")" 2>/dev/null && pwd -P)/$(basename "$expected_source") || expected_abs="$expected_source"
+        elif [[ "$expected_source" == /* ]] && [ -e "$expected_source" ]; then
+            expected_abs=$(cd "$(dirname "$expected_source")" 2>/dev/null && pwd -P)/$(basename "$expected_source") || expected_abs="$expected_source"
+        fi
+    fi
+    
+    # Compare both the resolved paths and original paths
+    if [ "$actual_abs" != "$expected_abs" ] && [ "$actual_source" != "$expected_source" ]; then
         log_error "Symlink points to wrong location: $link -> $actual_source (expected: $expected_source)"
+        log_error "Resolved: $actual_abs != $expected_abs"
         return 1
     fi
     
