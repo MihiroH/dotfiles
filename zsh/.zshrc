@@ -28,7 +28,7 @@ GIT_PS1_SHOWUNTRACKEDFILES=true
 GIT_PS1_SHOWSTASHSTATE=true
 GIT_PS1_SHOWUPSTREAM=auto
 # PROMPT="[%m]%# "
-RPROMPT="%*"
+# RPROMPT="%*"
 setopt PROMPT_SUBST
 # PS1=$'\n%c%F{#5ab0f6}$(__git_ps1 " (%s)")%f\n%# '
 PS1=$'\n%c%F{#3a94c5}$(__git_ps1 " (%s)")%f\n%# '
@@ -46,6 +46,8 @@ export HISTTIMEFORMAT='%F %T '
 
 # Homebrew
 export PATH=/opt/homebrew/bin:$PATH
+
+export PATH="$HOME/.local/bin:$PATH"
 
 # Homebrew PHP
 export PATH=/opt/homebrew/bin/php:$PATH
@@ -144,7 +146,7 @@ select-word-style bash
 # fzf
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS' --layout=reverse --border --color=fg:#5c6a72,bg:#fdf6e3,hl:#35a77c --color=fg+:#5c6a72,bg+:#eaedc8,hl+:#35a77c --color=info:#8da101,prompt:#5c6a72,pointer:#35a77c --color=marker:#f85552,spinner:#df69ba,header:#8da101'
 
-function search-fzf-history() {
+function fzf-search-history() {
     local HISTORY=$(history -n -r 1 | fzf --query="$BUFFER" +m)
     if [ -n "$HISTORY" ]; then
         BUFFER=$HISTORY
@@ -153,10 +155,10 @@ function search-fzf-history() {
         zle accept-line
     fi
 }
-zle -N search-fzf-history
-bindkey '^r' search-fzf-history
+zle -N fzf-search-history
+bindkey '^r' fzf-search-history
 
-function cd-fzf-git() {
+function fzf-cd-git() {
     local GHQ_ROOT=$(ghq root)
     local REPO=$(fd --type d --hidden --no-ignore --max-depth 4 '.git' "$GHQ_ROOT" \
         | rg -v '/(\.github|node_modules)/' \
@@ -170,10 +172,10 @@ function cd-fzf-git() {
     fi
     zle accept-line
 }
-zle -N cd-fzf-git
-bindkey '^g' cd-fzf-git
+zle -N fzf-cd-git
+bindkey '^g' fzf-cd-git
 
-function vim-fzf-find() {
+function fzf-vim-find() {
     local DIR=$(fd --type d --hidden --no-ignore \
         --exclude '.git' \
         --exclude 'node_modules' \
@@ -184,8 +186,22 @@ function vim-fzf-find() {
         cd "${DIR}" && ${EDITOR:-vim} .
     fi
 }
-zle -N vim-fzf-find
-bindkey '^v' vim-fzf-find
+zle -N fzf-vim-find
+bindkey '^v' fzf-vim-find
+
+function fzf-cd() {
+    local DIR=$(fd --type d --hidden --no-ignore \
+        --exclude '.git' \
+        --exclude 'node_modules' \
+        . \
+        | fzf +m)
+
+    if [ -n "$DIR" ]; then
+        cd "${DIR}"
+    fi
+}
+zle -N fzf-cd
+bindkey '^o' fzf-cd
 
 export PATH="$HOME/anaconda3/bin:$PATH"
 
@@ -204,13 +220,7 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # gcloud
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
-
-export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/legacy_credentials/mihiro.yanagawa@legalscape.co.jp/adc.json"
+export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/legacy_credentials/mihiro.hashimoto@legalscape.co.jp/adc.json"
 
 # java
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
@@ -230,8 +240,8 @@ export PKG_CONFIG_PATH="/usr/local/opt/jpeg/lib/pkgconfig"
 export MCP_TIMEOUT=120000
 
 # phantom
-if [ -f ${HOME}/.zsh/phantom-completion.zsh ]; then
-       source ${HOME}/.zsh/phantom-completion.zsh
+if command -v phantom >/dev/null 2>&1; then
+  eval "$(phantom completion zsh)"
 fi
 
 # cs-completion.zsh
@@ -241,3 +251,14 @@ fi
 
 # Submlime Merge
 export PATH="/Applications/Sublime Merge.app/Contents/SharedSupport/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc' ]; then . '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc' ]; then . '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc'; fi
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/mihiro/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
