@@ -15,3 +15,15 @@ Always use alternative command-line tools.
 ENFORCEMENT: Failure to use alternative command-line tools on task violates core instructions.
 - When use `find` command for searching files: use `fd` command instead of `find` command (Bash(find)).
 - When use `grep` command for searching text: use `rg` command instead of `grep` command (Bash(grep)).
+
+## Docker Compose Diagnostic Prompt
+I'm having an issue with my Docker Compose local dev environment: [describe symptom]. Before guessing at fixes, run a systematic diagnostic:
+
+1. Run `docker compose ps` to check all service statuses
+2. Run `docker compose config` and verify all environment variables that reference other services use correct hostnames (not localhost)
+3. For each service in the request path, curl its health endpoint from inside the Docker network using `docker compose exec`
+4. Trace the full request path from frontend → API → backend services, checking each hop
+5. Compare any override/local compose files against the base file for conflicting values
+6. Report findings as a table: Service | Status | Env Issues | Connectivity
+
+Only after completing diagnostics, propose the minimal fix and verify it works.
