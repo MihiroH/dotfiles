@@ -77,17 +77,17 @@ install_homebrew() {
             log_info "[DRY RUN] Would install Homebrew"
             return 0
         fi
-        
+
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
             log_error "Failed to install Homebrew"
             return 1
         }
-        
+
         # Set PATH for Apple Silicon
         if [ -f "/opt/homebrew/bin/brew" ]; then
             eval "$(/opt/homebrew/bin/brew shellenv)"
         fi
-        
+
         # Verify installation
         if command_exists "brew"; then
             log_success "Homebrew installed successfully: $(brew --version | head -1)"
@@ -102,8 +102,8 @@ install_homebrew() {
 }
 
 # Package definitions
-BREW_PACKAGES=("git" "ripgrep" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx")
-BREW_CASK_PACKAGES=("kitty")
+BREW_PACKAGES=("git" "ripgrep" "gh" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx")
+BREW_CASK_PACKAGES=("font-monaspice-nerd-font" "kitty" "maccy")
 
 # Tool dependencies
 get_tool_deps() {
@@ -122,7 +122,7 @@ get_tool_deps() {
 # Install packages
 install_packages() {
     log_info "Checking and installing required packages..."
-    
+
     # Install command-line packages
     for package in "${BREW_PACKAGES[@]}"; do
         if ! command_exists "$package" && ! brew list "$package" &>/dev/null; then
@@ -141,10 +141,10 @@ install_packages() {
             [ "$VERBOSE" = true ] && log_info "$package is already installed"
         fi
     done
-    
+
     # Install GUI applications
     for package in "${BREW_CASK_PACKAGES[@]}"; do
-        if ! brew list --cask "$package" &>/dev/null && [ ! -d "/Applications/${package^}.app" ]; then
+        if ! brew list --cask "$package" &>/dev/null; then
             log_info "Installing $package (cask)..."
             if [ "$DRY_RUN" = true ]; then
                 log_info "[DRY RUN] Would install cask: $package"
@@ -160,7 +160,7 @@ install_packages() {
             [ "$VERBOSE" = true ] && log_info "$package (cask) is already installed"
         fi
     done
-    
+
     # Handle mise config.toml
     if command_exists "mise" && [ -f "$SCRIPT_DIR/mise/config.toml" ]; then
         local mise_config="$HOME/.config/mise/config.toml"
@@ -170,7 +170,7 @@ install_packages() {
             create_symlink "$SCRIPT_DIR/mise/config.toml" "$mise_config" "$FORCE"
         fi
     fi
-    
+
     return 0
 }
 
@@ -215,7 +215,7 @@ check_tool_deps() {
     local tool=$1
     local deps
     deps="$(get_tool_deps "$tool")"
-    
+
     if [ -n "$deps" ]; then
         local missing_deps=()
         for dep in $deps; do
@@ -223,7 +223,7 @@ check_tool_deps() {
                 missing_deps+=("$dep")
             fi
         done
-        
+
         if [ ${#missing_deps[@]} -gt 0 ]; then
             log_warning "Tool '$tool' requires: ${missing_deps[*]}"
             if [ "$DRY_RUN" = false ]; then
@@ -244,29 +244,29 @@ check_tool_deps() {
 run_setup() {
     local tool=$1
     local script="$SCRIPT_DIR/$tool/setup.sh"
-    
+
     if [ ! -f "$script" ]; then
         log_error "Setup script not found for $tool"
         return 1
     fi
-    
+
     if [ ! -x "$script" ]; then
         chmod +x "$script"
     fi
-    
+
     # Check dependencies first
     check_tool_deps "$tool" || return 1
-    
+
     # Run setup
     if [ "$DRY_RUN" = true ]; then
         log_info "[DRY RUN] Would run setup for $tool"
         return 0
     fi
-    
+
     # Pass force flag to individual setup scripts
     local setup_env=""
     [ "$FORCE" = true ] && setup_env="FORCE=true"
-    
+
     if env $setup_env "$script"; then
         log_success "Setup completed for $tool"
         return 0
@@ -279,14 +279,14 @@ run_setup() {
 # Show post-setup instructions based on installed tools
 show_post_setup_instructions() {
     local installed_tools=("$@")
-    
+
     log_info "Post-setup steps:"
-    
+
     # Common steps for any setup
     log_info "1. Restart your terminal or run: source ~/.zshrc"
-    
+
     local step_num=2
-    
+
     # Tool-specific instructions
     for tool in "${installed_tools[@]}"; do
         case "$tool" in
@@ -323,7 +323,7 @@ show_post_setup_instructions() {
                 ;;
         esac
     done
-    
+
     # General reminder
     log_info "$step_num. Check individual tool setup messages above for additional steps"
 }
@@ -331,23 +331,23 @@ show_post_setup_instructions() {
 # Main setup function
 main() {
     print_section "Dotfiles Setup"
-    
+
     # Ensure not running as root
     ensure_not_sudo
-    
+
     # Check permissions
     ensure_permissions || exit 1
-    
+
     # Install Homebrew if needed
     if is_macos; then
         install_homebrew || exit 1
     else
         log_warning "Homebrew installation skipped (not macOS)"
     fi
-    
+
     # Install required packages
     install_packages || exit 1
-    
+
     # Determine which tools to setup
     local tools=()
     if [ $# -eq 0 ]; then
@@ -356,10 +356,10 @@ main() {
     else
         tools=("${@}")
     fi
-    
+
     # Validate tool selection
     validate_tools "${tools[@]}" || exit 1
-    
+
     # Setup each tool
     local failed_tools=()
     for tool in "${tools[@]}"; do
@@ -372,12 +372,12 @@ main() {
             fi
         fi
     done
-    
+
     # Summary
     print_section "Setup Summary"
     if [ ${#failed_tools[@]} -eq 0 ]; then
         log_success "All tools setup successfully!"
-        
+
         # Show post-setup instructions
         echo
         show_post_setup_instructions "${tools[@]}"
