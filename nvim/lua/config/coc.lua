@@ -31,7 +31,6 @@ vim.cmd([[
     \ 'coc-html',
     \ 'coc-json',
     \ 'coc-lua',
-    \ 'coc-markdown-preview-enhanced',
     \ 'coc-pairs',
     \ 'coc-phpls',
     \ 'coc-svelte',
@@ -47,9 +46,6 @@ vim.cmd([[
     \ 'coc-sql',
     \ 'coc-pyright',
   \]
-
-  " Markdown preview
-  nnoremap <C-s> :CocCommand markdown-preview-enhanced.openPreview<CR>
 
   autocmd FileType scss setl iskeyword+=@-@
 

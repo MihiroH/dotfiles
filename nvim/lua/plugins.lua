@@ -155,10 +155,10 @@ return packer.startup(function(use)
   }
 
   -- GitHub copilot
-  -- use {
-  --   'github/copilot.vim',
-  --   config = function() require('config.copilot') end,
-  -- }
+  use {
+    'github/copilot.vim',
+    config = function() require('config.copilot') end,
+  }
 
   -- Github copilot chat
   -- use {
@@ -194,10 +194,10 @@ return packer.startup(function(use)
   -- }
 
   -- AI-driven code suggestions
-  use {
-    'augmentcode/augment.vim',
-    config = function() require('config.augment') end,
-  }
+  -- use {
+  --   'augmentcode/augment.vim',
+  --   config = function() require('config.augment') end,
+  -- }
 
   -- Claude Code in Nvim
   use {
@@ -213,6 +213,17 @@ return packer.startup(function(use)
     after = { 'nvim-treesitter' },
     requires = { 'nvim-tree/nvim-web-devicons', opt = true },
     config = function() require('config.render-markdown') end,
+  }
+
+  use {
+    'iamcco/markdown-preview.nvim',
+    run = function() vim.fn['mkdp#util#install']() end,
+    config = function() require('config.markdown-preview') end,
+  }
+
+  use {
+    'hat0uma/csvview.nvim',
+    config = function() require('config.csvview') end,
   }
 
   -- Search
