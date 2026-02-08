@@ -47,6 +47,9 @@
     # マージ済みのブランチを一括削除(リモート追跡ブランチが存在しないローカルブランチを削除)
     delete-merged-branch = "!f() { git fetch -p; for branch in $(git branch -vv | grep \": gone]\" | awk '{print $1}'); do git branch -D \"$branch\"; done; }; f"
 
+    # find the parent of the branch
+    parent = "!git show-branch | grep '*' | grep -v \"$(git rev-parse --abbrev-ref HEAD)\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"
+
 [push]
     default = current
     autoSetupRemote = true
@@ -57,3 +60,5 @@
     process = git-lfs filter-process
 [pull]
     rebase = false
+[phantom]
+	ai = claude
