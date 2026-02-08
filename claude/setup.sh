@@ -9,7 +9,7 @@ source "$(dirname "$SCRIPT_DIR")/lib/common.sh" || {
 
 # Tool-specific configuration
 TOOL_NAME="Claude"
-REQUIRED_COMMANDS=("node" "npm") # Required for Claude Code installation
+REQUIRED_COMMANDS=("curl") # Required for Claude Code native installer
 
 # Configuration files mapping (source:target)
 CONFIG_SOURCES=(
@@ -23,7 +23,7 @@ CONFIG_TARGETS=(
     "$HOME/.claude/skills"
 )
 
-# Install Claude Code binary
+# Install Claude Code binary via native installer
 install_claude_code() {
     log_info "Checking Claude Code installation..."
 
@@ -32,54 +32,21 @@ install_claude_code() {
         return 0
     fi
 
-    log_info "Installing Claude Code via npm..."
+    log_info "Installing Claude Code via native installer..."
 
-    # Install Node.js via mise if not available
-    if ! command_exists "node" || ! command_exists "npm"; then
-        log_info "Node.js not found, installing via mise..."
+    if curl -fsSL https://claude.ai/install.sh | bash; then
+        # Ensure ~/.local/bin is in PATH for current session
+        export PATH="$HOME/.local/bin:$PATH"
 
-        if ! command_exists "mise"; then
-            log_error "mise is required to install Node.js"
-            log_error "Please install mise first or run the full setup: ./setup.sh"
-            return 1
-        fi
-
-        # Install latest Node.js LTS via mise
-        if mise install node && mise use -g node; then
-            log_success "Node.js installed via mise"
-
-            # Reload environment to pick up new Node.js
-            eval "$(mise activate zsh)"
-
-            # Verify installation
-            if command_exists "node" && command_exists "npm"; then
-                log_success "Node.js and npm are now available"
-            else
-                log_warning "Node.js installed but not found in PATH"
-                log_warning "You may need to restart your terminal or run: eval \"\$(mise activate bash)\""
-            fi
-        else
-            log_error "Failed to install Node.js via mise"
-            return 1
-        fi
-    else
-        log_info "Node.js and npm are already available"
-    fi
-
-    # Install Claude globally
-    if npm install -g @anthropic-ai/claude-code; then
-        log_success "Claude Code installed successfully"
-
-        # Verify installation
         if command_exists "claude"; then
-            log_success "Claude Code is now available: $(claude --version 2>/dev/null || echo 'installed')"
+            log_success "Claude Code installed successfully: $(claude --version 2>/dev/null || echo 'installed')"
         else
             log_warning "Claude Code installed but not found in PATH"
-            log_warning "You may need to restart your terminal or check your PATH configuration"
+            log_warning "Add to your shell config: export PATH=\"\$HOME/.local/bin:\$PATH\""
         fi
     else
-        log_error "Failed to install Claude Code via npm"
-        log_error "You may need to install it manually or check your npm configuration"
+        log_error "Failed to install Claude Code via native installer"
+        log_error "Install manually: https://code.claude.com/docs/en/setup"
         return 1
     fi
 
@@ -155,7 +122,7 @@ verify_installation() {
         log_success "Claude Code binary is installed: $version"
     else
         log_error "Claude binary not found in PATH"
-        log_error "Run setup again or install manually: npm install -g @anthropic-ai/claude-code"
+        log_error "Run setup again or install manually: curl -fsSL https://claude.ai/install.sh | bash"
         return 1
     fi
 
