@@ -16,6 +16,10 @@
       "type": "http",
       "url": "https://mcp.notion.com/mcp"
     },
+    "linear": {
+      "type": "sse",
+      "url": "https://mcp.linear.app/sse"
+    },
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
@@ -24,22 +28,29 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
-        "Authorization": "Bearer REDACTED"
+        "Authorization": "Bearer $(grep GITHUB_PAT ~/Documents/personal/dotfiles/.env | cut -d '=' -f2)"
       }
     },
-    "sequential-thinking": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest"
+      ]
+    },
+    "terraform": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "hashicorp/terraform-mcp-server"
+      ]
+    },
+    "gcloud": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ]
-    },
-    "serena": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena-mcp-server"
+        "@google-cloud/gcloud-mcp"
       ]
     }
   },
