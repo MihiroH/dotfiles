@@ -20,6 +20,7 @@ vim.cmd([[
   " default extensions
   let g:coc_global_extensions = [
     \ '@yaegassy/coc-volar',
+    \ '@yaegassy/coc-volar-tools',
     \ '@yaegassy/coc-tailwindcss3',
     \ 'coc-css',
     \ 'coc-cssmodules',
@@ -30,7 +31,6 @@ vim.cmd([[
     \ 'coc-html',
     \ 'coc-json',
     \ 'coc-lua',
-    \ 'coc-markdown-preview-enhanced',
     \ 'coc-pairs',
     \ 'coc-phpls',
     \ 'coc-svelte',
@@ -44,10 +44,8 @@ vim.cmd([[
     \ 'coc-biome',
     \ 'coc-prisma',
     \ 'coc-sql',
+    \ 'coc-pyright',
   \]
-
-  " Markdown preview
-  nnoremap <C-s> :CocCommand markdown-preview-enhanced.openPreview<CR>
 
   autocmd FileType scss setl iskeyword+=@-@
 
@@ -101,7 +99,7 @@ vim.cmd([[
   endfunction
 
   " Remap keys for applying codeAction to the current buffer.
-  nmap <Leader>ac  <Plug>(coc-codeaction)
+  nmap <Leader>cac  <Plug>(coc-codeaction)
   " Apply AutoFix to problem on the current line.
   nmap <Leader>qf  <Plug>(coc-fix-current)
 

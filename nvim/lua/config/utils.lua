@@ -1,6 +1,7 @@
 local cmd = vim.cmd
 local o_s = vim.o
-local map_key = vim.api.nvim_set_keymap
+-- local map_key = vim.api.nvim_set_keymap
+local map_key = vim.keymap.set
 
 local function opt(o, v, scopes)
   scopes = scopes or {o_s}
@@ -17,10 +18,11 @@ local function autocmd(group, cmds, clear)
 end
 
 local function map(modes, lhs, rhs, opts)
-  opts = opts or {}
-  opts.noremap = opts.noremap == nil and true or opts.noremap
-  if type(modes) == 'string' then modes = {modes} end
-  for _, mode in ipairs(modes) do map_key(mode, lhs, rhs, opts) end
+  -- opts = opts or {}
+  -- opts.noremap = opts.noremap == nil and true or opts.noremap
+  -- if type(modes) == 'string' then modes = {modes} end
+  -- for _, mode in ipairs(modes) do map_key(mode, lhs, rhs, opts) end
+  map_key(modes, lhs, rhs, opts)
 end
 
 return {opt = opt, autocmd = autocmd, map = map}

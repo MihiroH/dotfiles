@@ -16,7 +16,7 @@ vim.cmd([[
 vim.g['fern#default_hidden'] = 1
 vim.g['fern#renderer'] = 'nerdfont'
 
-map('n', '<C-n>', ':Fern . -reveal=% -drawer -toggle<cr>')
+map('n', '<C-n>', ':Fern . -reveal=% -drawer -toggle -width=40<cr>')
 
 -- アイコンに色をつける
 vim.cmd([[
