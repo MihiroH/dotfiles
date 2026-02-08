@@ -1,0 +1,60 @@
+{
+  "installMethod": "unknown",
+  "autoUpdates": true,
+  "firstStartTime": "2025-09-05T01:43:57.083Z",
+  "userID": "3009d882ee4a2e016647cb8aa9f591756b6f3ff6c48bdaa9d9b039a4b87190bd",
+  "mcpServers": {
+    "obsidian": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "obsidian-mcp",
+        "/Users/mihiro/Library/Mobile Documents/iCloud~md~obsidian/Documents/My vault"
+      ]
+    },
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer REDACTED"
+      }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena-mcp-server"
+      ]
+    }
+  },
+  "projects": {
+    "/Users/mihiro/Documents/personal/dotfiles": {
+      "allowedTools": [],
+      "history": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
+    }
+  }
+}

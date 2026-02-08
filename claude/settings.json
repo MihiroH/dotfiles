@@ -1,5 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
@@ -10,8 +13,36 @@
       "Bash(fd:*)",
       "Bash(find:*)",
       "Bash(rg:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(bq show:*)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker compose logs:*)",
+      "Bash(docker compose up:*)",
+      "Bash(docker compose restart:*)",
+      "Bash(gh run view:*)",
+      "WebSearch",
+      "mcp__notion__fetch",
+      "mcp__notion__notion-fetch",
+      "mcp__notion__notion-search",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__list_network_requests",
+      "mcp__chrome-devtools__get_network_request",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__get_console_message",
+      "mcp__linear__get_issue",
+      "mcp__linear__get_project",
+      "mcp__linear__get_user",
+      "mcp__linear__list_issues",
+      "mcp__linear__list_teams"
     ],
     "deny": []
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "code-simplifier@claude-plugins-official": true
   }
 }
