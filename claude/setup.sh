@@ -15,12 +15,12 @@ REQUIRED_COMMANDS=("node" "npm") # Required for Claude Code installation
 CONFIG_SOURCES=(
     "$SCRIPT_DIR/CLAUDE.md"
     "$SCRIPT_DIR/settings.json"
-    "$SCRIPT_DIR/commands"
+    "$SCRIPT_DIR/skills"
 )
 CONFIG_TARGETS=(
     "$HOME/.claude/CLAUDE.md"
     "$HOME/.claude/settings.json"
-    "$HOME/.claude/commands"
+    "$HOME/.claude/skills"
 )
 
 # Install Claude Code binary
@@ -139,7 +139,7 @@ post_setup() {
     log_info "Claude configuration locations:"
     echo "  Global instructions: $HOME/.claude/CLAUDE.md"
     echo "  Settings: $HOME/.claude/settings.json"
-    echo "  Commands: $HOME/.claude/commands"
+    echo "  Skills: $HOME/.claude/skills"
 
     return 0
 }
