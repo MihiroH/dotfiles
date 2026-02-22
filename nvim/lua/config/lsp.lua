@@ -82,13 +82,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
       navic.attach(client, bufnr)
     end
 
-    -- ESLint autofix on save
-    if client.name == 'eslint' then
-      vim.api.nvim_create_autocmd('BufWritePre', {
-        buffer = bufnr,
-        command = 'EslintFixAll',
-      })
-    end
   end,
 })
 
