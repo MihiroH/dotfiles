@@ -7,7 +7,7 @@ if not present_ then return end
 ts_config.setup {
   auto_install = true,
 
-  sync_install = true,
+  sync_install = false,
 
   ensure_installed = {
     'vim',

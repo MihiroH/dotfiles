@@ -8,5 +8,5 @@ require('lualine').setup({
     lualine_x = { 'aerial' },
   },
 
-  extensions = { 'fern', 'quickfix', }
+  extensions = { 'oil', 'quickfix', }
 })

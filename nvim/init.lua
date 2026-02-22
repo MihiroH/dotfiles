@@ -6,10 +6,9 @@
 --
 
 local fn = vim.fn
-local cmd = vim.cmd
 
--- source basic config from vim
-cmd('source ' .. fn.stdpath('config') .. '/basic.vim')
+-- basic config
+require('basic')
 
 -- init neovim-only configs
 require('gconfig')

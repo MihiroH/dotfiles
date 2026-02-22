@@ -1,25 +1,9 @@
 return {
-  -- icon
-  { 'lambdalisue/nerdfont.vim' },
-
-  -- fern renderer icon
+  -- file explorer
   {
-    'lambdalisue/fern-renderer-nerdfont.vim',
-    dependencies = { 'lambdalisue/nerdfont.vim' },
-  },
-  { 'lambdalisue/glyph-palette.vim' },
-
-  -- fern.vim
-  {
-    'lambdalisue/fern.vim',
-    branch = 'main',
-    config = function() require('config.fern') end,
-  },
-
-  -- fern hijack
-  {
-    'lambdalisue/fern-hijack.vim',
-    dependencies = { 'lambdalisue/fern.vim' },
+    'stevearc/oil.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function() require('config.oil') end,
   },
 
   -- color scheme
@@ -147,10 +131,19 @@ return {
     config = function() require('config.gitsigns') end,
   },
 
-  -- syntax checking
+  -- formatting
   {
-    'w0rp/ale',
-    config = function() require('config.ale') end,
+    'stevearc/conform.nvim',
+    event = { 'BufWritePre' },
+    cmd = { 'ConformInfo' },
+    config = function() require('config.conform') end,
+  },
+
+  -- linting
+  {
+    'mfussenegger/nvim-lint',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function() require('config.lint') end,
   },
 
   -- Pretty symbols
@@ -179,21 +172,6 @@ return {
     'segeljakt/vim-silicon',
     cmd = 'Silicon',
     config = function() require('config.silicon') end,
-  },
-
-  -- Execute commands
-  {
-    'thinca/vim-quickrun',
-    ft = { 'python', 'php', 'javascript', 'go' },
-    config = function() require('config.quickrun') end,
-  },
-
-  -- Asynchronous execution library
-  {
-    'Shougo/vimproc.vim',
-    ft = { 'python', 'php', 'javascript', 'go' },
-    build = 'make',
-    config = function() require('config.quickrun') end,
   },
 
   -- Test
