@@ -44,30 +44,30 @@ vim.lsp.config('intelephense', {
   },
 })
 
--- Enable servers (nvim-lspconfig provides default configs in lsp/ directory)
-local servers = {
-  'ts_ls',
-  'volar',
-  'tailwindcss',
-  'cssls',
-  'html',
-  'jsonls',
-  'gopls',
-  'pyright',
-  'svelte',
-  'prismals',
-  'dockerls',
-  'yamlls',
-  'sqlls',
-  'graphql',
-  'biome',
-  'dartls',
-  'lua_ls',
-  'eslint',
-  'intelephense',
-}
-
-vim.lsp.enable(servers)
+-- Mason: auto-install and auto-enable LSP servers
+require('mason-lspconfig').setup({
+  ensure_installed = {
+    'ts_ls',
+    'volar',
+    'tailwindcss',
+    'cssls',
+    'html',
+    'jsonls',
+    'gopls',
+    'pyright',
+    'svelte',
+    'prismals',
+    'dockerls',
+    'yamlls',
+    'sqlls',
+    'graphql',
+    'biome',
+    'lua_ls',
+    'eslint',
+    'intelephense',
+  },
+  -- automatic_enable = true (default) calls vim.lsp.enable() for installed servers
+})
 
 -- LspAttach: buffer-local keybindings and per-client setup
 vim.api.nvim_create_autocmd('LspAttach', {

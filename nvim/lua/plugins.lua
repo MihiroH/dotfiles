@@ -73,12 +73,14 @@ return {
     config = function() require('config.cmp') end,
   },
 
-  -- LSP core (no mason — user uses mise for LSP server management)
+  -- LSP
+  { 'mason-org/mason.nvim', config = function() require('mason').setup() end },
   {
-    'neovim/nvim-lspconfig',
-    dependencies = { 'saghen/blink.cmp' },
+    'mason-org/mason-lspconfig.nvim',
+    dependencies = { 'mason-org/mason.nvim', 'neovim/nvim-lspconfig', 'saghen/blink.cmp' },
     config = function() require('config.lsp') end,
   },
+  { 'neovim/nvim-lspconfig' },
 
   -- Auto-pairs (replaces coc-pairs)
   {
@@ -127,7 +129,6 @@ return {
   -- Search
   {
     'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
     dependencies = {
       'nvim-lua/popup.nvim',
       'nvim-lua/plenary.nvim',

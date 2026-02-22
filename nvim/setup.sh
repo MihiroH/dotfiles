@@ -54,7 +54,7 @@ post_setup() {
         log_warning "Ripgrep (rg) not found. Required for Telescope live grep."
     fi
 
-    log_info "LSP servers are managed via mise. Run 'mise install' to set up language servers."
+    log_info "LSP servers are managed via Mason. Run :Mason in Neovim to manage language servers."
     
     return 0
 }
