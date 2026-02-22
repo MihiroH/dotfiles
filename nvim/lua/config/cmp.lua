@@ -1,50 +1,36 @@
-local cmp = require('cmp')
-local luasnip = require('luasnip')
-
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
+require('blink.cmp').setup({
+  keymap = {
+    preset = 'none',
+    ['<C-Space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+    ['<C-x>'] = { 'hide', 'fallback' },
+    ['<CR>'] = { 'accept', 'fallback' },
+    ['<Tab>'] = { 'select_next', 'snippet_forward', 'fallback' },
+    ['<S-Tab>'] = { 'select_prev', 'snippet_backward', 'fallback' },
   },
-  mapping = cmp.mapping.preset.insert({
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-x>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ select = false }),
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-  }),
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-  }, {
-    { name = 'buffer' },
-    { name = 'path' },
-  }),
-})
 
--- Cmdline completion
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' },
-  }, {
-    { name = 'cmdline' },
-  }),
+  completion = {
+    -- Don't preselect first item (explicit selection required, like CoC)
+    list = { selection = { preselect = false, auto_insert = false } },
+
+    -- Auto-brackets on completion accept
+    accept = { auto_brackets = { enabled = true } },
+
+    -- Show documentation when selecting a completion item
+    documentation = { auto_show = true, auto_show_delay_ms = 500 },
+  },
+
+  sources = {
+    default = { 'lsp', 'path', 'snippets', 'buffer' },
+  },
+
+  cmdline = {
+    keymap = {
+      ['<Tab>'] = { 'show_and_insert_or_accept_single', 'select_next' },
+      ['<S-Tab>'] = { 'select_prev', 'fallback' },
+      ['<CR>'] = { 'accept_and_enter', 'fallback' },
+      ['<C-x>'] = { 'cancel', 'fallback' },
+    },
+  },
+
+  signature = { enabled = true },
 })

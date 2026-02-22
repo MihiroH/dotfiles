@@ -1,28 +1,29 @@
 local lspconfig = require('lspconfig')
 local map = require('config.utils').map
 
--- Diagnostic signs
-local signs = {
-  { name = 'DiagnosticSignError', text = '🥵' },
-  { name = 'DiagnosticSignWarn', text = '💩' },
-  { name = 'DiagnosticSignHint', text = '💡' },
-  { name = 'DiagnosticSignInfo', text = 'i' },
-}
-for _, sign in ipairs(signs) do
-  vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = '' })
-end
+-- Diagnostic configuration
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '🥵',
+      [vim.diagnostic.severity.WARN]  = '💩',
+      [vim.diagnostic.severity.HINT]  = '💡',
+      [vim.diagnostic.severity.INFO]  = 'i',
+    },
+  },
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+})
 
 -- Check if a binary exists before configuring a server
 local function has_binary(name)
   return vim.fn.executable(name) == 1
 end
 
--- Shared capabilities (nvim-cmp integration)
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-local has_cmp_lsp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
-if has_cmp_lsp then
-  capabilities = cmp_lsp.default_capabilities(capabilities)
-end
+-- Shared capabilities (blink.cmp integration)
+local capabilities = require('blink.cmp').get_lsp_capabilities()
 
 -- Shared on_attach
 local on_attach = function(client, bufnr)
@@ -138,6 +139,11 @@ map('n', '<Leader>rn', vim.lsp.buf.rename, opts)
 
 -- Code actions
 map('n', '<Leader>cac', vim.lsp.buf.code_action, opts)
+
+-- Apply quickfix to current line
+map('n', '<Leader>qf', function()
+  vim.lsp.buf.code_action({ context = { only = { 'quickfix' } } })
+end, opts)
 
 -- Code Lens
 map('n', '<Leader>cl', vim.lsp.codelens.run, opts)

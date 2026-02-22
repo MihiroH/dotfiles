@@ -66,36 +66,25 @@ return {
     config = function() require('config.surround') end,
   },
 
+  -- Completion engine
+  {
+    'saghen/blink.cmp',
+    version = '1.*',
+    config = function() require('config.cmp') end,
+  },
+
   -- LSP core (no mason — user uses mise for LSP server management)
   {
     'neovim/nvim-lspconfig',
+    dependencies = { 'saghen/blink.cmp' },
     config = function() require('config.lsp') end,
-  },
-
-  -- Completion engine
-  {
-    'hrsh7th/nvim-cmp',
-    event = 'InsertEnter',
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
-      'hrsh7th/cmp-cmdline',
-      'L3MON4D3/LuaSnip',
-      'saadparwaiz1/cmp_luasnip',
-    },
-    config = function() require('config.cmp') end,
   },
 
   -- Auto-pairs (replaces coc-pairs)
   {
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
-    config = function()
-      require('nvim-autopairs').setup()
-      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-      require('cmp').event:on('confirm_done', cmp_autopairs.on_confirm_done())
-    end,
+    config = function() require('nvim-autopairs').setup() end,
   },
 
   -- Breadcrumb navigation
