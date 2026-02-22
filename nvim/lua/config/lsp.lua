@@ -53,7 +53,7 @@ require('mason-lspconfig').setup({
     'cssls',
     'html',
     'jsonls',
-    'gopls',
+    -- 'gopls',
     'pyright',
     'svelte',
     'prismals',
