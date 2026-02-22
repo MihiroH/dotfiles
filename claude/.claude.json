@@ -24,13 +24,6 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
     },
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "Bearer $(grep GITHUB_PAT ~/Documents/personal/dotfiles/.env | cut -d '=' -f2)"
-      }
-    },
     "chrome-devtools": {
       "command": "npx",
       "args": [
