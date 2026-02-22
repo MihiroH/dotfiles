@@ -12,12 +12,7 @@ require('conform').setup({
     go = { 'gofmt' },
     lua = { 'stylua' },
   },
-  format_on_save = function(bufnr)
-    if vim.bo[bufnr].filetype == 'go' then
-      return { timeout_ms = 500 }
-    end
-    return false
-  end,
+  format_on_save = false,
 })
 
 vim.keymap.set('n', '<leader>cf', function()
