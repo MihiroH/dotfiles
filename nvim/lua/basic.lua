@@ -193,9 +193,6 @@ if vim.fn.has('syntax') == 1 then
   zenkaku_space()
 end
 
--- Pythonを有効化
-vim.g.python3_host_prog = '/Users/mihiro/.anyenv/envs/pyenv/shims/python'
-
 -- Copy the latest message to clipboard
 vim.api.nvim_create_user_command('MesToClipboard', function()
   local content = vim.fn.execute('1messages'):gsub('[\r\n]', '')
