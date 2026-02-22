@@ -45,20 +45,9 @@ setup_tool() {
 
 # Post-setup actions
 post_setup() {
-    # Install Packer if not already installed
-    local packer_path="$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim"
-    if [ ! -d "$packer_path" ]; then
-        log_info "Installing Packer plugin manager..."
-        if git clone --depth 1 https://github.com/wbthomason/packer.nvim "$packer_path"; then
-            log_success "Packer installed successfully"
-            log_info "Run :PackerSync in Neovim to install plugins"
-        else
-            log_error "Failed to install Packer. Please check your internet connection and git configuration."
-            log_info "To install manually, run:"
-            log_info "  git clone --depth 1 https://github.com/wbthomason/packer.nvim $packer_path"
-            log_warning "Continuing without Packer - you can install it later"
-        fi
-    fi
+    # lazy.nvim auto-installs on first Neovim launch
+    log_info "lazy.nvim will auto-install on first Neovim launch"
+    log_info "Run :Lazy sync in Neovim to install/update plugins"
     
     # Check for required tools for plugins
     if ! command_exists "lua"; then
