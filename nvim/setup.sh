@@ -65,11 +65,6 @@ post_setup() {
         log_warning "Lua not found. Required for some Neovim plugins."
     fi
     
-    if ! command_exists "luarocks"; then
-        log_warning "Luarocks not found. Required for CopilotChat.nvim."
-        log_info "After installing, run: luarocks install tiktoken_core"
-    fi
-    
     if ! command_exists "rg"; then
         log_warning "Ripgrep (rg) not found. Required for Telescope live grep."
     fi

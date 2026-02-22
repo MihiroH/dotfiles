@@ -7,8 +7,6 @@ vim.g.did_load_filetypes = 0
 -- views can only be fully collapsed with the global statusline
 vim.opt.laststatus = 3
 
-local loadedImpatient, _ = pcall(require, 'impatient')
-
 local g = vim.g
 local cmd = vim.cmd
 local o, wo, bo = vim.o, vim.wo, vim.bo
@@ -38,8 +36,8 @@ local disabled_built_ins = {
   'netrwPlugin',
 }
 
-for i = 1, 10 do
-  g['loaded_' .. disabled_built_ins[i]] = 1
+for _, plugin in ipairs(disabled_built_ins) do
+  g['loaded_' .. plugin] = 1
 end
 
 require('config.git-conflict')

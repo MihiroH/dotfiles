@@ -30,9 +30,7 @@ telescope.setup({
   generic_sorter = require('telescope.sorters').get_fzy_sorter,
   extensions = {
     frecency = {
-      workspaces = {
-        exo = '/home/wil/projects/research/exoplanet'
-      }
+      workspaces = {}
     },
     coc = {
       prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc

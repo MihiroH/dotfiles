@@ -206,7 +206,7 @@ return packer.startup(function(use)
     {
       'nvim-telescope/telescope-frecency.nvim',
       -- after = 'telescope.nvim',
-      requires = { 'tami5/sqlite.lua' },
+      requires = { 'kkharji/sqlite.lua' },
     },
     {
       'nvim-telescope/telescope-fzy-native.nvim',
@@ -232,26 +232,14 @@ return packer.startup(function(use)
 
   -- Pretty symbols
   use {
-    'kyazdani42/nvim-web-devicons',
+    'nvim-tree/nvim-web-devicons',
     config = function() require('nvim-web-devicons').setup() end,
   }
 
   use {
     'nvim-lualine/lualine.nvim',
-    requires = { 'kyazdani42/nvim-web-devicons', opt = true },
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true },
     config = function() require('config.lualine') end,
-  }
-
-  -- editor config
-  use {
-    'editorconfig/editorconfig-vim',
-    event = 'InsertEnter *',
-  }
-
-  -- Run your favorite search tool from Vim
-  use {
-    'mileszs/ack.vim',
-    config = function() require('config.ack') end,
   }
 
   -- Modifiable within quickfix
@@ -314,15 +302,4 @@ return packer.startup(function(use)
     config = function() require('config.translator') end,
   })
 
-  use({
-    'utilyre/barbecue.nvim',
-    tag = "*",
-    requires = {
-      'SmiteshP/nvim-navic',
-      'kyazdani42/nvim-web-devicons',
-      'neovim/nvim-lspconfig',
-    },
-    after = 'nvim-web-devicons', -- keep this if you're using NvChad
-    config = function() require('config.barbecue') end,
-  })
 end)
