@@ -66,11 +66,44 @@ return {
     config = function() require('config.surround') end,
   },
 
-  -- Coc (Language Server Protocol)
+  -- LSP core (no mason — user uses mise for LSP server management)
   {
-    'neoclide/coc.nvim',
-    commit = 'd1fc170',
-    config = function() require('config.coc') end,
+    'neovim/nvim-lspconfig',
+    config = function() require('config.lsp') end,
+  },
+
+  -- Completion engine
+  {
+    'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+    },
+    config = function() require('config.cmp') end,
+  },
+
+  -- Auto-pairs (replaces coc-pairs)
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = function()
+      require('nvim-autopairs').setup()
+      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      require('cmp').event:on('confirm_done', cmp_autopairs.on_confirm_done())
+    end,
+  },
+
+  -- Breadcrumb navigation
+  {
+    'utilyre/barbecue.nvim',
+    version = '*',
+    dependencies = { 'SmiteshP/nvim-navic', 'nvim-tree/nvim-web-devicons' },
+    config = function() require('config.barbecue') end,
   },
 
   -- A code outline window for skimming and quick navigation
@@ -111,7 +144,6 @@ return {
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-frecency.nvim',
       'nvim-telescope/telescope-fzy-native.nvim',
-      'fannheyward/telescope-coc.nvim',
       'Snikimonkd/telescope-git-conflicts.nvim',
       'LukasPietzschmann/telescope-tabs',
     },

@@ -50,13 +50,11 @@ post_setup() {
     log_info "Run :Lazy sync in Neovim to install/update plugins"
     
     # Check for required tools for plugins
-    if ! command_exists "lua"; then
-        log_warning "Lua not found. Required for some Neovim plugins."
-    fi
-    
     if ! command_exists "rg"; then
         log_warning "Ripgrep (rg) not found. Required for Telescope live grep."
     fi
+
+    log_info "LSP servers are managed via mise. Run 'mise install' to set up language servers."
     
     return 0
 }
