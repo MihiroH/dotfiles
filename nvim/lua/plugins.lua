@@ -130,20 +130,13 @@ return {
   {
     'nvim-telescope/telescope.nvim',
     dependencies = {
-      'nvim-lua/popup.nvim',
       'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope-frecency.nvim',
-      'nvim-telescope/telescope-fzy-native.nvim',
       'Snikimonkd/telescope-git-conflicts.nvim',
       'LukasPietzschmann/telescope-tabs',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
     },
     config = function() require('config.telescope') end,
   },
-  {
-    'nvim-telescope/telescope-frecency.nvim',
-    dependencies = { 'kkharji/sqlite.lua' },
-  },
-  { 'nvim-telescope/telescope-fzy-native.nvim' },
 
   -- Git
   { 'tpope/vim-fugitive' },

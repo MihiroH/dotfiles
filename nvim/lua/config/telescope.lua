@@ -28,16 +28,10 @@ telescope.setup({
   },
   file_sorter = require('telescope.sorters').get_fzy_sorter,
   generic_sorter = require('telescope.sorters').get_fzy_sorter,
-  extensions = {
-    frecency = {
-      workspaces = {}
-    },
-  },
 })
 
 -- Extensions
-telescope.load_extension('frecency')
-telescope.load_extension('fzy_native')
+telescope.load_extension('fzf')
 telescope.load_extension('conflicts')
 telescope.load_extension('telescope-tabs')
 
@@ -75,7 +69,6 @@ TelescopeThemeOpts = {
 
 map('n', '<Leader>.', function() require('telescope.builtin').find_files(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
 map('n', '<Leader>,', function() require('telescope.builtin').live_grep(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
--- map('n', '<Leader>r', function() require('telescope.builtin').frecency(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
 map('n', '<Leader>bb', function() require('telescope.builtin').buffers(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
 map('n', '<Leader>fb', function() require('telescope.builtin').git_bcommits(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
 map('n', '<Leader>fs', function() require('telescope.builtin').grep_string(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
