@@ -16,11 +16,13 @@ CONFIG_SOURCES=(
     "$SCRIPT_DIR/CLAUDE.md"
     "$SCRIPT_DIR/settings.json"
     "$SCRIPT_DIR/skills"
+    "$SCRIPT_DIR/statusline-command.sh"
 )
 CONFIG_TARGETS=(
     "$HOME/.claude/CLAUDE.md"
     "$HOME/.claude/settings.json"
     "$HOME/.claude/skills"
+    "$HOME/.claude/statusline-command.sh"
 )
 
 # Install Claude Code binary via native installer
