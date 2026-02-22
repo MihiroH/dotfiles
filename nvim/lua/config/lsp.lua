@@ -38,12 +38,6 @@ vim.lsp.config('lua_ls', {
   },
 })
 
-vim.lsp.config('intelephense', {
-  init_options = {
-    storagePath = '/tmp/intelephense',
-  },
-})
-
 -- Mason: auto-install and auto-enable LSP servers
 require('mason-lspconfig').setup({
   ensure_installed = {
@@ -64,7 +58,6 @@ require('mason-lspconfig').setup({
     'biome',
     'lua_ls',
     'eslint',
-    'intelephense',
   },
   -- automatic_enable = true (default) calls vim.lsp.enable() for installed servers
 })
