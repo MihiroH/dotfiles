@@ -102,7 +102,7 @@ install_homebrew() {
 }
 
 # Package definitions
-BREW_PACKAGES=("git" "ripgrep" "gh" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "luarocks" "lynx" "tmux")
+BREW_PACKAGES=("git" "ripgrep" "gh" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "tmux")
 BREW_CASK_PACKAGES=("font-monaspice-nerd-font" "kitty" "maccy")
 
 # Tool dependencies
@@ -110,7 +110,7 @@ get_tool_deps() {
     case "$1" in
         git) echo "git" ;;
         zsh) echo "zsh git curl" ;;
-        nvim) echo "nvim git lua luarocks" ;;
+        nvim) echo "nvim git lua" ;;
         kitty) echo "" ;;
         karabiner) echo "" ;;
         iterm) echo "curl" ;;
@@ -298,17 +298,8 @@ show_post_setup_instructions() {
                 fi
                 ;;
             nvim)
-                log_info "$step_num. For Neovim, run :PackerSync to install plugins"
+                log_info "$step_num. For Neovim, run :Lazy sync to install plugins"
                 step_num=$((step_num + 1))
-                # Only show CopilotChat instructions if tiktoken_core is not installed
-                if ! luarocks list | grep -q tiktoken_core 2>/dev/null; then
-                    log_info "$step_num. For CopilotChat.nvim:"
-                    if ! command_exists "cargo"; then
-                        log_info "   - mise install rust && mise use -g rust"
-                    fi
-                    log_info "   - luarocks install tiktoken_core"
-                    step_num=$((step_num + 1))
-                fi
                 ;;
             iterm)
                 if pgrep -x "iTerm2" > /dev/null; then
