@@ -106,9 +106,9 @@ map('n', 'K', vim.lsp.buf.hover, opts)
 
 -- CocJumpAction reimplementation
 map('n', '<C-t>', function()
-  print('Open definition in (s)plit / (v)split / (t)abedit / (n)ew: ')
+  print('Open definition in (s)plit / (v)split / (t)ab: ')
   local char = vim.fn.getcharstr()
-  local cmd_map = { s = 'split', v = 'vsplit', t = 'tabedit', n = 'tabnew' }
+  local cmd_map = { s = 'split', v = 'vsplit', t = 'tab split' }
   local cmd = cmd_map[char]
   if cmd then
     vim.cmd(cmd)
