@@ -139,9 +139,9 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 -- Commands
-vim.api.nvim_create_user_command('ESLintFix', 'EslintFixAll', {})
-vim.api.nvim_create_user_command('Prettier', function()
-  require('conform').format({ formatters = { 'prettier' }, async = true })
-end, {})
-vim.api.nvim_create_user_command('Format', '!npm run check', {})
-vim.api.nvim_create_user_command('FormatPrisma', '!npm run format:prisma', {})
+-- vim.api.nvim_create_user_command('ESLintFix', 'EslintFixAll', {})
+-- vim.api.nvim_create_user_command('Prettier', function()
+--   require('conform').format({ formatters = { 'prettier' }, async = true })
+-- end, {})
+-- vim.api.nvim_create_user_command('Format', '!npm run check', {})
+-- vim.api.nvim_create_user_command('FormatPrisma', '!npm run format:prisma', {})

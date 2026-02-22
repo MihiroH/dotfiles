@@ -83,11 +83,11 @@ return {
   { 'neovim/nvim-lspconfig' },
 
   -- Auto-pairs (replaces coc-pairs)
-  {
-    'windwp/nvim-autopairs',
-    event = 'InsertEnter',
-    config = function() require('nvim-autopairs').setup() end,
-  },
+  -- {
+  --   'windwp/nvim-autopairs',
+  --   event = 'InsertEnter',
+  --   config = function() require('nvim-autopairs').setup() end,
+  -- },
 
   -- Breadcrumb navigation
   {
