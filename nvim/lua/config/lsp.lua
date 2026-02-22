@@ -1,4 +1,3 @@
-local lspconfig = require('lspconfig')
 local map = require('config.utils').map
 
 -- Diagnostic configuration
@@ -17,98 +16,81 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
--- Check if a binary exists before configuring a server
-local function has_binary(name)
-  return vim.fn.executable(name) == 1
-end
+-- Shared capabilities (blink.cmp integration) for all servers
+vim.lsp.config('*', {
+  capabilities = require('blink.cmp').get_lsp_capabilities(),
+})
 
--- Shared capabilities (blink.cmp integration)
-local capabilities = require('blink.cmp').get_lsp_capabilities()
+-- Custom server configs
 
--- Shared on_attach
-local on_attach = function(client, bufnr)
-  -- Attach nvim-navic for barbecue breadcrumbs
-  local has_navic, navic = pcall(require, 'nvim-navic')
-  if has_navic and client.server_capabilities.documentSymbolProvider then
-    navic.attach(client, bufnr)
-  end
-end
-
--- Simple servers (default config)
-local simple_servers = {
-  { name = 'ts_ls', binary = 'typescript-language-server' },
-  { name = 'volar', binary = 'vue-language-server' },
-  { name = 'tailwindcss', binary = 'tailwindcss-language-server' },
-  { name = 'cssls', binary = 'css-languageserver' },
-  { name = 'html', binary = 'html-languageserver' },
-  { name = 'jsonls', binary = 'vscode-json-languageserver' },
-  { name = 'gopls', binary = 'gopls' },
-  { name = 'pyright', binary = 'pyright-langserver' },
-  { name = 'svelte', binary = 'svelteserver' },
-  { name = 'prismals', binary = 'prisma-language-server' },
-  { name = 'dockerls', binary = 'docker-langserver' },
-  { name = 'yamlls', binary = 'yaml-language-server' },
-  { name = 'sqlls', binary = 'sql-language-server' },
-  { name = 'graphql', binary = 'graphql-lsp' },
-  { name = 'biome', binary = 'biome' },
-  { name = 'dartls', binary = 'dart' },
-}
-
-for _, server in ipairs(simple_servers) do
-  if has_binary(server.binary) then
-    lspconfig[server.name].setup({
-      capabilities = capabilities,
-      on_attach = on_attach,
-    })
-  end
-end
-
--- Custom servers
-
--- lua_ls (Neovim runtime)
-if has_binary('lua-language-server') then
-  lspconfig.lua_ls.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = {
-      Lua = {
-        runtime = { version = 'LuaJIT' },
-        workspace = {
-          library = vim.api.nvim_get_runtime_file('', true),
-          checkThirdParty = false,
-        },
-        diagnostics = {
-          globals = { 'vim' },
-        },
+vim.lsp.config('lua_ls', {
+  settings = {
+    Lua = {
+      runtime = { version = 'LuaJIT' },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file('', true),
+        checkThirdParty = false,
+      },
+      diagnostics = {
+        globals = { 'vim' },
       },
     },
-  })
-end
+  },
+})
 
--- eslint (autofix on save)
-if has_binary('vscode-eslint-language-server') then
-  lspconfig.eslint.setup({
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-      on_attach(client, bufnr)
+vim.lsp.config('intelephense', {
+  init_options = {
+    storagePath = '/tmp/intelephense',
+  },
+})
+
+-- Enable servers (nvim-lspconfig provides default configs in lsp/ directory)
+local servers = {
+  'ts_ls',
+  'volar',
+  'tailwindcss',
+  'cssls',
+  'html',
+  'jsonls',
+  'gopls',
+  'pyright',
+  'svelte',
+  'prismals',
+  'dockerls',
+  'yamlls',
+  'sqlls',
+  'graphql',
+  'biome',
+  'dartls',
+  'lua_ls',
+  'eslint',
+  'intelephense',
+}
+
+vim.lsp.enable(servers)
+
+-- LspAttach: buffer-local keybindings and per-client setup
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local bufnr = args.buf
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if not client then return end
+
+    -- Attach nvim-navic for barbecue breadcrumbs
+    local has_navic, navic = pcall(require, 'nvim-navic')
+    if has_navic and client.server_capabilities.documentSymbolProvider then
+      navic.attach(client, bufnr)
+    end
+
+    -- ESLint autofix on save
+    if client.name == 'eslint' then
       vim.api.nvim_create_autocmd('BufWritePre', {
         buffer = bufnr,
         command = 'EslintFixAll',
       })
-    end,
-  })
-end
-
--- intelephense (PHP)
-if has_binary('intelephense') then
-  lspconfig.intelephense.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    init_options = {
-      storagePath = '/tmp/intelephense',
-    },
-  })
-end
+    end
+  end,
+})
 
 -- Keybindings
 local opts = { noremap = true, silent = true }
