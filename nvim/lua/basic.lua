@@ -137,22 +137,15 @@ vim.keymap.set('i', '<C-b>', '<Left>')
 vim.keymap.set('i', '<C-f>', '<Right>')
 
 -- Search selected text with * and # in visual mode
-vim.keymap.set('x', '*', function()
-  local save = vim.fn.getreg('s')
-  vim.cmd('normal! gv"sy')
-  local pattern = '\\V' .. vim.fn.escape(vim.fn.getreg('s'), '/\\'):gsub('\n', '\\n')
-  vim.fn.setreg('/', pattern)
-  vim.fn.setreg('s', save)
-  vim.cmd('/' .. vim.fn.getreg('/'))
-end)
-vim.keymap.set('x', '#', function()
-  local save = vim.fn.getreg('s')
-  vim.cmd('normal! gv"sy')
-  local pattern = '\\V' .. vim.fn.escape(vim.fn.getreg('s'), '/\\'):gsub('\n', '\\n')
-  vim.fn.setreg('/', pattern)
-  vim.fn.setreg('s', save)
-  vim.cmd('?' .. vim.fn.getreg('/'))
-end)
+local function visual_search(direction)
+  vim.cmd('normal! "vy')
+  local text = vim.fn.escape(vim.fn.getreg('v'), '\\/.*$^~[]')
+  vim.fn.setreg('/', '\\V' .. text)
+  vim.cmd('normal! ' .. (direction == 'forward' and 'n' or 'N'))
+end
+
+vim.keymap.set('x', '*', function() visual_search('forward') end,  { noremap = true, silent = true })
+vim.keymap.set('x', '#', function() visual_search('backward') end, { noremap = true, silent = true })
 
 -- Store undo files in a single location
 if vim.fn.has('persistent_undo') == 1 then
