@@ -42,8 +42,8 @@ return {
   -- Better syntax highlighting
   {
     'nvim-treesitter/nvim-treesitter',
+    lazy = false,
     build = ':TSUpdate',
-    config = function() require('config.treesitter') end,
   },
 
   -- Documentation
@@ -62,7 +62,7 @@ return {
   -- surround motions
   {
     'kylechui/nvim-surround',
-    version = '*',
+    event = 'VeryLazy',
     config = function() require('config.surround') end,
   },
 
@@ -94,10 +94,15 @@ return {
 
   -- Breadcrumb navigation
   {
-    'utilyre/barbecue.nvim',
-    version = '*',
-    dependencies = { 'SmiteshP/nvim-navic', 'nvim-tree/nvim-web-devicons' },
-    config = function() require('config.barbecue') end,
+    'Bekaboo/dropbar.nvim',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+      {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'make'
+      },
+    },
+    config = function() require('config.breadcrumb') end
   },
 
   -- A code outline window for skimming and quick navigation

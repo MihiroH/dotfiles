@@ -69,12 +69,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if not client then return end
 
-    -- Attach nvim-navic for barbecue breadcrumbs
-    local has_navic, navic = pcall(require, 'nvim-navic')
-    if has_navic and client.server_capabilities.documentSymbolProvider then
-      navic.attach(client, bufnr)
-    end
-
   end,
 })
 
