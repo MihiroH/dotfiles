@@ -17,13 +17,14 @@ return {
   -- indent
   {
     'lukas-reineke/indent-blankline.nvim',
+    event = 'VeryLazy',
     config = function() require('config.indent') end,
   },
 
   -- Preview colors of hexcodes
   {
     'norcalli/nvim-colorizer.lua',
-    event = 'VimEnter',
+    event = 'VeryLazy',
     config = function() require('colorizer').setup() end,
   },
 
@@ -37,6 +38,7 @@ return {
   -- text move, duplication
   {
     't9md/vim-textmanip',
+    event = 'VeryLazy',
     config = function() require('config.textmanip') end,
   },
 
@@ -49,16 +51,10 @@ return {
     end,
   },
 
-  -- Documentation
-  {
-    'danymat/neogen',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    config = function() require('config.neogen') end,
-  },
-
   -- comments
   {
     'numToStr/Comment.nvim',
+    event = 'VeryLazy',
     config = function() require('config.comment') end,
   },
 
@@ -98,6 +94,7 @@ return {
   -- Breadcrumb navigation
   {
     'Bekaboo/dropbar.nvim',
+    event = 'BufReadPost',
     dependencies = {
       'nvim-tree/nvim-web-devicons',
       {
@@ -111,7 +108,7 @@ return {
   -- A code outline window for skimming and quick navigation
   {
     'stevearc/aerial.nvim',
-    opts = {},
+    event = 'VeryLazy',
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
       'nvim-tree/nvim-web-devicons'
@@ -122,6 +119,7 @@ return {
   -- GitHub copilot
   {
     'github/copilot.vim',
+    event = 'InsertEnter',
     config = function() require('config.copilot') end,
   },
 
@@ -137,12 +135,14 @@ return {
 
   {
     'hat0uma/csvview.nvim',
+    ft = { 'csv', 'tsv' },
     config = function() require('config.csvview') end,
   },
 
   -- Search
   {
     'nvim-telescope/telescope.nvim',
+    event = 'VeryLazy',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'Snikimonkd/telescope-git-conflicts.nvim',
@@ -154,9 +154,13 @@ return {
   },
 
   -- Git
-  { 'tpope/vim-fugitive' },
+  {
+    'tpope/vim-fugitive',
+    cmd = { 'Git', 'Gcd', 'Gdiffsplit', 'Gvdiffsplit', 'Gread', 'Gwrite' },
+  },
   {
     'lewis6991/gitsigns.nvim',
+    event = 'BufReadPost',
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function() require('config.gitsigns') end,
   },
@@ -179,22 +183,21 @@ return {
   -- Pretty symbols
   {
     'nvim-tree/nvim-web-devicons',
+    lazy = true,
     config = function() require('nvim-web-devicons').setup() end,
   },
 
   {
     'nvim-lualine/lualine.nvim',
+    event = 'VeryLazy',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function() require('config.lualine') end,
   },
 
   -- Modifiable within quickfix
-  { 'stefandtw/quickfix-reflector.vim' },
-
-  -- GUI Git Operator
   {
-    'kdheepak/lazygit.nvim',
-    config = function() require('config.lazygit') end,
+    'stefandtw/quickfix-reflector.vim',
+    ft = 'qf',
   },
 
   -- Generate image of the source code
@@ -214,19 +217,15 @@ return {
   -- Visualizing test coverage results
   {
     'andythigpen/nvim-coverage',
+    cmd = { 'Coverage', 'CoverageLoad', 'CoverageShow', 'CoverageHide', 'CoverageToggle', 'CoverageSummary' },
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function() require('config.coverage') end,
-  },
-
-  -- Live Share
-  {
-    'jbyuki/instant.nvim',
-    config = function() require('config.liveshare') end,
   },
 
   -- Translator
   {
     'voldikss/vim-translator',
+    event = 'VeryLazy',
     config = function() require('config.translator') end,
   },
 }
