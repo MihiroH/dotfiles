@@ -8,4 +8,11 @@ oil.setup({
   },
 })
 
-map('n', '<C-n>', function() oil.toggle_float() end)
+map('n', '<C-n>', function()
+  oil.toggle_float()
+  vim.schedule(function()
+    if oil.get_cursor_entry() then
+      oil.open_preview()
+    end
+  end)
+end)
