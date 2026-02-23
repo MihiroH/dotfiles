@@ -11,7 +11,7 @@ oil.setup({
 map('n', '<C-n>', function()
   oil.toggle_float()
   vim.schedule(function()
-    if oil.get_cursor_entry() then
+    if vim.api.nvim_buf_is_valid(0) and oil.get_cursor_entry() then
       oil.open_preview()
     end
   end)
