@@ -5,14 +5,11 @@
 -- |_|\_|___\___/ \_/ |___|_|  |_|
 --
 
-local fn = vim.fn
-local cmd = vim.cmd
+-- Basic config
+require('basic')
 
--- source basic config from vim
-cmd('source ' .. fn.stdpath('config') .. '/basic.vim')
-
--- init neovim-only configs
+-- Init neovim-only configs
 require('gconfig')
 
--- init plugins
-require('plugins')
+-- Bootstrap lazy.nvim
+require('config.lazy')
