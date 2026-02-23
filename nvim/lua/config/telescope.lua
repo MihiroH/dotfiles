@@ -28,12 +28,18 @@ telescope.setup({
   },
   file_sorter = require('telescope.sorters').get_fzy_sorter,
   generic_sorter = require('telescope.sorters').get_fzy_sorter,
+  extensions = {
+    ['ui-select'] = {
+      require('telescope.themes').get_dropdown(TelescopeThemeOpts)
+    }
+  },
 })
 
 -- Extensions
 telescope.load_extension('fzf')
 telescope.load_extension('conflicts')
 telescope.load_extension('telescope-tabs')
+telescope.load_extension('ui-select')
 
 tabs.setup()
 

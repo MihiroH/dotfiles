@@ -149,6 +149,7 @@ return {
       'nvim-lua/plenary.nvim',
       'Snikimonkd/telescope-git-conflicts.nvim',
       'LukasPietzschmann/telescope-tabs',
+      'nvim-telescope/telescope-ui-select.nvim',
       { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
     },
     config = function() require('config.telescope') end,
