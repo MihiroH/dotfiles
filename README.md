@@ -141,16 +141,17 @@ Version control system with custom configuration.
 Modern Vim-based text editor configured as a complete IDE.
 
 - **Config Location**: `~/.config/nvim/`
-- **Plugin Manager**: Packer
+- **Plugin Manager**: Lazy.nvim
 - **Key Features**:
   - AI assistance (Copilot, Avante, Claude Code)
   - LSP support with autocompletion
-  - File navigation (Telescope, Fern)
+  - Breadcrumb navigation (dropbar.nvim)
+  - File navigation (Telescope, Oil)
   - Git integration (Gitsigns, Lazygit)
   - Testing and debugging tools
   - Beautiful themes and UI
 
-**Post-install**: Run `:PackerSync` in Neovim to install plugins.
+**Post-install**: Run `:Lazy sync` in Neovim to install plugins.
 
 ### 🐱 Kitty
 Fast, feature-rich terminal emulator.
