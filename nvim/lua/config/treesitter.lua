@@ -1,0 +1,26 @@
+vim.schedule(function()
+  require('nvim-treesitter').install {
+    'bash',
+    'css',
+    'dockerfile',
+    'go',
+    'graphql',
+    'html',
+    'javascript',
+    'json',
+    'lua',
+    'markdown',
+    'markdown_inline',
+    'python',
+    'regex',
+    'sql',
+    'svelte',
+    'swift',
+    'tsx',
+    'typescript',
+    'vim',
+    'vimdoc',
+    'vue',
+    'yaml',
+  }
+end)
