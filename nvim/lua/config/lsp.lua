@@ -48,11 +48,22 @@ vim.lsp.config('lua_ls', {
   },
 })
 
+-- Mason:
+require('mason').setup({
+  ui = {
+    icons = {
+      package_installed = '✓',
+      package_pending = '➜',
+      package_uninstalled = '✗'
+    }
+  }
+})
+
 -- Mason: auto-install and auto-enable LSP servers
 require('mason-lspconfig').setup({
   ensure_installed = {
     'ts_ls',
-    'volar',
+    'vue_ls',
     'tailwindcss',
     'cssls',
     'html',
