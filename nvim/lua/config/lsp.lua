@@ -33,6 +33,25 @@ vim.lsp.config('*', {
 
 -- Custom server configs
 
+-- Vue / TypeScript hybrid mode
+-- https://github.com/vuejs/language-tools/wiki/Neovim#configuration
+local vue_language_server_path = vim.fn.stdpath('data') .. '/mason/packages/vue-language-server/node_modules/@vue/language-server'
+
+vim.lsp.config('ts_ls', {
+  init_options = {
+    plugins = {
+      {
+        name = '@vue/typescript-plugin',
+        location = vue_language_server_path,
+        languages = { 'vue' },
+      },
+    },
+  },
+  filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+})
+
+vim.lsp.config('vue_ls', {})
+
 vim.lsp.config('lua_ls', {
   settings = {
     Lua = {
@@ -47,6 +66,9 @@ vim.lsp.config('lua_ls', {
     },
   },
 })
+
+vim.lsp.config('sourcekit', {})
+vim.lsp.enable('sourcekit')
 
 -- Mason:
 require('mason').setup({
@@ -105,7 +127,7 @@ map('n', '<C-t>', function()
 end, opts)
 
 -- Show documentation
-map('n', 'K', vim.lsp.buf.hover, opts)
+map('n', 'K', function() vim.lsp.buf.hover({ border = 'rounded' }) end, opts)
 
 -- Symbol renaming
 map('n', '<Leader>rn', vim.lsp.buf.rename, opts)
