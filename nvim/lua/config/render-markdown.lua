@@ -1,7 +1,7 @@
 require('render-markdown').setup({
-  file_types = {
-    'markdown',
-    'copilot-chat',
-    'Avante',
+  completions = {
+    lsp = {
+      enabled = true
+    }
   },
 })

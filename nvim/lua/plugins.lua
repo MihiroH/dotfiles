@@ -2,6 +2,7 @@ return {
   -- file explorer
   {
     'stevearc/oil.nvim',
+    lazy = false,
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function() require('config.oil') end,
   },
@@ -130,6 +131,8 @@ return {
 
   {
     'iamcco/markdown-preview.nvim',
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    ft = { 'markdown' },
     build = function() vim.fn['mkdp#util#install']() end,
     config = function() require('config.markdown-preview') end,
   },
