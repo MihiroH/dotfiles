@@ -141,9 +141,18 @@ vim.keymap.set('i', '<C-f>', '<Right>')
 -- Search selected text with * and # in visual mode
 local function visual_search(direction)
   vim.cmd('normal! "vy')
-  local text = vim.fn.escape(vim.fn.getreg('v'), '\\/.*$^~[]')
+  local text = vim.fn.getreg('v')
+  -- Block visual: only search for the first line
+  if vim.fn.getregtype('v'):byte(1) == 22 then
+    text = text:match('[^\n]+') or text
+  end
+  text = vim.fn.escape(text, '\\/')
+  text = text:gsub('\n', '\\n')
   vim.fn.setreg('/', '\\V' .. text)
-  vim.cmd('normal! ' .. (direction == 'forward' and 'n' or 'N'))
+  local ok = pcall(vim.cmd, 'normal! ' .. (direction == 'forward' and 'n' or 'N'))
+  if not ok then
+    vim.notify('Pattern not found', vim.log.levels.WARN)
+  end
 end
 
 vim.keymap.set('x', '*', function() visual_search('forward') end,  { noremap = true, silent = true })
