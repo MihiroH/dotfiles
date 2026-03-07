@@ -9,6 +9,9 @@ cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 # Get basename of current directory (equivalent to zsh %c)
 current_dir=$(basename "$cwd")
 
+# Awk pattern for non-substantive files (tests, locks, generated, snapshots)
+FILTER='/\.(lock|snap)$/ || /package-lock\.json/ || /pnpm-lock\.yaml/ || /yarn\.lock/ || /\.test\./ || /\.spec\./ || /_test\./ || /_spec\./ || /\/__snapshots__\// || /\.generated\./'
+
 # Get git branch if in a git repo (equivalent to __git_ps1)
 git_branch=""
 diff_stats=""
@@ -36,13 +39,13 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
         else
             # Feature branches: check explicit config, PR base (cached), or merge-base heuristic
             git_dir=$(git -C "$cwd" rev-parse --git-dir 2>/dev/null)
+            cache_file="$git_dir/.statusline-base-$(echo "$branch" | tr '/' '-')"
 
             # 1. Explicit git config: git config branch.<name>.base <parent-branch>
             base=$(git -C "$cwd" config "branch.$branch.base" 2>/dev/null)
 
             if [ -z "$base" ]; then
-                # 2. Cached PR base (< 5 minutes)
-                cache_file="$git_dir/.statusline-base-$(echo "$branch" | tr '/' '-')"
+                # 2. Cached base (< 5 minutes) — covers both PR and heuristic results
                 if [ -f "$cache_file" ] && [ $(($(date +%s) - $(stat -f %m "$cache_file" 2>/dev/null || stat -c %Y "$cache_file" 2>/dev/null))) -lt 300 ]; then
                     base=$(cat "$cache_file")
                 else
@@ -56,51 +59,57 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
             fi
 
             if [ -z "$base" ]; then
-                    # 3. Heuristic: merge-base analysis
-                    # A parent's tip is on our first-parent ancestry. A child's tip diverges.
-                    head_sha=$(git -C "$cwd" rev-parse HEAD 2>/dev/null)
-                    first_parent_shas=$(git -C "$cwd" rev-list --first-parent HEAD 2>/dev/null)
-                    same_base=""
-                    ahead_base="" ahead_best=""
-                    dist_base="" dist_best=""
-                    while IFS= read -r candidate; do
-                        [ "$candidate" = "$branch" ] && continue
-                        mb=$(git -C "$cwd" merge-base HEAD "$candidate" 2>/dev/null) || continue
-                        if [ "$mb" = "$head_sha" ]; then
-                            ahead=$(git -C "$cwd" rev-list --count "HEAD..$candidate" 2>/dev/null) || continue
-                            if [ "$ahead" -eq 0 ]; then
-                                # Same commit as HEAD: likely the parent we branched from
-                                same_base="$candidate"
-                                continue
-                            fi
-                            if [ -z "$ahead_best" ] || [ "$ahead" -lt "$ahead_best" ]; then
-                                ahead_best="$ahead"
-                                ahead_base="$candidate"
-                            fi
-                        else
-                            # Distance > 0: check if candidate tip is on our first-parent path (parent, not child)
-                            candidate_sha=$(git -C "$cwd" rev-parse "$candidate" 2>/dev/null)
-                            echo "$first_parent_shas" | grep -q "^$candidate_sha$" || continue
-                            dist=$(git -C "$cwd" rev-list --count "$mb..HEAD" 2>/dev/null) || continue
-                            if [ -z "$dist_best" ] || [ "$dist" -lt "$dist_best" ]; then
-                                dist_best="$dist"
-                                dist_base="$candidate"
-                            fi
+                # 3. Heuristic: merge-base analysis
+                # A parent's tip is on our first-parent ancestry. A child's tip diverges.
+                head_sha=$(git -C "$cwd" rev-parse HEAD 2>/dev/null)
+                same_base=""
+                ahead_base="" ahead_best=""
+                dist_base="" dist_best=""
+                while IFS= read -r candidate; do
+                    [ "$candidate" = "$branch" ] && continue
+                    mb=$(git -C "$cwd" merge-base HEAD "$candidate" 2>/dev/null) || continue
+                    if [ "$mb" = "$head_sha" ]; then
+                        ahead=$(git -C "$cwd" rev-list --count "HEAD..$candidate" 2>/dev/null) || continue
+                        if [ "$ahead" -eq 0 ]; then
+                            # Same commit as HEAD: likely the parent we branched from
+                            same_base="$candidate"
+                            continue
                         fi
-                    done < <(git -C "$cwd" for-each-ref --format='%(refname:short)' refs/heads/ 2>/dev/null)
-
-                    # Check if branch has own commits (via reflog)
-                    own_commits=$(git -C "$cwd" reflog show "$branch" --format='%gs' 2>/dev/null | grep -c "^commit" || true)
-
-                    if [ "$own_commits" -eq 0 ] && [ -n "$same_base" ]; then
-                        base="$same_base"
-                    elif [ "$own_commits" -eq 0 ] && [ -n "$ahead_base" ]; then
-                        base="$ahead_base"
-                    elif [ -n "$dist_base" ]; then
-                        base="$dist_base"
-                    elif [ -n "$ahead_base" ]; then
-                        base="$ahead_base"
+                        if [ -z "$ahead_best" ] || [ "$ahead" -lt "$ahead_best" ]; then
+                            ahead_best="$ahead"
+                            ahead_base="$candidate"
+                        fi
+                    else
+                        # Check if candidate tip is on our first-parent path (parent, not child)
+                        candidate_sha=$(git -C "$cwd" rev-parse "$candidate" 2>/dev/null)
+                        git -C "$cwd" merge-base --is-ancestor "$candidate_sha" HEAD 2>/dev/null || continue
+                        # Verify it's on the first-parent path (not a merged side branch)
+                        git -C "$cwd" log --first-parent --format='%H' HEAD 2>/dev/null | grep -q "^$candidate_sha$" || continue
+                        dist=$(git -C "$cwd" rev-list --count "$mb..HEAD" 2>/dev/null) || continue
+                        if [ -z "$dist_best" ] || [ "$dist" -lt "$dist_best" ]; then
+                            dist_best="$dist"
+                            dist_base="$candidate"
+                        fi
                     fi
+                done < <(git -C "$cwd" for-each-ref --format='%(refname:short)' refs/heads/ 2>/dev/null)
+
+                # Check if branch has own commits (via reflog)
+                own_commits=$(git -C "$cwd" reflog show "$branch" --format='%gs' 2>/dev/null | grep -c "^commit" || true)
+
+                if [ "$own_commits" -eq 0 ] && [ -n "$same_base" ]; then
+                    base="$same_base"
+                elif [ "$own_commits" -eq 0 ] && [ -n "$ahead_base" ]; then
+                    base="$ahead_base"
+                elif [ -n "$dist_base" ]; then
+                    base="$dist_base"
+                elif [ -n "$ahead_base" ]; then
+                    base="$ahead_base"
+                fi
+
+                # Cache heuristic result to avoid re-running the loop
+                if [ -n "$base" ]; then
+                    echo "$base" > "$cache_file" 2>/dev/null
+                fi
             fi
         fi
 
@@ -108,27 +117,16 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
             merge_base=$(git -C "$cwd" merge-base "$base" HEAD 2>/dev/null)
             if [ -n "$merge_base" ]; then
                 # Diff merge-base against working tree (committed + staged + unstaged)
-                # Compute both total and substantive (excluding tests, locks, generated) stats
                 numstat=$(git -C "$cwd" diff --numstat "$merge_base" 2>/dev/null)
 
-                # Count untracked files (split into substantive vs non-substantive)
-                untracked_stats=$(git -C "$cwd" ls-files --others --exclude-standard 2>/dev/null | awk '
-                    /\.(lock|snap)$/ || /package-lock\.json/ || /pnpm-lock\.yaml/ || /yarn\.lock/ ||
-                    /\.test\./ || /\.spec\./ || /_test\./ || /_spec\./ ||
-                    /\/__snapshots__\// || /\.generated\./ { next }
-                    { sub_count++ }
-                    END { print NR+0, sub_count+0 }
-                ')
-                ut_total=$(echo "$untracked_stats" | awk '{print $1}')
-                ut_sub=$(echo "$untracked_stats" | awk '{print $2}')
-                # Count lines in untracked files (must run wc in repo dir for relative paths)
-                ut_all_lines=$(cd "$cwd" && git ls-files --others --exclude-standard -z 2>/dev/null | xargs -0 wc -l 2>/dev/null | tail -1 | awk '{print $1+0}')
-                ut_sub_lines=$(cd "$cwd" && git ls-files --others --exclude-standard 2>/dev/null | awk '
-                    /\.(lock|snap)$/ || /package-lock\.json/ || /pnpm-lock\.yaml/ || /yarn\.lock/ ||
-                    /\.test\./ || /\.spec\./ || /_test\./ || /_spec\./ ||
-                    /\/__snapshots__\// || /\.generated\./ { next }
-                    { print }
-                ' | tr '\n' '\0' | xargs -0 wc -l 2>/dev/null | tail -1 | awk '{print $1+0}')
+                # List untracked files once, compute both all and substantive line counts
+                untracked_files=$(cd "$cwd" && git ls-files --others --exclude-standard 2>/dev/null)
+                ut_all_lines=0
+                ut_sub_lines=0
+                if [ -n "$untracked_files" ]; then
+                    ut_all_lines=$(cd "$cwd" && echo "$untracked_files" | tr '\n' '\0' | xargs -0 wc -l 2>/dev/null | tail -1 | awk '{print $1+0}')
+                    ut_sub_lines=$(echo "$untracked_files" | awk "$FILTER { next } { print }" | (cd "$cwd" && tr '\n' '\0' | xargs -0 wc -l 2>/dev/null) | tail -1 | awk '{print $1+0}')
+                fi
 
                 stats=$(echo "$numstat" | awk -v ut_all="$ut_all_lines" -v ut_sub="$ut_sub_lines" '
                     {
@@ -144,10 +142,7 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
                         print all_ins+ut_all+0, all_del+0, sub_ins+ut_sub+0, sub_del+0
                     }
                 ')
-                all_ins=$(echo "$stats" | awk '{print $1}')
-                all_del=$(echo "$stats" | awk '{print $2}')
-                sub_ins=$(echo "$stats" | awk '{print $3}')
-                sub_del=$(echo "$stats" | awk '{print $4}')
+                read all_ins all_del sub_ins sub_del <<< "$stats"
                 sub_total=$((sub_ins + sub_del))
                 all_total=$((all_ins + all_del))
 
