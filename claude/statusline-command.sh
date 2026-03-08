@@ -72,7 +72,8 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
 
             if [ -z "$base" ]; then
                 # 3. Heuristic: merge-base analysis
-                # A parent's tip is on our first-parent ancestry. A child's tip diverges.
+                # Parent branches have a close merge-base and haven't diverged much.
+                # Children have diverged more from the merge-base than we have.
                 head_sha=$(git -C "$cwd" rev-parse HEAD 2>/dev/null)
                 same_base=""
                 ahead_base="" ahead_best=""
@@ -92,14 +93,12 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
                             ahead_base="$candidate"
                         fi
                     else
-                        # Check if candidate tip is on our first-parent path (parent, not child)
-                        candidate_sha=$(git -C "$cwd" rev-parse "$candidate" 2>/dev/null)
-                        git -C "$cwd" merge-base --is-ancestor "$candidate_sha" HEAD 2>/dev/null || continue
-                        # Verify it's on the first-parent path (not a merged side branch)
-                        git -C "$cwd" log --first-parent --format='%H' HEAD 2>/dev/null | grep -q "^$candidate_sha$" || continue
-                        dist=$(git -C "$cwd" rev-list --count "$mb..HEAD" 2>/dev/null) || continue
-                        if [ -z "$dist_best" ] || [ "$dist" -lt "$dist_best" ]; then
-                            dist_best="$dist"
+                        our_dist=$(git -C "$cwd" rev-list --count "$mb..HEAD" 2>/dev/null) || continue
+                        their_dist=$(git -C "$cwd" rev-list --count "$mb..$candidate" 2>/dev/null) || continue
+                        # Skip children: they diverge more from the merge-base than we do
+                        [ "$their_dist" -lt "$our_dist" ] || continue
+                        if [ -z "$dist_best" ] || [ "$our_dist" -lt "$dist_best" ]; then
+                            dist_best="$our_dist"
                             dist_base="$candidate"
                         fi
                     fi
