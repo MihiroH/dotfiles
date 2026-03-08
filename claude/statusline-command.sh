@@ -5,6 +5,7 @@ input=$(cat)
 
 # Extract data from JSON
 cwd=$(echo "$input" | jq -r '.workspace.current_dir')
+context_pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
 # Get basename of current directory (equivalent to zsh %c)
 current_dir=$(basename "$cwd")
@@ -13,12 +14,23 @@ current_dir=$(basename "$cwd")
 FILTER='/\.(lock|snap)$/ || /package-lock\.json/ || /pnpm-lock\.yaml/ || /yarn\.lock/ || /\.test\./ || /\.spec\./ || /_test\./ || /_spec\./ || /\/__snapshots__\// || /\.generated\./'
 
 # Get git branch if in a git repo (equivalent to __git_ps1)
-git_branch=""
+git_branch_name=""
 diff_stats=""
+ahead_behind=""
 if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
     branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git -C "$cwd" rev-parse --short HEAD 2>/dev/null)
     if [ -n "$branch" ]; then
-        git_branch=$(printf " \033[38;2;58;148;197m(%s)\033[0m" "$branch")
+        git_branch_name="$branch"
+
+        # Ahead/behind upstream
+        upstream=$(git -C "$cwd" rev-parse --abbrev-ref "@{upstream}" 2>/dev/null)
+        if [ -n "$upstream" ]; then
+            read ahead behind < <(git -C "$cwd" rev-list --left-right --count "HEAD...$upstream" 2>/dev/null)
+            ab=""
+            [ "$ahead" -gt 0 ] 2>/dev/null && ab="↑${ahead}"
+            [ "$behind" -gt 0 ] 2>/dev/null && ab="${ab}${ab:+ }↓${behind}"
+            [ -n "$ab" ] && ahead_behind="$ab"
+        fi
 
         # Detect base branch to diff against
         base=""
@@ -114,6 +126,7 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
         fi
 
         if [ -n "$base" ]; then
+            git_branch_name="$branch \033[2mfrom $base\033[38;2;58;148;197m"
             merge_base=$(git -C "$cwd" merge-base "$base" HEAD 2>/dev/null)
             if [ -n "$merge_base" ]; then
                 # Diff merge-base against working tree (committed + staged + unstaged)
@@ -169,4 +182,23 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
 fi
 
 # Output the status line
-printf "%s%s%s" "$current_dir" "$git_branch" "$diff_stats"
+dir_extras=""
+if [ "$context_pct" -gt 0 ] 2>/dev/null; then
+    if [ "$context_pct" -le 50 ]; then
+        ctx_color="32" # green
+    elif [ "$context_pct" -le 80 ]; then
+        ctx_color="33" # yellow
+    else
+        ctx_color="31" # red
+    fi
+    dir_extras="${dir_extras} \033[${ctx_color}m🧠 ${context_pct}%\033[0m"
+fi
+printf "%s%b\n" "$current_dir" "$dir_extras"
+if [ -n "${git_branch_name:-}" ]; then
+    ab_display=""
+    [ -n "$ahead_behind" ] && ab_display=" \033[2m${ahead_behind}\033[0m"
+    printf "\033[38;2;58;148;197m%b\033[0m%b\n" "$git_branch_name" "$ab_display"
+fi
+if [ -n "$diff_stats" ]; then
+    printf "%b\n" "$diff_stats"
+fi
