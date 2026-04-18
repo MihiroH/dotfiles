@@ -71,3 +71,6 @@ gcloud() {
         command gcloud "$@"
     fi
 }
+
+# ireko
+alias ireko="node /Users/mihiro/Documents/personal/ireko/dist/cli.cjs"

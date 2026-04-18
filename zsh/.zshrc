@@ -8,6 +8,20 @@ export EDITOR="nvim"
 # Prevent input keys from being displayed with Ctrl+e or Ctrl+f
 [[ -n $KITTY_WINDOW_ID ]] && stty sane
 
+# Set kitty tab title to git repo root name or current directory basename
+function _kitty_tab_title_precmd() {
+  local title
+  local git_root
+  git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+  if [[ -n "$git_root" ]]; then
+    title="${git_root:t}"
+  else
+    title="${PWD:t}"
+  fi
+  print -Pn "\e]2;${title}\a"
+}
+precmd_functions+=(_kitty_tab_title_precmd)
+
 # Git
 fpath=(~/.zsh $fpath)
 if [ -f ${HOME}/.zsh/git-completion.zsh ]; then
@@ -95,7 +109,6 @@ export PATH=$PATH:$GOBIN
 # 補完機能
 autoload -Uz compinit
 compinit
-
 # Emacs風キーバインド viがいいひとは -vで
 bindkey -e
 
@@ -262,3 +275,16 @@ fpath=(/Users/mihiro/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
+
+# 履歴検索（↑↓キーで入力中のコマンドにマッチする履歴を辿る）
+# Kept at end of .zshrc so nothing sourced earlier can clobber the bindings
+# (observed: phantom shell sessions were reverting arrows to up/down-line-or-history).
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search
+bindkey "${terminfo[kcud1]}" down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+bindkey "^[OA" up-line-or-beginning-search
+bindkey "^[OB" down-line-or-beginning-search
