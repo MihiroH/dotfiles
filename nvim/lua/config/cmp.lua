@@ -9,7 +9,7 @@ require('blink.cmp').setup({
 
   completion = {
     -- Don't preselect first item (explicit selection required, like CoC)
-    list = { selection = { preselect = false, auto_insert = false } },
+    list = { selection = { preselect = false, auto_insert = true } },
 
     -- Auto-brackets on completion accept
     accept = { auto_brackets = { enabled = true } },

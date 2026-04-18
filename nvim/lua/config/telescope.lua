@@ -73,8 +73,17 @@ TelescopeThemeOpts = {
   layout_config = layout_config,
 }
 
-map('n', '<Leader>.', function() require('telescope.builtin').find_files(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
+map('n', '<Leader>.', function()
+  require('telescope.builtin').find_files(require('telescope.themes').get_dropdown(
+    vim.tbl_extend('force', TelescopeThemeOpts, { files = true, hidden = true })
+  ))
+end, opts)
 map('n', '<Leader>,', function() require('telescope.builtin').live_grep(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
+map('n', '<Leader><Leader>,', function()
+  require('telescope.builtin').grep_string(require('telescope.themes').get_dropdown(
+    vim.tbl_extend('force', TelescopeThemeOpts, { shorten_path = true, word_match = "-w", only_sort_text = true, search = '' })
+  ))
+end, opts)
 map('n', '<Leader>bb', function() require('telescope.builtin').buffers(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
 map('n', '<Leader>fb', function() require('telescope.builtin').git_bcommits(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)
 map('n', '<Leader>fs', function() require('telescope.builtin').grep_string(require('telescope.themes').get_dropdown(TelescopeThemeOpts)) end, opts)

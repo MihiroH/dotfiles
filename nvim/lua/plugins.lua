@@ -131,6 +131,7 @@ return {
       vim.g.mkdp_filetypes = { 'markdown' }
     end,
     ft = { 'markdown' },
+    config = function() require('config.markdown-preview') end,
   },
 
   {
@@ -168,16 +169,9 @@ return {
   -- formatting
   {
     'stevearc/conform.nvim',
-    event = { 'BufWritePre' },
+    event = 'BufReadPost',
     cmd = { 'ConformInfo' },
     config = function() require('config.conform') end,
-  },
-
-  -- linting
-  {
-    'mfussenegger/nvim-lint',
-    event = { 'BufReadPre', 'BufNewFile' },
-    config = function() require('config.lint') end,
   },
 
   -- Pretty symbols

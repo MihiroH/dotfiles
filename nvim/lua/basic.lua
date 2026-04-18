@@ -47,7 +47,7 @@ vim.opt.swapfile = false
 -- Auto-reload files when changed externally
 vim.opt.autoread = true
 -- Faster CursorHold events (default 4000ms is too slow for diagnostic popups)
-vim.opt.updatetime = 250
+vim.opt.updatetime = 500
 -- Allow opening other files while buffer is unsaved
 vim.opt.hidden = true
 -- Show command being typed in status bar

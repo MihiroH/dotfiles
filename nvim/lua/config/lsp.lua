@@ -22,6 +22,12 @@ vim.diagnostic.config({
 -- Show diagnostics in a floating window when holding cursor
 vim.api.nvim_create_autocmd('CursorHold', {
   callback = function()
+    -- Skip if a floating window is already visible (e.g., hover documentation)
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_config(win).relative ~= '' then
+        return
+      end
+    end
     vim.diagnostic.open_float(nil)
   end,
 })
@@ -51,6 +57,17 @@ vim.lsp.config('ts_ls', {
 })
 
 vim.lsp.config('vue_ls', {})
+
+-- Suppress noisy ESLint config resolution errors (e.g. missing eslint-config-prettier)
+do
+  local original_notify = vim.notify
+  vim.notify = function(msg, ...)
+    if type(msg) == 'string' and msg:match('eslint') and (msg:match('Failed to load config') or msg:match('Failed to load plugin') or msg:match('Cannot read config file')) then
+      return
+    end
+    return original_notify(msg, ...)
+  end
+end
 
 vim.lsp.config('lua_ls', {
   settings = {
@@ -127,7 +144,15 @@ map('n', '<C-t>', function()
 end, opts)
 
 -- Show documentation
-map('n', 'K', function() vim.lsp.buf.hover({ border = 'rounded' }) end, opts)
+map('n', 'K', function()
+  -- Close existing floating windows (e.g., diagnostic popups) so hover takes priority
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_config(win).relative ~= '' then
+      pcall(vim.api.nvim_win_close, win, true)
+    end
+  end
+  vim.lsp.buf.hover({ border = 'rounded' })
+end, opts)
 
 -- Symbol renaming
 map('n', '<Leader>rn', vim.lsp.buf.rename, opts)
