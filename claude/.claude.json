@@ -4,6 +4,10 @@
   "firstStartTime": "2025-09-05T01:43:57.083Z",
   "userID": "3009d882ee4a2e016647cb8aa9f591756b6f3ff6c48bdaa9d9b039a4b87190bd",
   "mcpServers": {
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
     "obsidian": {
       "command": "npx",
       "args": [
