@@ -29,7 +29,7 @@ OPTIONS:
     --help, -h       Show this help message
 
 TOOLS:
-    zsh, git, nvim, karabiner, iterm, kitty, mise, claude, tmux
+    zsh, git, nvim, karabiner, iterm, kitty, cmux, mise, claude, tmux
 
 EXAMPLES:
     $0                    # Setup all default tools
@@ -102,7 +102,7 @@ install_homebrew() {
 }
 
 # Package definitions
-BREW_PACKAGES=("git" "ripgrep" "gh" "ghq" "fd" "fzf" "nvim" "gpg" "mise" "lua" "tmux")
+BREW_PACKAGES=("git" "ripgrep" "gh" "ghq" "fd" "fzf" "nvim" "prettierd" "gpg" "mise" "lua" "tmux")
 BREW_CASK_PACKAGES=("font-monaspice-nerd-font" "kitty" "maccy")
 
 # Tool dependencies
@@ -112,6 +112,7 @@ get_tool_deps() {
         zsh) echo "zsh git curl" ;;
         nvim) echo "nvim git lua" ;;
         kitty) echo "" ;;
+        cmux) echo "" ;;
         karabiner) echo "" ;;
         iterm) echo "curl" ;;
         mise) echo "mise" ;;
@@ -176,7 +177,7 @@ install_packages() {
 }
 
 # Default tools to set up if none are specified
-DEFAULT_TOOLS=("zsh" "git" "nvim" "kitty" "karabiner" "iterm" "claude" "tmux")
+DEFAULT_TOOLS=("zsh" "git" "nvim" "cmux" "karabiner" "iterm" "claude" "tmux")
 
 # Available tools
 AVAILABLE_TOOLS=()

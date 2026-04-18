@@ -34,7 +34,7 @@ setup:
 # Verify all installations
 verify:
 	@echo "Verifying all tool installations..."
-	@for tool in claude zsh git nvim kitty karabiner iterm tmux; do \
+	@for tool in claude zsh git nvim cmux karabiner iterm tmux; do \
 		if [ -f "./$$tool/setup.sh" ]; then \
 			echo ""; \
 			./$$tool/setup.sh verify || true; \

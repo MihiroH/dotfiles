@@ -1,0 +1,11 @@
+{
+  "theme": "system",
+  "shortcuts": {
+    "bindings": {
+      "focusPaneLeft": "ctrl+cmd+h",
+      "focusPaneRight": "ctrl+cmd+l",
+      "focusPaneUp": "ctrl+cmd+k",
+      "focusPaneDown": "ctrl+cmd+j"
+    }
+  }
+}

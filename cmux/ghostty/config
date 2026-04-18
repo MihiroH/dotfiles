@@ -1,0 +1,28 @@
+# Ghostty config read by cmux for terminal rendering.
+# cmux is built on Ghostty, so font/color/cursor settings come from here.
+# App-level settings (tabs, splits, shortcuts) live in ../settings.json.
+#
+# Reference: https://ghostty.org/docs/config/reference
+
+# Fonts
+font-family = "MonaspiceNe NFM"
+font-family = "Hiragino Kaku Gothic ProN"
+font-feature = -dlig
+font-size = 14
+adjust-cell-height = 20%
+
+# Cursor
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor
+# Theme (ported from kitty everforest_light)
+# To list available built-in themes: `ghostty +list-themes`
+theme = Everforest Light Custom
+
+# Scrollback
+scrollback-limit = 10000
+
+# Clipboard
+copy-on-select = clipboard
+clipboard-read = allow
+clipboard-write = allow
