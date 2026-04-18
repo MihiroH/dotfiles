@@ -11,7 +11,7 @@ context_pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut
 current_dir=$(basename "$cwd")
 
 # Awk pattern for non-substantive files (tests, locks, generated, snapshots)
-FILTER='/\.(lock|snap)$/ || /package-lock\.json/ || /pnpm-lock\.yaml/ || /yarn\.lock/ || /\.test\./ || /\.spec\./ || /_test\./ || /_spec\./ || /\/__snapshots__\// || /\.generated\./'
+FILTER='/\.(lock|snap)$/ || /package-lock\.json/ || /pnpm-lock\.yaml/ || /.terraform.lock.hcl/ || /yarn\.lock/ || /\.test\./ || /\.spec\./ || /_test\./ || /_spec\./ || /\/__snapshots__\// || /\.generated\./'
 
 # Get git branch if in a git repo (equivalent to __git_ps1)
 git_branch_name=""
