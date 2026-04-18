@@ -1,0 +1,346 @@
+// 設計ドキュメント用テンプレート
+//
+// 使い方:
+// 1. 対象の機能名・システム名に置換
+// 2. 4 象限 (Context / Architecture / Behavior / Tradeoffs) を埋める
+// 3. Non-Goals と Open Questions を省略しない
+
+@root
+diagram "機能 X の設計" {
+  flowchart TB
+    Design([機能 X の設計]) --> Why[なぜ作るか]
+    Design --> Arch[アーキテクチャ]
+    Design --> Flow[主要フロー]
+    Design --> Data[データ設計]
+    Design --> Choice[技術選定]
+    Design --> Risk[リスクと対策]
+    Design --> Open[未解決の論点]
+    Design --> Rollout[リリース計画]
+
+    ref Why > Context
+    ref Arch > Architecture
+    ref Flow > MainFlows
+    ref Data > DataModel
+    ref Choice > TechChoices
+    ref Risk > RisksAndMitigations
+    ref Open > OpenQuestions
+    ref Rollout > RolloutPlan
+}
+
+// ─────────────────────────────────
+// Context — なぜ作るか
+// ─────────────────────────────────
+
+diagram Context "背景と目的" {
+  flowchart TB
+    Current([現状]) --> P1[課題 1]
+    Current --> P2[課題 2]
+
+    P1 --> Goal([解決したいゴール])
+    P2 --> Goal
+
+    Goal --> Scope[Goals: 今回やること]
+    Goal --> NG[Non-Goals: 今回やらないこと]
+    Goal --> Cons[制約]
+
+    ref P1 > ProblemDetail1
+    ref Scope > GoalsDetail
+    ref NG > OutOfScope
+    ref Cons > Constraints
+}
+
+diagram ProblemDetail1 "課題 1 の詳細" {
+  flowchart TB
+    P([課題 1]) --> Impact[影響]
+    P --> Root[根本原因]
+    P --> Evidence[データ]
+}
+
+diagram GoalsDetail "Goals: 今回達成すること" {
+  flowchart TB
+    Goals([Goals]) --> G1[達成 1]
+    Goals --> G2[達成 2]
+    Goals --> Metrics[成功指標]
+
+    Metrics --> M1["測定可能な数値<br/>例: P95 レイテンシ < 200ms"]
+}
+
+diagram OutOfScope "Non-Goals: 今回やらないこと" {
+  flowchart TB
+    NG([Non-Goals]) --> N1[やらない 1]
+    NG --> N2[やらない 2]
+
+    N1 --> Why1["なぜやらないか<br/>→ 別 PR / 次四半期で対応"]
+}
+
+diagram Constraints "制約" {
+  flowchart TB
+    C([制約]) --> Tech[技術的制約]
+    C --> Biz[ビジネス的制約]
+    C --> Time[時間的制約]
+
+    Tech --> T1["既存の TypeORM を踏襲<br/>新 ORM は入れない"]
+    Biz --> B1["顧客データに触れるため<br/>SOC2 準拠が必須"]
+    Time --> Ti1["Q4 リリース必須"]
+}
+
+// ─────────────────────────────────
+// Architecture — 静的構造
+// ─────────────────────────────────
+
+diagram Architecture "システム全体構成" {
+  flowchart TB
+    subgraph Client["Client"]
+      Web[Web App]
+    end
+
+    subgraph Edge["Edge"]
+      RP[Reverse Proxy]
+    end
+
+    subgraph Backend["Backend"]
+      API[API Server]
+      Worker[Background Worker]
+    end
+
+    subgraph Data["Data Layer"]
+      DB[(Primary DB)]
+      Cache[(Cache)]
+      Queue[(Queue)]
+    end
+
+    Web --> RP
+    RP --> API
+    API --> DB
+    API --> Cache
+    API --> Queue
+    Queue --> Worker
+    Worker --> DB
+
+    ref RP > RPConfig
+    ref API > APIDetail
+    ref Worker > WorkerDetail
+    ref DB > DataModel
+}
+
+diagram RPConfig "Reverse Proxy の設定" {
+  flowchart TB
+    RP([RP]) --> Route[ルーティング]
+    RP --> Auth[認証]
+    RP --> Rate[レート制限]
+}
+
+diagram APIDetail "API サーバーの内部構成" {
+  flowchart TB
+    API([API Server]) --> Controllers[Controllers]
+    API --> Services[Services]
+    API --> Repos[Repositories]
+    API --> Middleware[Middleware]
+
+    Controllers --> Services
+    Services --> Repos
+    Middleware -.applied to.-> Controllers
+}
+
+diagram WorkerDetail "Worker の構成" {
+  flowchart TB
+    W([Worker]) --> Handlers[Job Handlers]
+    W --> Schedule[Schedule Config]
+
+    Handlers --> H1[Handler 1]
+    Handlers --> H2[Handler 2]
+}
+
+// ─────────────────────────────────
+// Behavior — 主要フロー
+// ─────────────────────────────────
+
+diagram MainFlows "主要フロー一覧" {
+  flowchart TB
+    Flows([主要フロー]) --> F1[フロー 1: ...]
+    Flows --> F2[フロー 2: ...]
+    Flows --> F3[フロー 3: ...]
+
+    ref F1 > Flow1Detail
+    ref F2 > Flow2Detail
+    ref F3 > Flow3Detail
+}
+
+diagram Flow1Detail "フロー 1: ユーザー操作 A の詳細" {
+  sequenceDiagram
+    participant U as User
+    participant Web as Web
+    participant API as API
+    participant DB as DB
+
+    U->>Web: 操作
+    Web->>API: リクエスト
+    API->>DB: クエリ
+    DB->>API: 結果
+    API->>Web: レスポンス
+    Web->>U: 表示
+}
+
+diagram Flow2Detail "フロー 2: 非同期処理" {
+  sequenceDiagram
+    participant API as API
+    participant Q as Queue
+    participant W as Worker
+    participant Ext as External_Service
+
+    API->>Q: Enqueue job
+    Note over W: polling
+    Q->>W: Dequeue job
+    W->>Ext: 外部サービス呼び出し
+    Ext->>W: 結果
+    W->>W: DB 更新
+}
+
+diagram Flow3Detail "フロー 3: エラーフロー" {
+  stateDiagram-v2
+    [*] --> InProgress
+
+    InProgress --> Success: 処理完了
+    InProgress --> Retrying: 一時的エラー
+    Retrying --> InProgress: リトライ
+    Retrying --> Failed: リトライ上限
+    InProgress --> Failed: 致命的エラー
+    Failed --> [*]
+    Success --> [*]
+}
+
+// ─────────────────────────────────
+// Data — データモデル
+// ─────────────────────────────────
+
+diagram DataModel "データモデル" {
+  classDiagram
+    class Entity1 {
+      +id: string
+      +name: string
+      +createdAt: Date
+    }
+    class Entity2 {
+      +id: string
+      +entity1Id: string
+      +value: number
+    }
+
+    Entity1 "1" --> "N" Entity2
+
+    note for Entity1 "主エンティティ"
+}
+
+// ─────────────────────────────────
+// Tradeoffs — 技術選定
+// ─────────────────────────────────
+
+diagram TechChoices "技術選定" {
+  flowchart TB
+    Choice([選定項目]) --> C1[データストア]
+    Choice --> C2[キャッシュ]
+    Choice --> C3[メッセージキュー]
+
+    ref C1 > DataStoreChoice
+    ref C2 > CacheChoice
+    ref C3 > QueueChoice
+}
+
+diagram DataStoreChoice "データストアの選定" {
+  classDiagram
+    class OptionA {
+      +特徴 1: ...
+      +特徴 2: ...
+      +pros: ...
+      +cons: ...
+    }
+    class OptionB {
+      +特徴 1: ...
+      +特徴 2: ...
+      +pros: ...
+      +cons: ...
+    }
+    class OptionC {
+      +特徴 1: ...
+      +特徴 2: ...
+      +pros: ...
+      +cons: ...
+    }
+
+    note for OptionA "採用: 理由をここに"
+}
+
+diagram CacheChoice "キャッシュの選定" {
+  classDiagram
+    class Redis {
+      +データ型: 豊富
+      +永続化: あり
+      +採用実績: あり
+    }
+    class Memcached {
+      +データ型: 単純
+      +永続化: なし
+      +採用実績: なし
+    }
+
+    note for Redis "採用: 既存採用実績"
+}
+
+diagram QueueChoice "キューの選定" {
+  classDiagram
+    class CloudTasks {
+      +遅延実行: 得意
+      +スケール: 自動
+      +運用: マネージド
+    }
+    class PubSub {
+      +pub-sub モデル: 得意
+      +スケール: 自動
+      +運用: マネージド
+    }
+}
+
+// ─────────────────────────────────
+// Risks — リスクと対策
+// ─────────────────────────────────
+
+diagram RisksAndMitigations "リスクと対策" {
+  flowchart TB
+    Risk([想定リスク]) --> R1[リスク 1]
+    Risk --> R2[リスク 2]
+    Risk --> R3[リスク 3]
+
+    R1 --> M1["mitigation:<br/>対策の内容"]
+    R2 --> M2["mitigation:<br/>対策の内容"]
+    R3 --> M3["mitigation:<br/>対策の内容"]
+}
+
+// ─────────────────────────────────
+// Open Questions — 未解決の論点
+// ─────────────────────────────────
+
+diagram OpenQuestions "未解決の論点" {
+  flowchart TB
+    Open([未解決の論点]) --> Q1["Q1: ..."]
+    Open --> Q2["Q2: ..."]
+    Open --> Q3["Q3: ..."]
+
+    Q1 --> P1["調査方法 / 決定期限"]
+    Q2 --> P2["調査方法 / 決定期限"]
+    Q3 --> P3["調査方法 / 決定期限"]
+}
+
+// ─────────────────────────────────
+// Rollout — リリース計画
+// ─────────────────────────────────
+
+diagram RolloutPlan "リリース計画" {
+  flowchart TB
+    Rollout([リリース計画]) --> P1["フェーズ 1:<br/>機能 α をカナリアリリース"]
+    P1 --> P2["フェーズ 2:<br/>1% → 10% → 50%"]
+    P2 --> P3["フェーズ 3:<br/>全面展開"]
+
+    Rollout --> Fallback[切り戻し手順]
+    Fallback --> FB1["feature flag で即切り戻し"]
+    Fallback --> FB2["DB スキーマは後方互換"]
+}

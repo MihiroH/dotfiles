@@ -1,0 +1,343 @@
+// 既存コード理解用テンプレート: リポジトリの構造マップ
+//
+// 使い方:
+// 1. リポジトリ名に置換
+// 2. 目的に合わせて不要な図を削除
+// 3. ファイルパス・関数名は具体的に記述
+// 4. "罠" セクションを必ず埋める
+
+@root
+diagram "リポジトリ X の読み方" {
+  flowchart TB
+    Repo([リポジトリ X]) --> Overview[このシステムが解く問題]
+    Repo --> Path[読む順番]
+    Repo --> Tree[ディレクトリ構成]
+    Repo --> Entry[エントリーポイント]
+    Repo --> Flow[主要なデータフロー]
+    Repo --> Domain[ドメイン概念]
+    Repo --> Infra[実行環境]
+    Repo --> Dev[開発時の動かし方]
+    Repo --> Gotcha[ハマりどころ]
+
+    ref Overview > SystemOverview
+    ref Path > ReadingPath
+    ref Tree > DirectoryTree
+    ref Entry > EntryPoints
+    ref Flow > MainDataFlows
+    ref Domain > DomainModel
+    ref Infra > InfraStack
+    ref Dev > DevWorkflow
+    ref Gotcha > Gotchas
+}
+
+// ─────────────────────────────────
+// システム全体像
+// ─────────────────────────────────
+
+diagram SystemOverview "このシステムが解く問題" {
+  flowchart TB
+    Problem([解決する問題]) --> P1["具体的な問題を 1 文で"]
+
+    System([システムの役割]) --> R1["役割 1"]
+    System --> R2["役割 2"]
+    System --> R3["役割 3"]
+
+    User([主な利用者]) --> U1["ユーザー群 1"]
+    User --> U2["ユーザー群 2"]
+
+    Tech([技術スタック概要]) --> T1["フロント: ..."]
+    Tech --> T2["バック: ..."]
+    Tech --> T3["インフラ: ..."]
+}
+
+// ─────────────────────────────────
+// 初見の人の読む順番
+// ─────────────────────────────────
+
+diagram ReadingPath "初めての人が読む順番" {
+  flowchart TB
+    S1["1. SystemOverview で目的を掴む"] --> S2["2. DirectoryTree で場所を覚える"]
+    S2 --> S3["3. EntryPoints でどこから始まるか知る"]
+    S3 --> S4["4. MainDataFlows で代表的な処理を辿る"]
+    S4 --> S5["5. DomainModel で概念を整理"]
+    S5 --> S6["6. Gotchas で罠を知る"]
+    S6 --> Done([実装に入れる])
+
+    ref S1 > SystemOverview
+    ref S2 > DirectoryTree
+    ref S3 > EntryPoints
+    ref S4 > MainDataFlows
+    ref S5 > DomainModel
+    ref S6 > Gotchas
+}
+
+// ─────────────────────────────────
+// ディレクトリ構成
+// ─────────────────────────────────
+
+diagram DirectoryTree "主要ディレクトリの役割" {
+  flowchart TB
+    Root([repo/]) --> Apps[apps/]
+    Root --> Packages[packages/]
+    Root --> Infra[infra/]
+    Root --> Docs[docs/]
+    Root --> Scripts[scripts/]
+
+    Apps --> A1["apps/web/<br/>フロントエンド"]
+    Apps --> A2["apps/api/<br/>API サーバー"]
+    Apps --> A3["apps/worker/<br/>非同期処理"]
+
+    Packages --> P1["packages/schema/<br/>共通スキーマ定義"]
+    Packages --> P2["packages/api-client/<br/>API クライアント"]
+
+    Infra --> I1["infra/terraform/<br/>インフラ定義"]
+    Infra --> I2["infra/docker/<br/>ローカル開発環境"]
+
+    ref A2 > APIInternal
+    ref P1 > SchemaPackage
+    ref I1 > InfraDetail
+}
+
+diagram APIInternal "apps/api の内部構成" {
+  flowchart TB
+    API([apps/api/src/]) --> Controllers["controllers/<br/>HTTP ハンドラ"]
+    API --> Services["services/<br/>ビジネスロジック"]
+    API --> Repositories["repositories/<br/>DB アクセス"]
+    API --> Middleware["middleware/<br/>共通処理"]
+    API --> Entities["entities/<br/>TypeORM エンティティ"]
+
+    Controllers -.呼ぶ.-> Services
+    Services -.使う.-> Repositories
+    Repositories -.管理.-> Entities
+}
+
+diagram SchemaPackage "packages/schema の役割" {
+  flowchart TB
+    S([packages/schema]) --> E[entities: DB テーブル定義]
+    S --> D[dtos: API 入出力型]
+    S --> V[validators: バリデーションルール]
+
+    Note1["apps/api と apps/admin で共有<br/>型安全性の源"]
+}
+
+diagram InfraDetail "infra/terraform の構成" {
+  flowchart TB
+    TF([infra/terraform/]) --> Env[env/]
+    TF --> Modules[modules/]
+
+    Env --> E1[staging/]
+    Env --> E2[production/]
+
+    Modules --> M1[lb/: ロードバランサー]
+    Modules --> M2[gke/: Kubernetes]
+    Modules --> M3[db/: Cloud SQL]
+}
+
+// ─────────────────────────────────
+// エントリーポイント
+// ─────────────────────────────────
+
+diagram EntryPoints "エントリーポイント一覧" {
+  flowchart TB
+    Entry([実行開始点]) --> API["apps/api/src/main.ts<br/>→ NestJS API サーバー"]
+    Entry --> Web["apps/web/server/index.ts<br/>→ Nuxt SSR サーバー"]
+    Entry --> Worker["apps/worker/src/main.ts<br/>→ Cloud Run Job"]
+    Entry --> CLI["scripts/*.ts<br/>→ 運用スクリプト"]
+
+    ref API > APIBootstrap
+    ref Worker > WorkerBootstrap
+}
+
+diagram APIBootstrap "API サーバー起動手順" {
+  sequenceDiagram
+    participant Main as main.ts
+    participant Nest as NestFactory
+    participant App as AppModule
+
+    Main->>Nest: NestFactory.create(AppModule)
+    Nest->>App: モジュール初期化
+    App->>App: TypeORM 接続
+    App->>App: Middleware 登録
+    App->>App: Controllers 登録
+    Main->>Nest: app.listen(port)
+    Note over Main: リクエスト待機開始
+}
+
+diagram WorkerBootstrap "Worker 起動手順" {
+  sequenceDiagram
+    participant Main as main.ts
+    participant Job as JobRunner
+    participant DB as DB
+
+    Main->>Job: コマンド引数でジョブ特定
+    Job->>DB: 接続
+    Job->>Job: ジョブ実行
+    Job->>Main: 終了コード
+    Note over Main: Cloud Run Job として完走
+}
+
+// ─────────────────────────────────
+// 主要データフロー
+// ─────────────────────────────────
+
+diagram MainDataFlows "主要なデータフロー" {
+  flowchart TB
+    Flows([主要フロー]) --> F1[フロー 1: 代表的な処理]
+    Flows --> F2[フロー 2: 非同期処理]
+    Flows --> F3[フロー 3: 認証]
+
+    ref F1 > Flow1Trace
+    ref F2 > Flow2Trace
+    ref F3 > Flow3Trace
+}
+
+diagram Flow1Trace "フロー 1: ユーザー操作 → DB 保存" {
+  sequenceDiagram
+    participant User as User
+    participant Web as Web
+    participant API as API (NestJS)
+    participant Svc as SomeService
+    participant Repo as SomeRepository
+    participant DB as MySQL
+
+    User->>Web: 操作
+    Web->>API: POST /api/...
+    Note over API: apps/api/src/controllers/some.controller.ts
+    API->>Svc: SomeService.doSomething()
+    Note over Svc: apps/api/src/services/some.service.ts
+    Svc->>Repo: repository.save()
+    Repo->>DB: INSERT
+    DB->>Repo: result
+    Repo->>Svc: entity
+    Svc->>API: result
+    API->>Web: JSON
+    Web->>User: 表示
+}
+
+diagram Flow2Trace "フロー 2: 非同期ジョブの投入と実行" {
+  sequenceDiagram
+    participant API as API
+    participant Q as Cloud Tasks
+    participant W as Worker
+    participant Ext as 外部 API
+
+    API->>Q: Enqueue
+    Note over API: services/queue.service.ts
+    Q->>W: Dispatch (HTTP)
+    W->>Ext: 外部呼び出し
+    Ext->>W: 結果
+    W->>W: DB 更新
+    W->>Q: 200 OK (job complete)
+}
+
+diagram Flow3Trace "フロー 3: 認証" {
+  sequenceDiagram
+    participant C as Client
+    participant RP as Reverse_Proxy
+    participant API as API
+    participant Auth as AuthMiddleware
+
+    C->>RP: Cookie: session=...
+    RP->>API: リクエスト (転送)
+    API->>Auth: 認証チェック
+    Note over Auth: apps/api/src/middleware/auth.ts
+    alt 認証 OK
+      Auth->>API: 次のハンドラへ
+      API->>C: 200 OK
+    else 認証 NG
+      Auth->>C: 401
+    end
+}
+
+// ─────────────────────────────────
+// ドメイン概念
+// ─────────────────────────────────
+
+diagram DomainModel "ドメイン概念と関係" {
+  classDiagram
+    class Entity1 {
+      +id: string
+      +name: string
+    }
+    class Entity2 {
+      +id: string
+      +entity1Id: string
+    }
+    class Entity3 {
+      +id: string
+      +entity2Id: string
+    }
+
+    Entity1 "1" --> "N" Entity2
+    Entity2 "1" --> "N" Entity3
+
+    note for Entity1 "packages/schema/src/entities/entity1.ts"
+}
+
+// ─────────────────────────────────
+// 実行環境
+// ─────────────────────────────────
+
+diagram InfraStack "本番の実行環境" {
+  flowchart TB
+    Prod([Production on GCP]) --> LB[Cloud Load Balancer]
+    Prod --> Run[Cloud Run]
+    Prod --> GAE[App Engine]
+    Prod --> SQL[(Cloud SQL: MySQL)]
+    Prod --> BQ[(BigQuery)]
+
+    LB --> Run
+    LB --> GAE
+    Run --> SQL
+    GAE --> SQL
+
+    Note1["Terraform で管理: infra/terraform/"]
+}
+
+// ─────────────────────────────────
+// 開発時の動かし方
+// ─────────────────────────────────
+
+diagram DevWorkflow "ローカル開発環境" {
+  flowchart TB
+    Dev([開発開始]) --> S1["1. docker-compose up<br/>→ MySQL / Redis 起動"]
+    S1 --> S2["2. pnpm install<br/>→ 依存インストール"]
+    S2 --> S3["3. pnpm --filter api dev<br/>→ API サーバー起動"]
+    S3 --> S4["4. pnpm --filter web dev<br/>→ フロントエンド起動"]
+
+    Dev --> Test["テスト実行"]
+    Test --> T1["pnpm test: ユニット"]
+    Test --> T2["pnpm e2e: E2E"]
+}
+
+// ─────────────────────────────────
+// 罠・ハマりどころ
+// ─────────────────────────────────
+
+diagram Gotchas "ハマりどころ" {
+  flowchart TB
+    Gotcha([注意点]) --> G1[技術的な罠]
+    Gotcha --> G2[規約的な罠]
+    Gotcha --> G3[歴史的な罠]
+
+    G1 --> G11["罠 1 の説明<br/>→ 回避方法"]
+    G1 --> G12["罠 2 の説明<br/>→ 回避方法"]
+
+    G2 --> G21["コミットメッセージ規約:<br/>Conventional Commits"]
+    G2 --> G22["PR の粒度:<br/>1 PR = 1 論点"]
+
+    G3 --> G31["legacy/ 以下は触る前に要相談"]
+
+    ref G11 > GotchaDetail1
+}
+
+diagram GotchaDetail1 "罠 1 の詳細" {
+  flowchart TB
+    G([罠 1]) --> Symptom[症状]
+    G --> Cause[原因]
+    G --> Fix[対処法]
+
+    Symptom --> S1["起きること"]
+    Cause --> C1["なぜ起きるか"]
+    Fix --> F1["どう回避するか"]
+}

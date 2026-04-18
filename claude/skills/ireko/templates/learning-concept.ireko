@@ -1,0 +1,161 @@
+// 学習ノート用テンプレート: 概念を 5W1H で深掘る
+//
+// 使い方:
+// 1. "X" を学習対象のトピック名に置換
+// 2. 各ダイアグラムの内容をトピックに合わせて埋める
+// 3. 不要なサブ図は削除
+// 4. 共通ハブが必要なら (対比型の場合) 追加
+
+@root
+diagram "X の学び方" {
+  flowchart TB
+    Start([ここから]) --> What[1. What: X とは]
+    What --> Why[2. Why: なぜ使うか]
+    Why --> How[3. How: どう動くか]
+    How --> Real[4. 実例]
+
+    Why --> Side1[応用: トピック A]
+    How --> Side2[応用: トピック B]
+    How --> Trap[落とし穴・限界]
+
+    Real --> Done([理解完了])
+
+    ref What > WhatX
+    ref Why > WhyX
+    ref How > HowX
+    ref Side1 > TopicA
+    ref Side2 > TopicB
+    ref Trap > XLimits
+    ref Real > RealWorldX
+}
+
+// ─────────────────────────────────
+// What — X とは
+// ─────────────────────────────────
+
+diagram WhatX "What — X とは" {
+  flowchart LR
+    subgraph Without["X なしの場合"]
+      A1[状態 A] --> A2[問題 A]
+    end
+
+    subgraph With["X ありの場合"]
+      B1[状態 B] --> B2[解決]
+    end
+
+    Note1["X の本質を 1 段落で:<br/>- 何を解決するか<br/>- 何と何の間に位置するか<br/>- 似た概念との違い"]
+}
+
+// ─────────────────────────────────
+// Why — なぜ使うか (各目的から How へ ref を張る)
+// ─────────────────────────────────
+
+diagram WhyX "Why — なぜ X を使うか" {
+  flowchart TB
+    Why([X の目的]) --> G1[目的 1]
+    Why --> G2[目的 2]
+    Why --> G3[目的 3]
+
+    // 重要: 各目的から How 詳細へ ref を張る
+    ref G1 > HowAchievesG1
+    ref G2 > HowAchievesG2
+    ref G3 > HowAchievesG3
+}
+
+// ─────────────────────────────────
+// How — 全体の仕組み
+// ─────────────────────────────────
+
+diagram HowX "How — X の仕組み" {
+  sequenceDiagram
+    participant A as Actor_A
+    participant X as System_X
+    participant B as Actor_B
+
+    A->>X: リクエスト
+    X->>X: 処理 1
+    ref X > HowAchievesG1
+    X->>B: 処理 2
+    B->>X: 応答
+    X->>A: 結果
+}
+
+// ─────────────────────────────────
+// Why → How のブリッジ (目的 1 がどう実現されるか)
+// ─────────────────────────────────
+
+diagram HowAchievesG1 "目的 1 を実現する仕組み" {
+  flowchart TB
+    G1([目的 1]) --> M1[手段 1]
+    G1 --> M2[手段 2]
+
+    M1 --> D1["具体的な動作<br/>例: ..."]
+    M2 --> D2["具体的な動作<br/>例: ..."]
+}
+
+diagram HowAchievesG2 "目的 2 を実現する仕組み" {
+  flowchart TB
+    G2([目的 2]) --> M1[手段 1]
+    M1 --> D1["具体的な動作"]
+}
+
+diagram HowAchievesG3 "目的 3 を実現する仕組み" {
+  flowchart TB
+    G3([目的 3]) --> M1[手段 1]
+    M1 --> D1["具体的な動作"]
+}
+
+// ─────────────────────────────────
+// 応用トピック
+// ─────────────────────────────────
+
+diagram TopicA "応用: トピック A" {
+  flowchart TB
+    A([トピック A]) --> P1[ポイント 1]
+    A --> P2[ポイント 2]
+}
+
+diagram TopicB "応用: トピック B" {
+  flowchart TB
+    B([トピック B]) --> P1[ポイント 1]
+    B --> P2[ポイント 2]
+}
+
+// ─────────────────────────────────
+// 落とし穴・限界
+// ─────────────────────────────────
+
+diagram XLimits "X の落とし穴・限界" {
+  flowchart TB
+    Limit([X の限界]) --> L1[限界 1]
+    Limit --> L2[限界 2]
+    Limit --> L3[代替手段]
+
+    L1 --> D1["問題が起きる条件<br/>→ 対策"]
+    L2 --> D2["問題が起きる条件<br/>→ 対策"]
+    L3 --> D3["X を使わない方が良いケース"]
+}
+
+// ─────────────────────────────────
+// 実例
+// ─────────────────────────────────
+
+diagram RealWorldX "実際に使われている X" {
+  flowchart TB
+    Real([X の実例]) --> Cat1[カテゴリ 1]
+    Real --> Cat2[カテゴリ 2]
+
+    Cat1 --> I1[実装 1]
+    Cat1 --> I2[実装 2]
+
+    Cat2 --> I3[実装 3]
+
+    ref I1 > Impl1Detail
+}
+
+diagram Impl1Detail "実装 1 の詳細" {
+  flowchart TB
+    I([実装 1]) --> F1[特徴 1]
+    I --> F2[特徴 2]
+    I --> U[ユースケース]
+}

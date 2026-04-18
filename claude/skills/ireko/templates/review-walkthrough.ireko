@@ -1,0 +1,216 @@
+// コードレビュー用テンプレート
+//
+// 使い方:
+// 1. PR 番号・タイトルを置換
+// 2. Before/After の対比を具体的に書く
+// 3. レビュー依頼事項を明示
+// 4. 不要な図は削除
+
+@root
+diagram "PR #NNN: タイトル" {
+  flowchart TB
+    PR([PR #NNN]) --> Why[なぜこの変更が必要か]
+    PR --> Overview[変更の概要]
+    PR --> Changes[主要な変更点]
+    PR --> Flow[動作の変化]
+    PR --> Review[レビュー依頼事項]
+    PR --> Risk[リスクと対策]
+    PR --> Test[動作確認]
+
+    ref Why > Motivation
+    ref Overview > BeforeAfter
+    ref Changes > ChangeList
+    ref Flow > FlowDiff
+    ref Review > ReviewPoints
+    ref Risk > RiskMitigation
+    ref Test > TestResult
+}
+
+// ─────────────────────────────────
+// なぜこの変更が必要か
+// ─────────────────────────────────
+
+diagram Motivation "なぜこの変更が必要か" {
+  flowchart TB
+    Why([背景]) --> Problem[解決する問題]
+    Why --> Issue[関連 Issue / Ticket]
+    Why --> Context[経緯]
+
+    Problem --> P1["例: ログイン URL が複数存在し<br/>運用が煩雑"]
+
+    Issue --> I1["#1234 ログイン統合"]
+    Issue --> I2["Q3 の OKR: セキュリティ強化"]
+
+    Context --> C1["過去の議論: Slack #auth での決定"]
+}
+
+// ─────────────────────────────────
+// Before / After の対比
+// ─────────────────────────────────
+
+diagram BeforeAfter "Before / After の概要" {
+  flowchart LR
+    subgraph Before["Before"]
+      B1[Component A]
+      B2[Component B]
+      B1 --> B2
+    end
+
+    subgraph After["After"]
+      A1[Component A]
+      A2[Component A']
+      A3[Component B]
+      A1 --> A2
+      A2 --> A3
+    end
+
+    Note1["Before: A が B に直接結合<br/>After: A' が間に入って責務を分離"]
+
+    ref Before > BeforeDetail
+    ref After > AfterDetail
+}
+
+diagram BeforeDetail "変更前の構造" {
+  flowchart TB
+    C1[Client] --> App[App Server]
+    App --> Custom[独自ロジック]
+    Custom --> DB[(DB)]
+
+    Note1["問題点:<br/>- App に認証責務が集中<br/>- 他の API でも同じロジックを重複実装"]
+}
+
+diagram AfterDetail "変更後の構造" {
+  flowchart TB
+    C1[Client] --> RP[Reverse Proxy]
+    RP --> App[App Server]
+    App --> DB[(DB)]
+
+    Note1["改善:<br/>- 認証責務を RP に移譲<br/>- App は認証済み前提で簡潔に"]
+}
+
+// ─────────────────────────────────
+// 主要な変更点
+// ─────────────────────────────────
+
+diagram ChangeList "主要な変更点" {
+  flowchart TB
+    Changes([変更サマリ]) --> Added[追加]
+    Changes --> Modified[修正]
+    Changes --> Deleted[削除]
+    Changes --> Config[設定変更]
+
+    Added --> A1["src/path/new-file.ts<br/>新しいコンポーネント"]
+    Added --> A2["test/path/new-file.test.ts"]
+
+    Modified --> M1["src/path/existing.ts<br/>ロジック変更"]
+    Modified --> M2["src/path/another.ts<br/>import の更新"]
+
+    Deleted --> D1["src/path/old-file.ts<br/>不要になった"]
+
+    Config --> C1["infra/terraform/lb.tf<br/>LB ルーティング追加"]
+    Config --> C2["infra/env/.env.example<br/>新環境変数"]
+
+    ref A1 > NewComponentDesign
+    ref M1 > ExistingLogicDiff
+}
+
+diagram NewComponentDesign "新規コンポーネントの設計" {
+  flowchart TB
+    N([new-file.ts]) --> Responsibility[責務]
+    N --> IO[入出力]
+    N --> Dep[依存]
+
+    Responsibility --> R1["このコンポーネントが担うこと<br/>担わないこと"]
+    IO --> IO1["入力: 型<br/>出力: 型"]
+    Dep --> D1["他モジュールとの依存関係"]
+}
+
+diagram ExistingLogicDiff "既存ロジックの変更点" {
+  flowchart TB
+    Diff([変更内容]) --> Before[変更前の挙動]
+    Diff --> After[変更後の挙動]
+    Diff --> Why[変更理由]
+}
+
+// ─────────────────────────────────
+// 動作の変化
+// ─────────────────────────────────
+
+diagram FlowDiff "動作フローの変化" {
+  sequenceDiagram
+    participant C as Client
+    participant RP as Reverse_Proxy
+    participant App as App
+
+    Note over C,App: 変更後の新しいフロー
+
+    C->>RP: リクエスト
+    RP->>RP: 認証チェック
+    alt 認証 OK
+      RP->>App: 転送
+      App->>RP: レスポンス
+      RP->>C: レスポンス
+    else 認証 NG
+      RP->>C: 401 Unauthorized
+    end
+}
+
+// ─────────────────────────────────
+// レビュー依頼事項
+// ─────────────────────────────────
+
+diagram ReviewPoints "レビュー依頼事項" {
+  flowchart TB
+    Review([レビュー観点]) --> Must[必ず見てほしい]
+    Review --> Nice[できれば見てほしい]
+    Review --> Skip[今回はスルーで OK]
+
+    Must --> M1["セキュリティ上の論点 X"]
+    Must --> M2["パフォーマンスに影響する箇所 Y"]
+
+    Nice --> N1["命名・コメントの改善案"]
+    Nice --> N2["テストケースの追加案"]
+
+    Skip --> S1["自動生成された型定義の大量変更"]
+    Skip --> S2["Lint エラー修正の一括変更"]
+}
+
+// ─────────────────────────────────
+// リスクと対策
+// ─────────────────────────────────
+
+diagram RiskMitigation "リスクと対策" {
+  flowchart TB
+    Risk([想定リスク]) --> R1[リスク 1]
+    Risk --> R2[リスク 2]
+
+    R1 --> M1["mitigation:<br/>feature flag で切り戻し可能"]
+    R2 --> M2["mitigation:<br/>段階リリース"]
+
+    Risk --> Rollback[切り戻し手順]
+    Rollback --> RB1["手順 1: ..."]
+    Rollback --> RB2["手順 2: ..."]
+}
+
+// ─────────────────────────────────
+// 動作確認
+// ─────────────────────────────────
+
+diagram TestResult "動作確認" {
+  flowchart TB
+    Test([確認項目]) --> Unit[ユニットテスト]
+    Test --> Int[統合テスト]
+    Test --> E2E[E2E テスト]
+    Test --> Manual[手動確認]
+    Test --> Load[負荷試験]
+
+    Unit --> U1["pass: N 件追加"]
+    Int --> I1["pass"]
+    E2E --> E1["pass"]
+
+    Manual --> M1["シナリオ 1: OK"]
+    Manual --> M2["シナリオ 2: OK"]
+    Manual --> M3["エラーケース: OK"]
+
+    Load --> L1["結果: P99 < 100ms<br/>(目標達成)"]
+}
