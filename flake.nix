@@ -12,6 +12,7 @@
 
   outputs = inputs @ { self, nixpkgs, nix-darwin }:
     let
+      forAllSystems = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-darwin" ];
       mkHost = import ./lib/mkHost.nix;
     in
     {
@@ -22,7 +23,7 @@
         username = "mihiro";
       };
 
-      formatter.aarch64-darwin =
-        nixpkgs.legacyPackages.aarch64-darwin.nixpkgs-fmt;
+      formatter = forAllSystems (system:
+        nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
 }

@@ -1,9 +1,9 @@
-{ lib, ... }:
+{ lib, username, ... }:
 
 {
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
-    trusted-users = [ "root" "@admin" ];
+    trusted-users = [ "root" username ];
   };
 
   nix.gc = {
