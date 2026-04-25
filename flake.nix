@@ -8,9 +8,14 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs @ { self, nixpkgs, nix-darwin }:
+  outputs = inputs @ { self, nixpkgs, nix-darwin, home-manager }:
     let
       forAllSystems = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-darwin" ];
       mkHost = import ./lib/mkHost.nix;
