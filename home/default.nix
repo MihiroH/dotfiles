@@ -3,6 +3,11 @@
 {
   imports = [
     ./packages.nix
+    ./programs/fzf.nix
+    ./programs/gh.nix
+    ./programs/git.nix
+    ./programs/gpg.nix
+    ./programs/tmux.nix
     ./programs/zsh.nix
   ];
 
