@@ -10,7 +10,6 @@
     gnupg
     jq
     lua
-    pinentry_mac
     prettierd
     ripgrep
     tree-sitter
