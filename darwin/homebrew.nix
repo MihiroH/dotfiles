@@ -7,11 +7,13 @@
     onActivation = {
       autoUpdate = false;
       upgrade = false;
-      # Uninstall casks that are present in brew but no longer declared
-      # below. Set to "zap" to also wipe app support data; leaving as
-      # "uninstall" so removing a line drops the cask but keeps user
-      # state if reinstalled later.
-      cleanup = "uninstall";
+      # IMPORTANT: cleanup applies to BOTH casks and brew formulae and
+      # there is no per-type override in nix-darwin. Set to null until
+      # the formulae set is fully declared (planned for Phase 4b after
+      # mise is removed); otherwise activation mass-uninstalls anything
+      # not listed in `brews`. Removal of a cask currently requires a
+      # manual `brew uninstall --cask <name>` after dropping the line.
+      cleanup = null;
     };
 
     casks = [
