@@ -15,13 +15,13 @@
     };
 
     casks = [
-      "docker-desktop"
       "font-monaspice-nerd-font"
       "fork"
       "gcloud-cli"
       "homerow"
       "kitty"
       "maccy"
+      "orbstack"
     ];
   };
 }
