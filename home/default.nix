@@ -3,6 +3,7 @@
 {
   imports = [
     ./packages.nix
+    ./runtimes.nix
     ./programs/claude.nix
     ./programs/fzf.nix
     ./programs/gh.nix
