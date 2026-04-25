@@ -13,7 +13,6 @@
       share = true;
       ignoreDups = true;
       ignoreAllDups = true;
-      reduceBlanks = true;
     };
 
     sessionVariables = {
@@ -101,6 +100,7 @@
       setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS
       setopt no_beep nolistbeep
       setopt print_eight_bit
+      setopt hist_reduce_blanks
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
       autoload -U select-word-style
       select-word-style bash
