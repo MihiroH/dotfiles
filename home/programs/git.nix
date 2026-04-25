@@ -19,7 +19,7 @@
 
     settings = {
       user = {
-        name = "MihiroH";
+        name = "mihirove";
         email = "mihiro.hashimoto.1125@gmail.com";
 
         # Custom user.mail field used by some downstream tooling.
