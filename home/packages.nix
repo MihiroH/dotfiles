@@ -7,8 +7,11 @@
     fd
     ghq
     gnupg
+    google-cloud-sdk
     jq
+    kitty
     lua
+    maccy
     prettierd
     ripgrep
     tree-sitter

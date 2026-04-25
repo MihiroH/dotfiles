@@ -17,11 +17,7 @@
     };
 
     casks = [
-      "font-monaspice-nerd-font"
       "fork"
-      "gcloud-cli"
-      "kitty"
-      "maccy"
       "orbstack"
     ];
   };
