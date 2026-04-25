@@ -6,6 +6,7 @@
     ./homebrew.nix
     ./nix.nix
     ./system.nix
+    ./tailscale.nix
     ./users.nix
   ];
 
