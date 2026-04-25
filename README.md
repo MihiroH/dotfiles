@@ -5,37 +5,40 @@
 [![nix-darwin](https://img.shields.io/badge/nix--darwin-managed-success.svg)](https://github.com/LnL7/nix-darwin)
 [![home-manager](https://img.shields.io/badge/home--manager-managed-success.svg)](https://github.com/nix-community/home-manager)
 
-Declarative macOS dotfiles managed with [Nix flakes](https://nixos.wiki/wiki/Flakes), [nix-darwin](https://github.com/LnL7/nix-darwin) and [home-manager](https://github.com/nix-community/home-manager). One `darwin-rebuild switch` rebuilds the system: shell, editor, terminals, fonts, GUI apps, language runtimes, GPG agent, Tailscale, all at once and pinned by `flake.lock`.
+Declarative macOS dotfiles managed with [Nix flakes](https://nixos.wiki/wiki/Flakes), [nix-darwin](https://github.com/LnL7/nix-darwin) and [home-manager](https://github.com/nix-community/home-manager). One `nix run .#switch` rebuilds the system: shell, editor, terminals, fonts, GUI apps, language runtimes, GPG agent, Tailscale, all at once and pinned by `flake.lock`.
 
 ## Quick start (fresh Mac)
 
 ```bash
-# 1. Install nix (Determinate Systems installer recommended)
+# 1. Install Nix (Determinate Systems installer enables flakes by default)
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# 2. Clone this repo to a stable path
+# 2. Clone this repo
 git clone git@github.com:MihiroH/dotfiles.git ~/Documents/personal/dotfiles
 cd ~/Documents/personal/dotfiles
 
-# 3. First-time bootstrap only — required because `darwin-rebuild` is not yet
-#    on PATH. This is the one place this repo uses `nix run nix-darwin`; it
-#    may hit the unauthenticated GitHub API rate limit and fall back to the
-#    cached version. After this step always use the form in step 4.
-sudo nix --extra-experimental-features 'nix-command flakes' \
-  run nix-darwin -- switch --flake .#mihiro-mac
-
-# 4. From here on, every rebuild goes through darwin-rebuild (reads
-#    flake.lock, no GitHub round-trip needed):
-sudo darwin-rebuild switch --flake .#mihiro-mac
+# 3. Activate (works for both first-time bootstrap and every subsequent rebuild)
+nix run .#switch
 ```
 
-The host configuration is `darwinConfigurations."mihiro-mac"` (Apple Silicon). To target a different machine, copy that block in `flake.nix` and add a new entry to `lib/mkHost.nix`.
+The host configuration is `darwinConfigurations."mihiro-mac"` (Apple Silicon). To target a different machine, edit `hostName` / `system` / `username` at the top of `flake.nix`.
+
+## Daily commands
+
+```bash
+nix run .#build      # build into ./result without activating
+nix run .#switch     # build + activate (sudo prompt)
+nix run .#update     # nix flake update
+nix flake check      # type-check all options
+```
+
+These wrap the underlying `darwin-rebuild` and `nix flake` invocations so the host name (`.#mihiro-mac`) does not have to be retyped.
 
 ## Repository layout
 
 ```text
 dotfiles/
-├── flake.nix              # inputs (nixpkgs, nix-darwin, home-manager) + outputs
+├── flake.nix              # inputs (nixpkgs, nix-darwin, home-manager) + outputs (darwinConfigurations + apps)
 ├── flake.lock
 ├── lib/
 │   └── mkHost.nix         # darwinSystem factory; passes specialArgs (incl. dotfilesPath)
@@ -90,34 +93,25 @@ The `mkOutOfStoreSymlink` modules point at the repo path (`/Users/<user>/Documen
 | **Brew formulae** | `darwin/homebrew.nix` — `phantom` only (cmux completion CLI with hard-coded shebang) |
 | **iTerm2 plist** | `home/programs/iterm2.nix` — `defaults import` + `killall cfprefsd` activation |
 
-`homebrew.onActivation.cleanup = "uninstall"`: anything brew has installed that is not in `brews` / `casks` is removed on the next `darwin-rebuild switch`.
+`homebrew.onActivation.cleanup = "uninstall"`: anything brew has installed that is not in `brews` / `casks` is removed on the next switch.
 
 ## Common tasks
 
 ### Update an upstream package
 
 ```bash
-# Update a specific input (or omit the arg to update all)
-nix flake update home-manager
-sudo darwin-rebuild switch --flake .#mihiro-mac
+nix run .#update              # all inputs
+nix flake update home-manager # one input
+nix run .#switch              # apply
 ```
 
 ### Add a CLI
 
-Edit `home/packages.nix`, append the attribute name, then `darwin-rebuild switch`.
+Edit `home/packages.nix`, append the attribute name, then `nix run .#switch`.
 
 ### Add a brew cask
 
 Edit the `casks = [ ... ]` list in `darwin/homebrew.nix`. Removing a line uninstalls the cask (because of `cleanup = "uninstall"`).
-
-### Verify a build without activating
-
-```bash
-nix flake check
-darwin-rebuild build --flake .#mihiro-mac
-```
-
-`nix flake check` runs in seconds and catches option-name typos. `darwin-rebuild build` actually builds the closure into `./result/`.
 
 ### Roll back
 
@@ -143,10 +137,10 @@ export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/legacy_credentials/<
 
 ## Caveats
 
-- **`nix run nix-darwin -- ...`** hits the unauthenticated GitHub API (60 req/h) and may fall back to the cached version with a 403 warning. Use `darwin-rebuild` directly once it is on PATH; it reads `flake.lock` instead.
 - **macOS App Management permission**: the first activation that touches `~/Applications/Home Manager Apps/` (kitty / Maccy via nix) requires you to grant the active terminal "App Management" in System Settings → Privacy & Security.
 - **Tailscale state**: `services.tailscale.enable` keeps the auth state at `/Library/Tailscale/tailscaled.state`. Migrating from the brew formula adopts that path automatically — no re-login required.
 - **`phantom` shebang**: the cmux completion CLI installs with `#!/opt/homebrew/opt/node/bin/node` hard-coded. After moving Node to nix the binary is patched in place to `#!/usr/bin/env node`. Re-running `brew reinstall phantom` would reset that patch.
+- **Non-Determinate Nix installers**: official `https://nixos.org/download` does not enable flakes by default. If you used the official installer, prepend `--extra-experimental-features 'nix-command flakes'` to the first `nix run .#switch`, or add `experimental-features = nix-command flakes` to `~/.config/nix/nix.conf`.
 
 ## License
 

@@ -12,18 +12,21 @@ Declarative macOS dotfiles. The whole environment — shell, editor, terminals, 
 # Type-check and option-name validate without building artifacts
 nix flake check
 
-# Evaluate and build the closure into ./result without activating
-darwin-rebuild build --flake .#mihiro-mac
+# Build the system closure into ./result without activating
+nix run .#build
 
-# Activate (requires sudo because it reloads launchd daemons and writes /etc)
-sudo darwin-rebuild switch --flake .#mihiro-mac
+# Activate (handles sudo internally)
+nix run .#switch
+
+# Refresh flake.lock (then `nix run .#switch` to apply)
+nix run .#update
 
 # Roll back
 darwin-rebuild --list-generations
 sudo darwin-rebuild switch --flake .#mihiro-mac~1
 ```
 
-`darwin-rebuild` is preferred over `nix run nix-darwin -- ...`; the latter hits the unauthenticated GitHub API.
+`nix run .#switch` wraps `darwin-rebuild switch --flake .#mihiro-mac` — the rebuild binary it invokes is the one built from this flake's pinned `nix-darwin` input, so no GitHub round-trip per activation.
 
 ## Architecture
 
@@ -81,7 +84,7 @@ Editing the file in the repo path is the same as editing the file at the symlink
 
 ### Add a CLI tool
 
-Edit `home/packages.nix`, append the nixpkgs attribute name, run `darwin-rebuild switch`.
+Edit `home/packages.nix`, append the nixpkgs attribute name, run `nix run .#switch`.
 
 ### Add a `programs.<tool>` module
 
@@ -101,9 +104,9 @@ Edit `home/programs/zsh.nix`:
 ### Bump pinned packages
 
 ```bash
-nix flake update                # update all inputs
-nix flake update <input-name>   # update one
-sudo darwin-rebuild switch --flake .#mihiro-mac
+nix run .#update                # update all inputs
+nix flake update <input-name>   # update one specific input
+nix run .#switch                # apply
 ```
 
 ## Caveats
