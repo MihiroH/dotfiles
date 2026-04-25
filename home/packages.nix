@@ -1,9 +1,12 @@
 { pkgs, ... }:
 
 {
-  # Phase 1: CLI tools only. Runtimes (node/python/go/rust/bun/etc.) move
-  # off mise into nix in Phase 4.
+  # CLI tools and small GUI helpers managed via nix instead of brew.
+  # Runtimes are in ./runtimes.nix; per-tool program modules live under
+  # ./programs/.
   home.packages = with pkgs; [
+    asciinema
+    asciinema-agg
     fd
     ghq
     gnupg
@@ -13,7 +16,9 @@
     lua
     maccy
     prettierd
+    pstree
     ripgrep
+    tree
     tree-sitter
   ];
 }
