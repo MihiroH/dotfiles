@@ -22,7 +22,6 @@
       "homerow"
       "kitty"
       "maccy"
-      "rio"
     ];
   };
 }
