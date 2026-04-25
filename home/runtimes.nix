@@ -13,6 +13,7 @@
     awscli2
     bun
     cargo
+    clippy
     ffmpeg
     firebase-tools
     go
@@ -21,6 +22,7 @@
     pnpm
     python313
     rustc
+    rustfmt
     uv
     yarn-berry
   ];
