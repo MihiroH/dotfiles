@@ -16,7 +16,7 @@
     ffmpeg
     firebase-tools
     go
-    jdk23
+    jdk21
     nodejs_24
     pnpm
     python310
