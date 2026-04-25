@@ -5,7 +5,6 @@
   # off mise into nix in Phase 4.
   home.packages = with pkgs; [
     fd
-    gh
     ghq
     gnupg
     jq
