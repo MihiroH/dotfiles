@@ -7,14 +7,20 @@
     onActivation = {
       autoUpdate = false;
       upgrade = false;
-      # IMPORTANT: cleanup applies to BOTH casks and brew formulae and
-      # there is no per-type override in nix-darwin. Set to "none" until
-      # the formulae set is fully declared (planned for Phase 4b after
-      # mise is removed); otherwise activation mass-uninstalls anything
-      # not listed in `brews`. Removal of a cask currently requires a
-      # manual `brew uninstall --cask <name>` after dropping the line.
-      cleanup = "none";
+      # cleanup applies to both casks and brew formulae. Now that the
+      # full set is declared explicitly below, "uninstall" is safe and
+      # gives us idempotent activations: anything brew has installed
+      # that is not in brews/casks gets removed on the next switch.
+      cleanup = "uninstall";
     };
+
+    brews = [
+      # cmux's shell completion CLI. Cannot be moved to nix because the
+      # binary ships with a hard-coded `#!/opt/homebrew/opt/node/bin/node`
+      # shebang; until upstream supports `#!/usr/bin/env node` it stays
+      # on brew.
+      "phantom"
+    ];
 
     casks = [
       "fork"
