@@ -14,7 +14,7 @@ Declarative macOS dotfiles managed with [Nix flakes](https://nixos.wiki/wiki/Fla
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
 # 2. Clone this repo
-git clone git@github.com:MihiroH/dotfiles.git ~/Documents/personal/dotfiles
+git clone git@github.com:mihirove/dotfiles.git ~/Documents/personal/dotfiles
 cd ~/Documents/personal/dotfiles
 
 # 3. Activate (works for both first-time bootstrap and every subsequent rebuild)
