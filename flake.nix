@@ -44,6 +44,7 @@
         # Build the darwin system closure into ./result without activating.
         build = {
           type = "app";
+          meta.description = "Build the darwin system into ./result without activating";
           program = toString (pkgs.writeShellScript "darwin-build" ''
             set -e
             echo "Building darwin configuration..."
@@ -56,6 +57,7 @@
         # caller does not have to remember --flake .#${hostName}.
         switch = {
           type = "app";
+          meta.description = "Build and activate the darwin system";
           program = toString (pkgs.writeShellScript "darwin-switch" ''
             set -eo pipefail
             exec sudo ${darwinRebuild} switch --flake .#${hostName} "$@"
@@ -65,6 +67,7 @@
         # Refresh flake.lock for all (or selected) inputs.
         update = {
           type = "app";
+          meta.description = "Refresh flake.lock (run nix run .#switch afterwards)";
           program = toString (pkgs.writeShellScript "flake-update" ''
             set -e
             echo "Updating flake.lock..."
