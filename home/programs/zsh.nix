@@ -61,6 +61,9 @@
       # paths are wired up by /etc/zprofile from nix-darwin.
       export PATH="$HOME/.local/bin:$PATH"
       export PATH="$PATH:$GOBIN"
+      # Brew CLIs that have no nix replacement yet (phantom, tailscale,
+      # tree, ...). Append after nix so nix wins for any duplicates.
+      export PATH="$PATH:/opt/homebrew/bin"
 
       # ---- kitty / cmux integration --------------------------------------
       # Prevent input keys from being displayed with Ctrl+e or Ctrl+f.
@@ -117,16 +120,6 @@
       status()    { git status; }
       fetchpull() { git fetch -p && git pull; }
       rmbranch()  { git branch | grep "$1" | xargs git branch -D; }
-
-      # gcloud wrapper that forces xterm-256color for `compute ssh`
-      # because the remote tput often misbehaves with kitty/ghostty.
-      gcloud() {
-        if [[ "$1" == "compute" && "$2" == "ssh" ]]; then
-          TERM=xterm-256color command gcloud "$@"
-        else
-          command gcloud "$@"
-        fi
-      }
 
       # ---- fzf widgets ---------------------------------------------------
       function fzf-search-history() {
