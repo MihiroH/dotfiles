@@ -17,12 +17,15 @@ curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 git clone git@github.com:MihiroH/dotfiles.git ~/Documents/personal/dotfiles
 cd ~/Documents/personal/dotfiles
 
-# 3. First-time activation. The flake input pin lives in flake.lock so the
-#    initial run does not need a GitHub round-trip.
+# 3. First-time bootstrap only — required because `darwin-rebuild` is not yet
+#    on PATH. This is the one place this repo uses `nix run nix-darwin`; it
+#    may hit the unauthenticated GitHub API rate limit and fall back to the
+#    cached version. After this step always use the form in step 4.
 sudo nix --extra-experimental-features 'nix-command flakes' \
   run nix-darwin -- switch --flake .#mihiro-mac
 
-# 4. After step 3 darwin-rebuild lives on PATH; subsequent rebuilds:
+# 4. From here on, every rebuild goes through darwin-rebuild (reads
+#    flake.lock, no GitHub round-trip needed):
 sudo darwin-rebuild switch --flake .#mihiro-mac
 ```
 
@@ -30,7 +33,7 @@ The host configuration is `darwinConfigurations."mihiro-mac"` (Apple Silicon). T
 
 ## Repository layout
 
-```
+```text
 dotfiles/
 ├── flake.nix              # inputs (nixpkgs, nix-darwin, home-manager) + outputs
 ├── flake.lock

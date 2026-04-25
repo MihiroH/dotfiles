@@ -27,7 +27,7 @@ sudo darwin-rebuild switch --flake .#mihiro-mac~1
 
 ## Architecture
 
-```
+```text
 flake.nix                    # inputs: nixpkgs (unstable), nix-darwin, home-manager
 └── lib/mkHost.nix           # darwinSystem factory; passes inputs/hostName/system/username/dotfilesPath as specialArgs
     ├── darwin/              # system-level (root)
