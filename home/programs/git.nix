@@ -6,6 +6,20 @@
 
     lfs.enable = true;
 
+    # Patterns previously kept in git/.gitignore — written by
+    # home-manager to ~/.config/git/ignore and wired up via
+    # core.excludesfile automatically.
+    ignores = [
+      ".DS_Store"
+      "*.bak*"
+      ".claude/"
+      ".serena/"
+      "CLAUDE.local.md"
+      "phantom.config.json"
+      "mise.toml"
+      "adminsdk.*.json"
+    ];
+
     settings = {
       user = {
         name = "MihiroH";
@@ -16,7 +30,6 @@
       };
 
       core = {
-        excludesFile = "~/.config/git/ignore";
         editor = "nvim";
       };
 

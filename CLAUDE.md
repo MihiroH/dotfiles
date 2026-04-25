@@ -1,119 +1,114 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code (claude.ai/code) working in this repository.
 
-## Repository Overview
+## Repository overview
 
-This is a comprehensive dotfiles repository for macOS development environment configuration. It provides a modular, automated setup system for configuring development tools with intelligent backup management and verification capabilities.
+Declarative macOS dotfiles. The whole environment — shell, editor, terminals, fonts, GUI apps, language runtimes, GPG agent, Tailscale — is described by a Nix flake and applied with `nix-darwin` + `home-manager`. One `darwin-rebuild switch` is the only command needed to converge to the declared state.
 
-## Common Development Commands
+## Build / verify / activate
 
-### Setup and Installation
 ```bash
-# Install all default tools (zsh, git, nvim, kitty, karabiner, iterm)
-make
+# Type-check and option-name validate without building artifacts
+nix flake check
 
-# Install specific tools
-make install-nvim
-make install-git
-make install-zsh
+# Evaluate and build the closure into ./result without activating
+darwin-rebuild build --flake .#mihiro-mac
 
-# Preview what would be installed (dry run)
-make test
-./setup.sh --dry-run
+# Activate (requires sudo because it reloads launchd daemons and writes /etc)
+sudo darwin-rebuild switch --flake .#mihiro-mac
 
-# Force installation (skip backups)
-./setup.sh --force
-
-# Verify installations
-make verify
-make verify-nvim  # Verify specific tool
-
-# Clean up (remove symlinks, restore backups)
-make clean
+# Roll back
+darwin-rebuild --list-generations
+sudo darwin-rebuild switch --flake .#mihiro-mac~1
 ```
 
-### Development and Testing
-```bash
-# Check shell scripts for errors
-make lint
+`darwin-rebuild` is preferred over `nix run nix-darwin -- ...`; the latter hits the unauthenticated GitHub API.
 
-# Run all checks (lint + verify)
-make check
+## Architecture
 
-# List available tools
-make list
-
-# Individual tool setup
-./git/setup.sh
-./nvim/setup.sh verify
+```
+flake.nix                    # inputs: nixpkgs (unstable), nix-darwin, home-manager
+└── lib/mkHost.nix           # darwinSystem factory; passes inputs/hostName/system/username/dotfilesPath as specialArgs
+    ├── darwin/              # system-level (root)
+    │   ├── default.nix      # imports + networking.hostName + nixpkgs config
+    │   ├── nix.nix          # experimental-features, gc, trusted-users
+    │   ├── system.nix       # system.stateVersion, primaryUser
+    │   ├── users.nix        # users.users.<name>, login shell
+    │   ├── homebrew.nix     # casks + brews + cleanup="uninstall"
+    │   ├── fonts.nix        # fonts.packages
+    │   └── tailscale.nix    # services.tailscale.enable
+    │
+    └── home/                # user-level (home-manager via darwin module)
+        ├── default.nix
+        ├── packages.nix     # CLI tools as home.packages
+        ├── runtimes.nix     # node / python / go / rust / java / etc.
+        └── programs/        # programs.<tool> wrappers
+            ├── zsh.nix      # initContent + sessionVariables + shellAliases
+            ├── git.nix      # settings + aliases + includes + ignores
+            ├── tmux.nix
+            ├── neovim.nix   # mkOutOfStoreSymlink to ../../nvim
+            ├── kitty.nix    # mkOutOfStoreSymlink to ../../kitty
+            ├── karabiner.nix
+            ├── ghostty.nix
+            ├── claude.nix
+            ├── iterm2.nix   # defaults import + killall cfprefsd
+            ├── fzf.nix
+            ├── gh.nix
+            └── gpg.nix
 ```
 
-## High-Level Architecture
+### `mkOutOfStoreSymlink`
 
-### Directory Structure
-- **`lib/`**: Common utilities shared by all setup scripts
-  - `common.sh`: Core functions for logging, backups, symlinks, downloads
-  - `setup_template.sh`: Template for creating new tool setup scripts
-- **`scripts/`**: Management scripts for cleanup and verification
-- **`[tool]/`**: Each tool has its own directory with:
-  - `setup.sh`: Installation script following standardized pattern
-  - Configuration files specific to that tool
-- **`setup.sh`**: Main orchestration script that calls individual tool setups
-- **`Makefile`**: User-friendly interface to common operations
+Several home-manager modules use `config.lib.file.mkOutOfStoreSymlink` to point `~/.config/<tool>` directly at the repo path (`dotfilesPath` specialArg from `lib/mkHost.nix`) rather than into the read-only `/nix/store`. Required for tools that write back into their config:
 
-### Setup Script Pattern
-All setup scripts follow this standardized flow:
-1. Source `lib/common.sh` for shared utilities
-2. Define tool-specific configuration (names, dependencies, file mappings)
-3. Implement `setup_tool()` function with installation logic
-4. Implement `verify_tool()` function for validation
-5. Main execution block routing setup/verify commands
+- `nvim/lazy-lock.json` — updated by `:Lazy sync`.
+- `karabiner/karabiner.json` — Karabiner-Elements GUI rewrites this.
+- `kitty/`, `cmux/ghostty/`, `claude/` — convenience so direct edits don't need a `darwin-rebuild`.
 
-### Key Design Principles
-- **Safety First**: Always create backups before modifying existing configs
-- **Modular**: Each tool is independent and can be installed separately
-- **Verification**: Every tool includes verification logic
-- **Idempotent**: Running setup multiple times is safe
-- **Platform-Aware**: Handles macOS-specific requirements (e.g., Apple Silicon Homebrew paths)
+Editing the file in the repo path is the same as editing the file at the symlink target.
 
-### Symlink Strategy
-The repository uses symlinks to manage configurations:
-- Source files live in this repository
-- Symlinks are created to expected config locations
-- Original files are backed up with `.bak` suffix
-- Multiple backups are numbered (`.bak.1`, `.bak.2`, etc.)
+### Boundaries
 
-## Tool-Specific Notes
+- **Nix CLI tools** → `home/packages.nix`.
+- **Language runtimes** → `home/runtimes.nix`.
+- **Per-tool config that maps to a `programs.<tool>` module** → `home/programs/<tool>.nix`.
+- **System-level** (launchd daemons, system fonts, brew casks, macOS defaults) → `darwin/`.
+- **Brew** is reserved for things nix cannot replace cleanly (currently: `phantom` formula, `fork`/`orbstack` casks).
+- **Secrets** (API tokens, work GCP credentials) live in `~/.secrets.zsh` (git-ignored), sourced from `programs.zsh.initContent`.
 
-### Neovim
-- Config location: `~/.config/nvim/`
-- Uses Packer for plugin management
-- Post-install: Run `:PackerSync` to install plugins
-- Heavy AI integration (Copilot, Avante, Claude Code)
+## Common changes
 
-### Git
-- Config location: `~/.config/git/`
-- Supports conditional includes for work/personal profiles
-- FZF-powered interactive commands
+### Add a CLI tool
 
-### Zsh
-- Installs zsh-autosuggestions plugin
-- Custom aliases in `.zsh_profile`
-- FZF integration for enhanced navigation
+Edit `home/packages.nix`, append the nixpkgs attribute name, run `darwin-rebuild switch`.
 
-## Adding New Tools
+### Add a `programs.<tool>` module
 
-To add a new tool to this dotfiles repository:
+Create `home/programs/<tool>.nix` with `programs.<tool>.enable = true` and tool-specific options, then add the module to the `imports` list in `home/default.nix`.
 
-1. Create directory: `mkdir yourtool`
-2. Copy template: `cp lib/setup_template.sh yourtool/setup.sh`
-3. Customize the configuration section:
-   ```bash
-   TOOL_NAME="YourTool"
-   REQUIRED_COMMANDS=("command1" "command2")
-   CONFIG_SOURCES=("$SCRIPT_DIR/config")
-   CONFIG_TARGETS=("$HOME/.config/yourtool/config")
-   ```
-4. Add tool-specific logic in `post_setup()` and `verify_tool()`
-5. Test thoroughly before committing
+### Add or remove a brew cask
+
+Edit the `casks` list in `darwin/homebrew.nix`. Removing a line auto-uninstalls (`cleanup = "uninstall"`).
+
+### Modify zsh behavior
+
+Edit `home/programs/zsh.nix`:
+- Environment variables → `sessionVariables`
+- One-line aliases → `shellAliases`
+- Functions, widgets, bindkeys, sourcing → `initContent`
+
+### Bump pinned packages
+
+```bash
+nix flake update                # update all inputs
+nix flake update <input-name>   # update one
+sudo darwin-rebuild switch --flake .#mihiro-mac
+```
+
+## Caveats
+
+- **macOS App Management permission**: first activation touching `~/Applications/Home Manager Apps/` requires the active terminal to be granted "App Management" in System Settings → Privacy & Security.
+- **Karabiner**: needs Full Disk Access on `karabiner_grabber` and `karabiner_observer` (System Settings → Privacy & Security).
+- **iTerm2 plist**: `home/programs/iterm2.nix` runs `defaults import` and `killall cfprefsd` so the imported plist actually takes effect; running iTerm2 windows may need to be relaunched.
+- **`phantom` shebang**: the binary's `#!/opt/homebrew/opt/node/bin/node` shebang gets patched in place to `#!/usr/bin/env node` so it can use the nix-managed Node. `brew reinstall phantom` would reset the patch.

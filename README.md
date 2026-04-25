@@ -1,408 +1,150 @@
 # Dotfiles
 
-[![macOS](https://img.shields.io/badge/macOS-Supported-green.svg)](https://www.apple.com/macos/)
-[![Bash](https://img.shields.io/badge/Bash-5.2%2B-blue.svg)](https://www.gnu.org/software/bash/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![macOS](https://img.shields.io/badge/macOS-aarch64-blue.svg)](https://www.apple.com/macos/)
+[![Nix](https://img.shields.io/badge/Nix-flakes-5277C3.svg)](https://nixos.wiki/wiki/Flakes)
+[![nix-darwin](https://img.shields.io/badge/nix--darwin-managed-success.svg)](https://github.com/LnL7/nix-darwin)
+[![home-manager](https://img.shields.io/badge/home--manager-managed-success.svg)](https://github.com/nix-community/home-manager)
 
-A comprehensive dotfiles repository for macOS development environment configuration. This repository provides a modular, automated setup system for configuring development tools with intelligent backup management and verification capabilities.
+Declarative macOS dotfiles managed with [Nix flakes](https://nixos.wiki/wiki/Flakes), [nix-darwin](https://github.com/LnL7/nix-darwin) and [home-manager](https://github.com/nix-community/home-manager). One `darwin-rebuild switch` rebuilds the system: shell, editor, terminals, fonts, GUI apps, language runtimes, GPG agent, Tailscale, all at once and pinned by `flake.lock`.
 
-## 🚀 Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-
-# Install everything with default settings
-make
-
-# Or use the setup script directly
-./setup.sh
-```
-
-## 📋 Table of Contents
-
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Supported Tools](#supported-tools)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Customization](#customization)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-
-## ✨ Features
-
-- **🔧 Modular Architecture**: Each tool has its own setup script with standardized patterns
-- **🔒 Safe Installation**: Automatic backups before modifying existing configurations
-- **✅ Verification System**: Built-in verification for all installations
-- **🎯 Selective Installation**: Install only the tools you need
-- **🔍 Dry Run Mode**: Preview changes before applying them
-- **🧹 Clean Uninstall**: Remove configurations and restore backups
-- **📝 Comprehensive Logging**: Colored output with detailed error messages
-- **🔄 Dependency Management**: Automatic installation of required dependencies
-
-## 🔧 Prerequisites
-
-### Required
-- macOS (tested on macOS 11+)
-- Command Line Tools for Xcode
-- Internet connection for downloading dependencies
-
-### Automatically Installed
-- [Homebrew](https://brew.sh/) - Package manager for macOS
-- Bash 3.2+ - Works with standard macOS bash (no Homebrew required)
-- Various command-line tools (git, ripgrep, fd, fzf, etc.)
-
-## 📦 Installation
-
-### Using Make (Recommended)
+## Quick start (fresh Mac)
 
 ```bash
-# Install all default tools
-make
+# 1. Install nix (Determinate Systems installer recommended)
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 
-# Install specific tools
-make install-nvim
-make install-git
-make install-zsh
+# 2. Clone this repo to a stable path
+git clone git@github.com:MihiroH/dotfiles.git ~/Documents/personal/dotfiles
+cd ~/Documents/personal/dotfiles
 
-# Preview what would be installed
-make test
+# 3. First-time activation. The flake input pin lives in flake.lock so the
+#    initial run does not need a GitHub round-trip.
+sudo nix --extra-experimental-features 'nix-command flakes' \
+  run nix-darwin -- switch --flake .#mihiro-mac
 
-# Verify installations
-make verify
-
-# List available tools
-make list
+# 4. After step 3 darwin-rebuild lives on PATH; subsequent rebuilds:
+sudo darwin-rebuild switch --flake .#mihiro-mac
 ```
 
-### Using Setup Script
+The host configuration is `darwinConfigurations."mihiro-mac"` (Apple Silicon). To target a different machine, copy that block in `flake.nix` and add a new entry to `lib/mkHost.nix`.
 
-```bash
-# Install all default tools
-./setup.sh
-
-# Install specific tools
-./setup.sh zsh git nvim
-
-# Preview mode (dry run)
-./setup.sh --dry-run
-
-# Force installation (skip backups)
-./setup.sh --force
-
-# Verbose output
-./setup.sh --verbose
-
-# Show help
-./setup.sh --help
-```
-
-### Individual Tool Setup
-
-Each tool can be installed independently:
-
-```bash
-# Install and verify individual tools
-./git/setup.sh
-./git/setup.sh verify
-
-./nvim/setup.sh
-./nvim/setup.sh verify
-```
-
-## 🛠 Supported Tools
-
-### 🐚 Zsh
-Modern shell with extensive customization and plugins.
-
-- **Config Files**: `.zshrc`, `.zsh_profile`
-- **Plugins**: 
-  - Git completion and prompt
-  - Zsh autosuggestions
-- **Features**: 
-  - Custom aliases and functions
-  - FZF integration
-  - Enhanced directory navigation
-
-### 📝 Git
-Version control system with custom configuration.
-
-- **Config Location**: `~/.config/git/`
-- **Features**:
-  - Global gitconfig with useful aliases
-  - Custom gitignore patterns
-  - Conditional includes for work/personal profiles
-  - FZF-powered interactive commands
-
-### 🖥 Neovim
-Modern Vim-based text editor configured as a complete IDE.
-
-- **Config Location**: `~/.config/nvim/`
-- **Plugin Manager**: Lazy.nvim
-- **Key Features**:
-  - AI assistance (Copilot, Avante, Claude Code)
-  - LSP support with autocompletion
-  - Breadcrumb navigation (dropbar.nvim)
-  - File navigation (Telescope, Oil)
-  - Git integration (Gitsigns, Lazygit)
-  - Testing and debugging tools
-  - Beautiful themes and UI
-
-**Post-install**: Run `:Lazy sync` in Neovim to install plugins.
-
-### 🐱 Kitty
-Fast, feature-rich terminal emulator.
-
-- **Config Location**: `~/.config/kitty/`
-- **Features**:
-  - Custom themes (Gruvbox, Everforest)
-  - Font configuration
-  - Keyboard shortcuts
-  - Window management
-
-### ⌨️ Karabiner-Elements
-Powerful keyboard customization tool for macOS.
-
-- **Config Location**: `~/.config/karabiner/`
-- **Features**:
-  - Custom key mappings
-  - Complex modifications
-  - Japanese input integration
-
-**Post-install**: Grant Full Disk Access to karabiner_grabber and karabiner_observer in System Preferences.
-
-### 🖥 iTerm2
-Popular terminal emulator for macOS.
-
-- **Features**:
-  - Custom preferences
-  - FiraCode Nerd Font installation
-  - Color schemes and profiles
-
-### 🔧 Mise
-Tool version management (formerly rtx).
-
-- **Config Location**: `~/.config/mise/config.toml`
-- **Features**:
-  - Language version management
-  - Global tool configuration
-
-### 🤖 Claude Code
-AI-powered coding assistant by Anthropic.
-
-- **Config Location**: `~/.claude/`
-- **Features**:
-  - Global CLAUDE.md configuration for all projects
-  - MCP (Model Context Protocol) server configurations
-  - Custom commands and aliases for enhanced workflows
-  - Integration with development tools and workflows
-
-**Post-install**: Claude Code will be configured with global settings and instructions that apply to all your projects.
-
-## 📖 Usage
-
-### Common Commands
-
-```bash
-# Setup all tools
-make
-
-# Verify all installations
-make verify
-
-# Clean up (remove symlinks, restore backups)
-make clean
-
-# Check specific tool
-./zsh/setup.sh verify
-
-# Force reinstall a tool
-./setup.sh --force nvim
-
-# See what would be changed
-./setup.sh --dry-run
-```
-
-### Managing Configurations
-
-1. **Edit configurations**: Modify files in this repository (not the symlinked files)
-2. **Changes take effect**: Most changes apply immediately, some tools may need restart
-3. **Commit changes**: Use git to track your configuration changes
-
-### Adding a New Tool
-
-1. Create a new directory for your tool
-2. Copy `lib/setup_template.sh` to `yourtool/setup.sh`
-3. Customize the configuration:
-   ```bash
-   TOOL_NAME="YourTool"
-   REQUIRED_COMMANDS=("command1" "command2")
-   
-   CONFIG_SOURCES=(
-       "$SCRIPT_DIR/config"
-   )
-   CONFIG_TARGETS=(
-       "$HOME/.config/yourtool/config"
-   )
-   ```
-4. Add tool-specific logic in `post_setup()` and `verify_tool()` functions
-
-## 🏗 Architecture
-
-### Directory Structure
+## Repository layout
 
 ```
 dotfiles/
-├── lib/                    # Common utilities
-│   ├── common.sh          # Shared functions
-│   └── setup_template.sh  # Template for new tools
-├── scripts/               # Management scripts
-│   ├── cleanup.sh        # Remove configurations
-│   └── verify-all.sh     # Verify installations
-├── [tool]/               # Tool-specific directory
-│   ├── setup.sh         # Installation script
-│   └── config files     # Tool configurations
-├── setup.sh             # Main setup script
-├── Makefile            # Make interface
-└── README.md           # This file
+├── flake.nix              # inputs (nixpkgs, nix-darwin, home-manager) + outputs
+├── flake.lock
+├── lib/
+│   └── mkHost.nix         # darwinSystem factory; passes specialArgs (incl. dotfilesPath)
+│
+├── darwin/                # nix-darwin (system-level, root-managed)
+│   ├── default.nix        # imports the rest, sets hostName + nixpkgs.hostPlatform
+│   ├── nix.nix            # experimental-features, gc, trusted-users
+│   ├── system.nix         # system.stateVersion, primaryUser, defaults
+│   ├── users.nix          # users.users.<name>, login shell
+│   ├── homebrew.nix       # cask + brew formula declarations
+│   ├── fonts.nix          # fonts.packages (Nerd Fonts)
+│   └── tailscale.nix      # services.tailscale.enable
+│
+├── home/                  # home-manager (user-level)
+│   ├── default.nix        # imports + home.{username,homeDirectory,stateVersion}
+│   ├── packages.nix       # CLI tools as home.packages
+│   ├── runtimes.nix       # node / python / go / rust / java / etc.
+│   └── programs/
+│       ├── zsh.nix        # programs.zsh + initContent
+│       ├── git.nix        # programs.git (settings, aliases, includes, ignores)
+│       ├── tmux.nix       # tmux + xdg.configFile."tmux/tmux.conf"
+│       ├── neovim.nix     # programs.neovim + mkOutOfStoreSymlink to ../../nvim
+│       ├── kitty.nix      # mkOutOfStoreSymlink to ../../kitty
+│       ├── karabiner.nix  # mkOutOfStoreSymlink to ../../karabiner
+│       ├── ghostty.nix    # mkOutOfStoreSymlink to ../../cmux/ghostty
+│       ├── claude.nix     # ~/.claude/* mkOutOfStoreSymlink
+│       ├── iterm2.nix     # defaults import + killall cfprefsd
+│       ├── fzf.nix        # programs.fzf + everforest palette
+│       ├── gh.nix         # programs.gh
+│       └── gpg.nix        # ~/.gnupg/gpg-agent.conf with pinentry_mac
+│
+├── nvim/                  # init.lua + lua/ (managed by lazy.nvim, repo-writable)
+├── kitty/                 # kitty.conf, kitty.d/, kitty-themes/, ...
+├── karabiner/karabiner.json
+├── claude/                # CLAUDE.md, settings.json, skills/, statusline-command.sh
+├── cmux/                  # ghostty/config, settings.json
+├── tmux/tmux.conf
+└── iterm/com.googlecode.iterm2.plist
 ```
 
-### Setup Script Pattern
+The `mkOutOfStoreSymlink` modules point at the repo path (`/Users/<user>/Documents/personal/dotfiles/...`) so tools that write back to their config (lazy.nvim's `lazy-lock.json`, Karabiner-Elements GUI) keep working — the file edited is the file in the repo.
 
-All setup scripts follow a standardized pattern:
+## What the flake manages today
 
-1. **Source common utilities** - Import shared functions
-2. **Define configuration** - Specify files, dependencies, and actions
-3. **Setup function** - Handle installation logic
-4. **Verification function** - Validate installation
-5. **Main execution** - Route commands (setup/verify)
+| Layer | Source |
+|---|---|
+| **Nix CLI tools** | `home/packages.nix` — fd, fzf, gh, ghq, jq, lua, prettierd, ripgrep, tree, tree-sitter, asciinema, asciinema-agg, pstree, gnupg, google-cloud-sdk, kitty, maccy |
+| **Language runtimes** | `home/runtimes.nix` — Node 24, Python 3.13, Go, Rust (cargo+rustc+rustfmt), Bun, OpenJDK 21 LTS, awscli2, ffmpeg, firebase-tools, pnpm, uv, yarn-berry |
+| **System fonts** | `darwin/fonts.nix` — `nerd-fonts.monaspace` |
+| **Tailscale** | `darwin/tailscale.nix` — `services.tailscale.enable = true` (CLI + tailscaled launchd daemon) |
+| **Brew casks** | `darwin/homebrew.nix` — `fork`, `orbstack` (apps that need privileged installers) |
+| **Brew formulae** | `darwin/homebrew.nix` — `phantom` only (cmux completion CLI with hard-coded shebang) |
+| **iTerm2 plist** | `home/programs/iterm2.nix` — `defaults import` + `killall cfprefsd` activation |
 
-### Common Utilities Features
+`homebrew.onActivation.cleanup = "uninstall"`: anything brew has installed that is not in `brews` / `casks` is removed on the next `darwin-rebuild switch`.
 
-- **Logging**: `log_info`, `log_success`, `log_warning`, `log_error`
-- **Backups**: `backup_if_exists` - Safe file replacement
-- **Symlinks**: `create_symlink` - Intelligent symlink creation
-- **Downloads**: `download_if_missing`, `clone_if_missing`
-- **Validation**: `command_exists`, `require_commands`
-- **Platform**: `is_macos`, `is_linux`
+## Common tasks
 
-## 🎨 Customization
+### Update an upstream package
 
-### Environment-Specific Configuration
-
-Git supports conditional includes for different environments:
-
-```gitconfig
-[includeIf "gitdir:~/work/"]
-    path = ~/.config/git/work.config
-[includeIf "gitdir:~/personal/"]
-    path = ~/.config/git/personal.config
-```
-
-### Adding Custom Aliases
-
-Edit the relevant configuration file:
-- Zsh aliases: `zsh/.zsh_profile`
-- Git aliases: `git/.gitconfig`
-
-### Modifying Neovim Plugins
-
-1. Edit `nvim/lua/plugins.lua`
-2. Run `:PackerSync` in Neovim
-3. Restart Neovim
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-#### Permission Denied
 ```bash
-# Make scripts executable
-chmod +x setup.sh
-chmod +x */setup.sh
+# Update a specific input (or omit the arg to update all)
+nix flake update home-manager
+sudo darwin-rebuild switch --flake .#mihiro-mac
 ```
 
-#### Bash Version Error
+### Add a CLI
+
+Edit `home/packages.nix`, append the attribute name, then `darwin-rebuild switch`.
+
+### Add a brew cask
+
+Edit the `casks = [ ... ]` list in `darwin/homebrew.nix`. Removing a line uninstalls the cask (because of `cleanup = "uninstall"`).
+
+### Verify a build without activating
+
 ```bash
-# Install newer bash
-brew install bash
-
-# Verify version (should be 5.2+)
-/opt/homebrew/bin/bash --version
+nix flake check
+darwin-rebuild build --flake .#mihiro-mac
 ```
 
-#### Symlink Already Exists
+`nix flake check` runs in seconds and catches option-name typos. `darwin-rebuild build` actually builds the closure into `./result/`.
+
+### Roll back
+
+`darwin-rebuild` keeps the last few generations:
+
 ```bash
-# Use force mode to overwrite
-./setup.sh --force [tool]
-
-# Or manually remove and retry
-rm ~/.config/[tool]
-./[tool]/setup.sh
+darwin-rebuild --list-generations
+sudo darwin-rebuild switch --flake .#mihiro-mac~1   # previous generation
 ```
 
-#### Homebrew Not Found
-The setup script will automatically install Homebrew if missing. If it fails:
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+## Secrets
+
+Tokens and per-host work credentials live in `~/.secrets.zsh` (git-ignored, sourced from the end of `programs.zsh.initContent`). Example:
+
+```sh
+# ~/.secrets.zsh
+if [ -f ~/.config/tavily/apps.json ]; then
+    export TAVILY_API_KEY=$(jq -r '."api_key"' ~/.config/tavily/apps.json 2>/dev/null)
+fi
+
+export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/legacy_credentials/<work-email>/adc.json"
 ```
 
-### Verification Failed
+## Caveats
 
-Run individual verification to see specific issues:
-```bash
-./[tool]/setup.sh verify
-```
+- **`nix run nix-darwin -- ...`** hits the unauthenticated GitHub API (60 req/h) and may fall back to the cached version with a 403 warning. Use `darwin-rebuild` directly once it is on PATH; it reads `flake.lock` instead.
+- **macOS App Management permission**: the first activation that touches `~/Applications/Home Manager Apps/` (kitty / Maccy via nix) requires you to grant the active terminal "App Management" in System Settings → Privacy & Security.
+- **Tailscale state**: `services.tailscale.enable` keeps the auth state at `/Library/Tailscale/tailscaled.state`. Migrating from the brew formula adopts that path automatically — no re-login required.
+- **`phantom` shebang**: the cmux completion CLI installs with `#!/opt/homebrew/opt/node/bin/node` hard-coded. After moving Node to nix the binary is patched in place to `#!/usr/bin/env node`. Re-running `brew reinstall phantom` would reset that patch.
 
-### Restoring Backups
+## License
 
-If something goes wrong:
-```bash
-# Restore all backups
-make clean
-
-# Or manually restore
-mv ~/.config/[tool].bak ~/.config/[tool]
-```
-
-## 🤝 Contributing
-
-### Adding a New Tool
-
-1. Create a directory with the tool name
-2. Copy and customize `lib/setup_template.sh`
-3. Add configuration files
-4. Update this README
-5. Test thoroughly:
-   ```bash
-   ./yourtool/setup.sh
-   ./yourtool/setup.sh verify
-   ./setup.sh --dry-run yourtool
-   ```
-
-### Best Practices
-
-- Use the common utilities library for consistency
-- Always create backups before modifying files
-- Provide clear error messages
-- Include verification logic
-- Document any manual steps required
-- Test on a clean system when possible
-
-### Code Style
-
-- Use 4-space indentation in bash scripts
-- Follow existing naming conventions
-- Add comments for complex logic
-- Keep functions focused and small
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-Made with ❤️ for the developer community
+MIT.
