@@ -55,22 +55,15 @@
     };
 
     initContent = ''
-      # ---- PATH ----------------------------------------------------------
-      # claude CLI installs under ~/.local/bin via the official curl
-      # installer; keep on PATH ahead of the system fallbacks. nix profile
-      # paths are wired up by /etc/zprofile from nix-darwin.
       export PATH="$HOME/.local/bin:$PATH"
       export PATH="$PATH:$GOBIN"
-      # Brew CLIs that have no nix replacement yet (phantom, tailscale,
-      # tree, ...). Append after nix so nix wins for any duplicates.
+      # Brew CLIs that have no nix replacement (phantom, etc.).
+      # Append after nix so nix wins for any duplicates.
       export PATH="$PATH:/opt/homebrew/bin"
 
-      # ---- kitty / cmux integration --------------------------------------
       # Prevent input keys from being displayed with Ctrl+e or Ctrl+f.
       [[ -n $KITTY_WINDOW_ID ]] && stty sane
 
-      # Set the kitty/ghostty tab title to the git repo root name when
-      # inside a repo, otherwise the current directory basename.
       function _kitty_tab_title_precmd() {
         local title
         local git_root
@@ -84,12 +77,9 @@
       }
       precmd_functions+=(_kitty_tab_title_precmd)
 
-      # ---- zsh-autosuggestions style -------------------------------------
       ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#35a77c'
 
-      # ---- git-prompt + PS1 ----------------------------------------------
-      # __git_ps1 ships in git's contrib/. Sourced from the nix git so the
-      # path tracks flake.lock instead of /opt/homebrew.
+      # Source from the nix git so the path tracks flake.lock instead of /opt/homebrew.
       source ${pkgs.git}/share/git/contrib/completion/git-prompt.sh
       GIT_PS1_SHOWDIRTYSTATE=true
       GIT_PS1_SHOWUNTRACKEDFILES=true
@@ -98,7 +88,6 @@
       setopt PROMPT_SUBST
       PS1=$'\n%c%F{#3a94c5}$(__git_ps1 " (%s)")%f\n%# '
 
-      # ---- shell options -------------------------------------------------
       bindkey -e
       setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS
       setopt no_beep nolistbeep
@@ -108,7 +97,6 @@
       autoload -U select-word-style
       select-word-style bash
 
-      # ---- functions (alias targets and standalone helpers) --------------
       cdls() {
         \cd "$@" && ls
       }
@@ -121,7 +109,6 @@
       fetchpull() { git fetch -p && git pull; }
       rmbranch()  { git branch | grep "$1" | xargs git branch -D; }
 
-      # ---- fzf widgets ---------------------------------------------------
       function fzf-search-history() {
         local HISTORY=$(history -n -r 1 | fzf --query="$BUFFER" +m)
         if [ -n "$HISTORY" ]; then
@@ -176,12 +163,10 @@
       zle -N fzf-cd
       bindkey '^o' fzf-cd
 
-      # ---- phantom (cmux completion) -------------------------------------
       if command -v phantom >/dev/null 2>&1; then
         eval "$(phantom completion zsh)"
       fi
 
-      # ---- history search bindings (must stay near the end) --------------
       # Some sourced completions (phantom past versions, etc.) reset
       # arrow-key bindings, so register these after everything else.
       autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
@@ -194,11 +179,7 @@
       bindkey "^[OA" up-line-or-beginning-search
       bindkey "^[OB" down-line-or-beginning-search
 
-      # ---- secrets -------------------------------------------------------
-      # Git-ignored file with TAVILY_API_KEY,
-      # GOOGLE_APPLICATION_CREDENTIALS for the work GCP profile, etc.
-      # The legacy zshrc inlined those values; pull them out to keep
-      # work credentials and API tokens out of the repo.
+      # Git-ignored, holds API tokens and per-host work credentials.
       if [ -f "$HOME/.secrets.zsh" ]; then
         source "$HOME/.secrets.zsh"
       fi
