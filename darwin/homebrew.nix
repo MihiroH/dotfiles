@@ -18,7 +18,6 @@
       "font-monaspice-nerd-font"
       "fork"
       "gcloud-cli"
-      "homerow"
       "kitty"
       "maccy"
       "orbstack"
