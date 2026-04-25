@@ -13,7 +13,6 @@
     awscli2
     bun
     cargo
-    clippy
     ffmpeg
     firebase-tools
     go
