@@ -19,7 +19,7 @@
     jdk21
     nodejs_24
     pnpm
-    python310
+    python313
     rustc
     uv
     yarn-berry
